@@ -1,0 +1,8 @@
+*.py[cod]
+*.log
+.idea/
+*.DS_Store
+*Thumbs.db
+*.app
+*.exe
+*.war
