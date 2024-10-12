@@ -64,8 +64,9 @@ function isValidIPRange(ip) {
 
 function isValidSubnet(subnet) {
 	// Regular expression to validate subnet range in CIDR notation
-	const subnetRegex = /^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9]))\/([0-9]|[1-2][0-9]|3[0-2])$/;
-	return subnetRegex.test(subnet);
+	// const subnetRegex = /^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9]))\/([0-9]|[1-2][0-9]|3[0-2])$/;
+	// return subnetRegex.test(subnet);
+	return subnet
 }
 
 function filterStr(str){

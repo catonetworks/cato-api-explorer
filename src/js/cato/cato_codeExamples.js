@@ -14,7 +14,7 @@ function transformToCLI(auth = getCurApiKey($('#catoApiKeys').val())){
         var variables = JSON.parse($('#catoVariables').val());
         delete variables.accountID;
         delete variables.accountId;
-		cliStr = "python -m cato " +$("#catoOperations").val().replaceAll("."," ")+" "+auth.account_id+" '"+JSON.stringify(variables)+"'";
+		cliStr = "catocli " +$("#catoOperations").val().replaceAll("."," ")+" "+auth.account_id+" '"+JSON.stringify(variables)+"'";
 	}
 	return cliStr;
 }
@@ -31,7 +31,7 @@ function transformToCURL(requestUrl = $('#catoServer').val(), auth = getCurApiKe
 	    var query = JSON.stringify({ 
 			"query": fmtQuery(reqObj), 
 			"variables": JSON.parse($('#catoVariables').val()),
-			"operationName": curOperationObj.name
+			"operationName": renderParentPath($('#catoOperations').val()).split(" ").pop()
 		});
 		curlStr = "curl -k -X POST" + headersStr + "'" + requestUrl +"' --data '"+query+"'";
 	}
