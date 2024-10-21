@@ -1,6 +1,10 @@
 var catoConfig = {
 	"server":"https://api.catonetworks.com/api/v1/graphql2",
-	"version":"1.0.1"
+	"version":"1.0.1",
+	"schema":{
+		"loadFromLocal":false,
+		"fileName":"introspection.json"
+	}
 }
 
 // Example Param Structure:

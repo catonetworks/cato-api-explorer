@@ -1047,9 +1047,17 @@ function renderParamListValues(response, input_id) {
 // Main AJAX function to proxy API calls
 function makeCall(callback, query, input_id, api_key) {
 	var operationName = "introspectionQuery";
+	var url = "/ajax/cato_api_post.php?server=" + catoConfig.server + "&operation=" + operationName;
+	var method = "POST";
 	if ($('#catoOperations').val()!=null) {
 		var operationAry = $('#catoOperations').val().split(".");
 		operationName = (!$('#catoOperations').val() == '') ? operationAry[1] : "introspectionQuery";
+	}
+	if (operationName=="introspectionQuery") {
+		if (catoConfig.schema.loadFromLocal==true) {
+			url = catoConfig.schema.fileName;
+			method = "GET";
+		}	
 	}
 	if (api_key == null || api_key == undefined) {
 		var usrObj = getCurApiKey();
@@ -1066,11 +1074,11 @@ function makeCall(callback, query, input_id, api_key) {
 		// "operationName":"`+ renderCamelCase($('#catoOperations').val().split(".").slice(1).join(".")) + `"
 	} else {
 		var queryJson = JSON.parse(query);
-		if (queryJson.operationName) operationName = queryJson.operationName;
-	}
+		if (queryJson.operationName) operationName = "/"+queryJson.operationName;
+	}	
 	$.ajax({
-		url: "/ajax/cato_api_post.php?server=" + catoConfig.server + "&operation=" + operationName,
-		type: 'POST',
+		url: url,
+		type: method,
 		contentType: 'application/json',
 		data: JSON.stringify(query),
 		headers: {
@@ -1079,6 +1087,9 @@ function makeCall(callback, query, input_id, api_key) {
 			"User-Agent": "Cato-API-Explorer/v"+catoConfig.version
 		},
 		success: function (data) {
+			if (data.data==undefined){
+				data = {"data":data}
+			}
 			if (data != null) {
 				responseObj = data;
 				if (input_id == undefined || input_id == null) $('#catoResult').val(JSON.stringify(data));
