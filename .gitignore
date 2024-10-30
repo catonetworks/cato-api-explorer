@@ -6,3 +6,4 @@
 *.app
 *.exe
 *.war
+src/introspection.json

@@ -333,3 +333,46 @@ td select.auto { width: auto; }
 /* #ExamplesNav .codeExample { border: 1px solid #999 !important; } */
 
 #catoExamplesNav .codeExample textarea { border: 1px solid #999 !important; background: #F8F8F8; padding: 5px; }
+
+#CatoPOPs {
+	height: 800px;
+}
+
+#CatoPOPs .product-device {
+	position: absolute;
+	right: 10%;
+	bottom: -30%;
+	width: 300px;
+	height: 540px;
+	background-color: #333;
+	border-radius: 21px;
+	transform: rotate(30deg);
+}
+  
+#CatoPOPs .product-device::before {
+	position: absolute;
+	top: 10%;
+	right: 10px;
+	bottom: 10%;
+	left: 10px;
+	content: "";
+	background-color: rgba(255, 255, 255, .1);
+	border-radius: 5px;
+}
+  
+#CatoPOPs .product-device-2 {
+	top: -25%;
+	right: auto;
+	bottom: 0;
+	left: 5%;
+	background-color: #e5e5e5;
+}
+
+#CatoPOPs .flex-equal > * {
+	flex: 1;
+}
+/* @media (min-width: 768px) {
+	.flex-md-equal > * {
+	  flex: 1;
+	}
+} */

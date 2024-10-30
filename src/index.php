@@ -30,6 +30,12 @@ header('Expires: 0');
 <script src="js/cato/cato_codeExamples.js"></script>
 <script src="js/cato/cato_settings_keys.js"></script>
 <script src="js/cato/cato_common.js"></script>
+
+<script src="js/cato_pop/d3.js"></script>
+<script src="js/cato_pop/leaflet.js"></script>
+<script src="js/cato_pop/bootstrap.bundle.min.js"></script>
+<link type="text/css" href="css/cato_pop/leaflet.css" rel="stylesheet" />
+<!-- <link type="text/css" href="css/cato_pop/bootstrap.min.css" rel="stylesheet" /> -->
 <script>
 $.extend($.gritter.options, {
 	//class_name: 'gritter-light', // for light notifications (can be added directly to $.gritter.add too)
@@ -86,6 +92,7 @@ textarea#catoResult {
 			<div id="mainNav" class="ui-widget-content content">
 				<ul>
 					<li><a id="CatoAPIBtn" href="#CatoAPI">GraphQL API Explorer</a></li>
+					<li><a id="CatoPOPsBtn" href="#CatoPOPs">Cato POPs</a></li>
 					<li><a id="settingsBtn" href="#settings">Settings</a></li>
 				</ul>		
 				<div id="CatoAPI">
@@ -166,6 +173,9 @@ textarea#catoResult {
 						</tr>
 					</table><br clear="all" />
 				</div>
+				<div id="CatoPOPs">
+					
+				</div>
 				<div id="settings">
 					<div id="settingsNav">
 						<table>
@@ -204,5 +214,31 @@ textarea#catoResult {
 			</div>
 		</div>
 	</div>
+
+<script>
+	const map = L.map('CatoPOPs').setView([47.81, 15], 3);
+	const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		noWrap: true,
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(map);
+
+	var catoIcon = L.icon({
+		iconUrl: 'images/cato_pop_icon.svg',
+		iconSize:     [23, 30], // size of the icon
+		iconAnchor:   [22, 50], // point of the icon which will correspond to marker's location
+		popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+	});
+
+	const data = d3.csv("ajax/parsed_pop_locations_uniq.csv", function(data) {
+			pop_up_desc = "POP: " + data.City
+			if (data.Via.length > 0) {
+				pop_up_desc += " via " + data.Via
+			}
+			L.marker([data.Latitude, data.Longitude], {icon: catoIcon}).addTo(map).bindPopup(pop_up_desc);
+		}
+	)
+</script>
+
 </body>
 </html>

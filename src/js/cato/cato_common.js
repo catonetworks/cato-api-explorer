@@ -612,7 +612,9 @@ function renderInputNestedFieldsHtml(param, parentContainerId) {
 }
 
 function renderResponseArguments() {
-	if (checkCatoForm("#catoBodyParams .param1")) updateRequestData();
+	// checkCatoForm mark
+	// if (checkCatoForm("#catoBodyParams .param1")) updateRequestData();
+	updateRequestData();
 }
 
 function addObjectToParent(input) {
@@ -708,7 +710,8 @@ function parseParamValue(input) {
 function updateRequestData() {
 	indent = '	';
 	var queryStr = "";
-	if (checkCatoForm()) {
+	// checkCatoForm mark
+	// if (checkCatoForm()) {
 		// Construct variable string to determine to render parent wrapper function
 		var variableStr = "";
 		var bodyParamsStr = "#catoBodyParams .bodyParams";
@@ -765,7 +768,7 @@ function updateRequestData() {
 			}
 		});
 		$('#catoVariables').val(JSON.stringify(variablesObj, null, 4));
-	}
+	// }
 	generateCodeExamples();
 }
 
