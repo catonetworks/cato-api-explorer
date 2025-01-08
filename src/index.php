@@ -10,6 +10,13 @@ header('Expires: 0');
 <meta HTTP-EQUIV="Pragma" CONTENT="no-cache" />
 <meta HTTP-EQUIV="Expires" CONTENT="-1" />
 <title>Cato Networks: API Explorer</title>
+
+<script src="js/cato_pop/d3.js"></script>
+<script src="js/cato_pop/leaflet.js"></script>
+<!-- <script src="js/cato_pop/bootstrap.bundle.min.js"></script> -->
+<link type="text/css" href="css/cato_pop/leaflet.css" rel="stylesheet" />
+<!-- <link type="text/css" href="css/cato_pop/bootstrap.min.css" rel="stylesheet" /> -->
+
 <link rel="shortcut icon" type="image/ico" href="https://www.catonetworks.com/favicon-32x32.png" />
 <link type="text/css" href="css/jquery.gritter.css" rel="stylesheet" />
 <link type="text/css" href="css/jquery-ui.min.css" rel="stylesheet" />
@@ -31,11 +38,6 @@ header('Expires: 0');
 <script src="js/cato/cato_settings_keys.js"></script>
 <script src="js/cato/cato_common.js"></script>
 
-<script src="js/cato_pop/d3.js"></script>
-<script src="js/cato_pop/leaflet.js"></script>
-<script src="js/cato_pop/bootstrap.bundle.min.js"></script>
-<link type="text/css" href="css/cato_pop/leaflet.css" rel="stylesheet" />
-<!-- <link type="text/css" href="css/cato_pop/bootstrap.min.css" rel="stylesheet" /> -->
 <script>
 $.extend($.gritter.options, {
 	//class_name: 'gritter-light', // for light notifications (can be added directly to $.gritter.add too)

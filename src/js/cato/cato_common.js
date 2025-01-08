@@ -128,7 +128,7 @@ function getChildOperations(operationType, curType, parentType, parentPath) {
 	var hasChildren = false;
 	for (i in curOfType.fields) {
 		var curFieldObject = copy(curOfType.fields[i]);
-		if (curFieldObject.args != null && curFieldObject.args.length > 0) {
+		if ((curFieldObject.args != null && curFieldObject.args.length > 0) || childOperationObjects[curFieldObject.name]!=undefined) {
 			hasChildren = true;
 			curParentType = copy(parentType);
 			curFieldObject.args = getNestedArgDefinitions(curFieldObject.args, curFieldObject.name);
@@ -461,10 +461,14 @@ function renderParamHTML(param) {
 		} else if (paramValType == "timeframe") {
 			str += '<select name="' + paramName + '" title="' + param.varName +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
 			str += '<option value="last.PT5M">Previous 5 minutes</option>';
+			str += '<option value="last.PT15M">Previous 15 minutes</option>';
+			str += '<option value="last.PT30M">Previous 30 minutes</option>';
+			str += '<option value="last.PT45M">Previous 45 minutes</option>';
+			str += '<option value="last.PT1H">Previous 1 hour</option>';
 			str += '<option value="last.PT2H">Previous 2 hours</option>';
-			str += '<option value="last.PT1D">Previous 1 day</option>';
-			str += '<option value="last.PT3M">Previous 3 months</option>';
-			str += '<option value="last.PT1Y">Previous 1 year</option>';
+			str += '<option value="last.P1D">Previous 1 day</option>';
+			str += '<option value="last.P2M">Previous 2 months</option>';
+			str += '<option value="custom">Custom</option>';
 			str += '</select>';
 		} else if (paramValType == "boolean") {
 			str += '<select name="' + paramName + '" title="' + param.varName +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
@@ -752,6 +756,9 @@ function updateRequestData() {
 		var variablesObj = {};
 		$.each($(bodyParamsStr + '.param:not(".hidden, .disabled"), ' + bodyParamsStr + '.param1:not(".hidden, .disabled"), ' + bodyParamsStr + '.searchParam:not(".hidden, .disabled")'), function (i, param) {
 			var inputObj = $('#' + param.id);
+			// console.log("param", param);
+			// console.log("var", [curOperationObj.operationArgs[$(param).attr("title")].varName]);
+			// debugger
 			if (inputObj.attr("multiple") == "multiple") {
 				if (inputObj.attr("required") == "required" || inputObj.find(":selected").length > 0) {
 					variablesObj[curOperationObj.operationArgs[$(param).attr("title")].varName] = parseParamValue(inputObj);
@@ -1125,25 +1132,31 @@ function checkCatoForm(parentId) {
 			if (inputObj.val() == '' && inputObj.hasClass("parent")) {
 				inputObj.val((inputObj.parent().prop("class") == 'object') ? "{}" : "[]");
 			}
-			if (inputObj.prop("required") && inputObj.prop("type") == "select-multiple" && inputObj.find(":selected").length == 0) {
+			if (inputObj.prop("required") && inputObj.val() == '') {
 				inputObj.addClass('errors');
 				paramok = false; isok = false;
-			} else if (inputObj.prop("required") && inputObj.val() == '') {
-				inputObj.addClass('errors');
-				paramok = false; isok = false;
+			// } else if (inputObj.prop("required") && inputObj.prop("type") == "select-multiple" && inputObj.find(":selected").length == 0) {
+			// 	inputObj.addClass('errors');
+			// 	paramok = false; isok = false;
 			} else if (inputObj.parent().attr("class") == "object" || inputObj.parent().attr("class") == "array_object") {
+				// debugger
 				var val = inputObj.val();
-				if (inputObj.prop("required")) {
-					if (String(inputObj.val().trim()) == String("{}") || !IsJsonString(val)) {
-						paramok = false;
-						isok = false;
-						inputObj.addClass('errors');
-					}
-				} else if (!IsJsonString(val)) {
+				if (!IsJsonString(val)) {
 					paramok = false;
 					isok = false;
 					inputObj.addClass('errors');
 				}
+				// if (inputObj.prop("required")) {
+				// 	if (String(inputObj.val().trim()) == String("{}") || !IsJsonString(val)) {
+				// 		paramok = false;
+				// 		isok = false;
+				// 		inputObj.addClass('errors');
+				// 	}
+				// } else if (!IsJsonString(val)) {
+				// 	paramok = false;
+				// 	isok = false;
+				// 	inputObj.addClass('errors');
+				// }
 			} else if (inputObj.val() != '') {
 				var val = inputObj.val();
 				switch (inputObj.parent().attr("class")) {

@@ -44,6 +44,11 @@ var catoConfig = {
 
 var intStringParams = {"networkRangeId":true}
 
+var childOperationObjects = {
+	"ipAddressRange":true,
+	"fqdn":true
+}
+
 var catoGetObjectActionMapping = {
 	"accountID":{
 	  	"default": {
