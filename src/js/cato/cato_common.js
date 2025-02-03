@@ -466,8 +466,18 @@ function renderParamHTML(param) {
 			str += '<option value="last.PT45M">Previous 45 minutes</option>';
 			str += '<option value="last.PT1H">Previous 1 hour</option>';
 			str += '<option value="last.PT2H">Previous 2 hours</option>';
+			str += '<option value="last.PT4H">Previous 4 hours</option>';
+			str += '<option value="last.PT6H">Previous 6 hours</option>';
+			str += '<option value="last.PT8H">Previous 8 hours</option>';
+			str += '<option value="last.PT10H">Previous 10 hours</option>';
 			str += '<option value="last.P1D">Previous 1 day</option>';
+			str += '<option value="last.P1D">Previous 2 day</option>';
+			str += '<option value="last.P7D">Previous 7 day</option>';
+			str += '<option value="last.P14D">Previous 14 day</option>';
+			str += '<option value="last.P21D">Previous 21 day</option>';
+			str += '<option value="last.P1M">Previous 1 months</option>';
 			str += '<option value="last.P2M">Previous 2 months</option>';
+			str += '<option value="last.P89D">Previous 3 months</option>';
 			str += '<option value="custom">Custom</option>';
 			str += '</select>';
 		} else if (paramValType == "boolean") {
