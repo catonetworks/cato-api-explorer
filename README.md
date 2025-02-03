@@ -8,7 +8,7 @@ The Cato API Explorer is a docker-based web application API client, developed as
 
 ## Prerequisites
 
-- Install [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/) on the system.
+- Install [Docker Desktop](https://docs.docker.com/desktop/) on the system.
 - Review the [Alpine Linux Container README](https://hub.docker.com/_/alpine).
 - Choose a location on the system in which to store your settings and logs.
 
