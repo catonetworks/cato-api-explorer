@@ -198,7 +198,7 @@ function getNetworkRangeIdsResponse(response, paramName) {
 
 // siteIDs.default.function()
 function getSiteIDs(paramActionObj, paramName) {
-	var userObj = getCurApiKey()
+	var userObj = getCurApiKey();
 	var query = fmtQuery(`{
 		"query":"query entityLookup ( $accountID:ID! $type:EntityType! $limit:Int $search:String ) {
 				entityLookup ( accountID:$accountID type:$type limit:$limit search:$search  ) {
@@ -247,6 +247,65 @@ function getSiteIDsResponse(response, paramName) {
 			});
 		}
 	}
+}
+
+function getStoryIDs(paramActionObj, paramName) {
+	var userObj = getCurApiKey();
+	var query = fmtQuery(`{
+		"query":"query xdr ( $storyInput:StoryInput! $accountID:ID! ) {
+			xdr ( accountID:$accountID  ) {
+				stories ( input:$storyInput  )  {
+					paging {
+						from 
+						limit 
+						total 
+					}
+					items {
+						id 
+						summary 
+						incident  {
+							id
+							firstSignal
+							lastSignal		
+						}
+					}
+				}
+			}	
+		}",
+		"variables":{
+			"accountID": `+ filterStr(userObj.account_id) + `,
+			"storyInput": {
+				"filter": [
+					{
+						"timeFrame": {
+							"time": "last.P89D"
+						}
+					}
+				],
+				"paging": {
+					"from": 0,
+					"limit": 100
+				},
+				"sort": []
+			}
+		},
+		"operationName":"xdr"
+	}`);
+	makeCall(paramActionObj.callback, query, paramName);
+};
+
+function getStoryIDsResponse(response, paramName) {
+	var dest = $("select[name=" + paramName + "]");	
+	if (response.errors != undefined) {
+		$.gritter.add({ title: 'ERROR', text: response.errors[0].message });
+		$('#cato_api_keys_tbl tr.current input').addClass("error");
+	} else {
+		dest.html('<otion value="">-- select --</option>');
+		$.each(response.data.xdr.stories.items, function (i, item) {
+			dest.append('<option value="' + item.id + '">' + item.summary + ' (' + item.incident.firstSignal + ')</option>');
+		});
+	}
+	updateRequestData();
 }
 
 // siteLocation field

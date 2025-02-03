@@ -117,6 +117,12 @@ var catoGetObjectActionMapping = {
 			callback: function (response, paramName) { getSiteIDsResponse(response, paramName) }
 		}
 	},
+	"storyId": {
+		"default": {
+			function: function (paramActionObj, paramName) { getStoryIDs(paramActionObj, paramName) },
+			callback: function (response, paramName) { getStoryIDsResponse(response, paramName) }
+		}
+	},
 	"subdomains": {
 		"default": {
 			function: function (paramActionObj, paramName) { getSubdomains(paramActionObj, paramName) },

@@ -695,7 +695,7 @@ function parseParamValue(input) {
 				}
 				val = valAry;
 				break;
-			case "id":
+			// case "id":
 			case "int":
 			case "integer":
 				if (intStringParams[input.attr("name")]==undefined) val = (!isNaN(parseInt(val, 10))) ? parseInt(val, 10) : 0;
@@ -1160,6 +1160,7 @@ function checkCatoForm(parentId) {
 			} else if (inputObj.val() != '') {
 				var val = inputObj.val();
 				switch (inputObj.parent().attr("class")) {
+					case "id":
 					case "text":
 						if (inputObj.hasClass("list")) {
 							var strAry = val.replaceAll("[", "").replaceAll("]", "").replaceAll('"', "").replaceAll("'", "").split(",");
@@ -1177,7 +1178,6 @@ function checkCatoForm(parentId) {
 					case "iprange":
 						if (!isValidIPRange(val)) { paramok = false; isok = false; inputObj.addClass('errors'); }
 						break;
-					case "id":
 					case "int":
 					case "integer":
 						if (intStringParams[inputObj.attr("name")]==undefined) {
