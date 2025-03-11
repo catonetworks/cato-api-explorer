@@ -14,15 +14,15 @@ The Cato API Explorer is a docker-based web application API client, developed as
 
 ## Container Setup
 
-To deploy a container based on this image, follow the steps below.  The instructions assume you have chosen **/opt/docker/cato-api-explorer** as a base folder for storing settings and data.  If you choose a different path, please update the path in the commands below accordingly.
+To deploy a container based on this image, follow the steps below.  The instructions assume you have chosen your home directory of `~/cato-api-explorer` as a base folder for storing settings and data.  If you choose a different path, please update the path in the commands below accordingly.
 
-1. On the Docker host, create the **docker-compose.yml** file inside the **/opt/docker/opt/docker/cato-api-explorer** folder. A sample **docker-compose.yml** file is included in this repository.
-1. Change into the **/opt/docker/opt/docker/cato-api-explorer** folder.
-   - `host# cd /opt/docker/opt/docker/cato-api-explorer`
+1. On the Docker host, create the **docker-compose.yml** file inside the `~/cato-api-explorer` folder. A sample **docker-compose.yml** file is included in this repository.
+1. Change into the `/cato-api-explorer` folder.
+   - `host# cd ~/cato-api-explorer`
 1. Pull the latest image from the registry:
-   - `host# docker-compose build`
+   - `host# docker compose build`
 1. Use **docker-compose** to bring up the container:
-   - `host# docker-compose up -d`
+   - `host# docker compose up -d`
 
 You can modify the ports mapped by the sample **docker-compose.yml** file if you'd prefer to run HTTP and HTTPS traffic on ports other than 8080 and 8443, respectively, on your system.
 
