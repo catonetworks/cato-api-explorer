@@ -1,6 +1,9 @@
 var catoConfig = {
-	"server":"https://api.catonetworks.com/api/v1/graphql2",
-	"version":"1.0.2",
+	"servers":{
+		"Ireland":"https://api.catonetworks.com/api/v1/graphql2",
+		"US1":"https://api.us1.catonetworks.com/api/v1/graphql2"
+	},
+	"version":"1.0.3",
 	"schema":{
 		"loadFromLocal":false,
 		"fileName":"introspection.json"

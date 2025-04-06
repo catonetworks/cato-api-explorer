@@ -109,12 +109,12 @@ textarea#catoResult {
 								<fieldset>
 									<legend>API Authentication</legend>
 									<table class="tableColL"-->
-										<tr><td align="right"><label for="catoServer">Server: </label></td>
-										  <td><input id="catoServer" style="width: 200px;" value="https://api.catonetworks.com/api/v1/graphql2" type="text" readonly="readonly" /></td></tr>
 										<tr id="catoAccountsListtr">
 											<td align="right"><label for="catoApiKeys">API Key: </label></td>
 											<td><select name="catoApiKeys" class="cato_api_keys_select" id="catoApiKeys"></select></td>
 										</tr>
+										<tr><td align="right"><label for="catoServer">Server: </label></td>
+										  <td><select id="catoServer" style="width: 200px;"></select></td></tr>
 										<tr id="catoOperationtr">
 											<td align="right"><label for="catocatoOperations">API Operations: </label></td>
 											<td><select name="catoOperations" class="cato_operations_select" id="catoOperations"></select></td>
@@ -194,6 +194,7 @@ textarea#catoResult {
 											<legend>Manage Cato API Keys</legend>
 											<table id="cato_api_keys_tbl">
 												<thead><tr>
+													<th>Endpoint</th>
 													<th>Description</th>
 													<th>Account ID</th>
 													<th>API KEY</th>
@@ -209,7 +210,7 @@ textarea#catoResult {
 					</div>
 				</div>
 				<div class="ui-widget-content ui-corner-bottom footer">
-					<p><span id="version" style="float: right;"><?=(getenv('VERSION', true) ?: getenv('VERSION'))?></span>Copyright ©<?=date("Y")?> Cato Networks. All Rights Reserved.  <a href="#">Privacy &amp; Legal</a></p>
+					<p><span id="version" style="float: right;"><?=(getenv('VERSION', true) ?: getenv('VERSION'))?></span>Copyright ©<?=date("Y")?> Cato Networks. All Rights Reserved.  <a href="https://www.catonetworks.com/privacypolicy/">Privacy &amp; Legal</a></p>
 				</div>
 			</div>
 			<div id="footer">

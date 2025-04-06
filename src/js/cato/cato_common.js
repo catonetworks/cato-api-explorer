@@ -16,10 +16,16 @@ var CATO_API_KEYS;
 
 $().ready(function () {
 	$("#mainNav").tabs();
+	$('#version').html(catoConfig.version);
 	init();
 });
 
 function init() {
+	$.each(catoConfig.servers, function(name, endpoint) {
+		$('#catoServer').append(
+			$('<option></option>').val(endpoint).text(name+" - "+endpoint)
+		);
+	});
 	$('#catoApiKeys').change(function () { changeOperation(); });
 	$('#catoOperations').change(function () { changeOperation(); });
 	$('#execute').click(function () { makeCall(); });
@@ -175,10 +181,7 @@ function getNestedArgDefinitions(argsAry, parentParamPath) {
 		}
 
 		if ($('#catoOperations').val() != null) {
-			// if (parentParamPath == null) {
-			// if ($('#catoOperations').val().split(".")[0] != "query" || parentParamPath == null) {
 			curOperationObj.operationArgs[arg.varName] = copy(arg);
-			// }
 		}
 		newArgsList[arg.id_str] = arg;
 	}
@@ -201,6 +204,10 @@ function renderApiOperations() {
 
 function changeOperation() {
 	if ($('#catoOperations').val() != null && $('#catoOperations').val() != '') {
+		userObj = getCurApiKey();
+		endpoint = userObj.endpoint!=undefined ? catoConfig.servers[userObj.endpoint] : catoConfig.servers.Ireland;
+		// TODO: check if endpoint changes, reload schema
+		$('#catoServer').val(endpoint);
 		$('#catoQuery').val('');
 		$('#catoVariables').val('');
 		$('#catoResult').val('');
@@ -1065,9 +1072,9 @@ function renderParamListValues(response, input_id) {
 }
 
 // Main AJAX function to proxy API calls
-function makeCall(callback, query, input_id, api_key) {
+function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 	var operationName = "introspectionQuery";
-	var url = "/ajax/cato_api_post.php?server=" + catoConfig.server + "&operation=" + operationName;
+	var url = "/ajax/cato_api_post.php?server=" + (endpoint!=undefined ? endpoint : $('#catoServer').val()) + "&operation=" + operationName;
 	var method = "POST";
 	if ($('#catoOperations').val()!=null) {
 		var operationAry = $('#catoOperations').val().split(".");
@@ -1077,11 +1084,12 @@ function makeCall(callback, query, input_id, api_key) {
 		if (catoConfig.schema.loadFromLocal==true) {
 			url = catoConfig.schema.fileName;
 			method = "GET";
-		}	
+		}
 	}
 	if (api_key == null || api_key == undefined) {
 		var usrObj = getCurApiKey();
 		api_key = usrObj.api_key;
+		account_id = usrObj.account_id;
 	}
 	operationAry = operationName.split(".")
 	operationType = operationAry.pop(0)
@@ -1104,6 +1112,7 @@ function makeCall(callback, query, input_id, api_key) {
 		headers: {
 			"Accept": "application/json",
 			"x-api-key": api_key,
+			"x-account-id": account_id,
 			"User-Agent": "Cato-API-Explorer/v"+catoConfig.version
 		},
 		success: function (data) {
