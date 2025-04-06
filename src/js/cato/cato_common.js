@@ -206,38 +206,43 @@ function changeOperation() {
 	if ($('#catoOperations').val() != null && $('#catoOperations').val() != '') {
 		userObj = getCurApiKey();
 		endpoint = userObj.endpoint!=undefined ? catoConfig.servers[userObj.endpoint] : catoConfig.servers.Ireland;
-		// TODO: check if endpoint changes, reload schema
-		$('#catoServer').val(endpoint);
-		$('#catoQuery').val('');
-		$('#catoVariables').val('');
-		$('#catoResult').val('');
-		$('#responseObject').val('');
-		$('#catoBodyParams_tbl').html("");
-		$('.codeExample textarea').html("");
-		var operation = getCurrentOperation();
-		curOperationObj = copy(operation);
-		curOperationObj.operationArgs = {};
-		curOperationObj.fieldTypes = {};
-		var curOfType = getOfType(curOperationObj.type, { non_null: false, kind: [], name: null }, null);
-		curOperationObj.type = copy(curOfType);
-		if (curOfType.name in catoApiIntrospection.objects) {
-			curOperationObj.args = getNestedArgDefinitions(curOperationObj.args, null);
-			curOperationObj.type.definition = copy(catoApiIntrospection.objects[curOperationObj.type.name]);
-			if (curOperationObj.childOperations) {
-				curOperationObj.type.definition.fields = copy(checkForChildOperation(curOperationObj.type.definition.fields));
-			}
-			if (curOperationObj.type.definition.fields != undefined) {
-				var fields = getNestedFieldDefinitions(curOperationObj.type.definition.fields, null);
-				curOperationObj.type.definition.fields = copy(fields);
-			}
-			if (curOperationObj.type.definition.inputFields != undefined) {
-				var inputFields = getNestedFieldDefinitions(curOperationObj.type.definition.inputFields, null);
-				curOperationObj.type.definition.inputFields = copy(inputFields);
-			}
+		console.log("endpoint="+endpoint,"$('#catoServer').val()="+$('#catoServer').val());
+		if (endpoint!=$('#catoServer').val()) {
+			$('#catoServer').val(endpoint);
+			loadApiSchema();
 		} else {
-			$.gritter.add({ title: 'ERROR', text: "No object definition for '" + curOperationObj.curOfType.name + "' in schema for operation '" + curOperationObj.name + "'." });
+			$('#catoServer').val(endpoint);
+			$('#catoQuery').val('');
+			$('#catoVariables').val('');
+			$('#catoResult').val('');
+			$('#responseObject').val('');
+			$('#catoBodyParams_tbl').html("");
+			$('.codeExample textarea').html("");
+			var operation = getCurrentOperation();
+			curOperationObj = copy(operation);
+			curOperationObj.operationArgs = {};
+			curOperationObj.fieldTypes = {};
+			var curOfType = getOfType(curOperationObj.type, { non_null: false, kind: [], name: null }, null);
+			curOperationObj.type = copy(curOfType);
+			if (curOfType.name in catoApiIntrospection.objects) {
+				curOperationObj.args = getNestedArgDefinitions(curOperationObj.args, null);
+				curOperationObj.type.definition = copy(catoApiIntrospection.objects[curOperationObj.type.name]);
+				if (curOperationObj.childOperations) {
+					curOperationObj.type.definition.fields = copy(checkForChildOperation(curOperationObj.type.definition.fields));
+				}
+				if (curOperationObj.type.definition.fields != undefined) {
+					var fields = getNestedFieldDefinitions(curOperationObj.type.definition.fields, null);
+					curOperationObj.type.definition.fields = copy(fields);
+				}
+				if (curOperationObj.type.definition.inputFields != undefined) {
+					var inputFields = getNestedFieldDefinitions(curOperationObj.type.definition.inputFields, null);
+					curOperationObj.type.definition.inputFields = copy(inputFields);
+				}
+			} else {
+				$.gritter.add({ title: 'ERROR', text: "No object definition for '" + curOperationObj.curOfType.name + "' in schema for operation '" + curOperationObj.name + "'." });
+			}
+			renderParamsHtml();
 		}
-		renderParamsHtml();
 	}
 }
 
