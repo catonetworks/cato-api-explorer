@@ -206,11 +206,10 @@ function changeOperation() {
 	if ($('#catoOperations').val() != null && $('#catoOperations').val() != '') {
 		userObj = getCurApiKey();
 		endpoint = userObj.endpoint!=undefined ? catoConfig.servers[userObj.endpoint] : catoConfig.servers.Ireland;
-		console.log("endpoint="+endpoint,"$('#catoServer').val()="+$('#catoServer').val());
-		if (endpoint!=$('#catoServer').val()) {
-			$('#catoServer').val(endpoint);
-			loadApiSchema();
-		} else {
+		$('#catoServer').val(endpoint);
+		// if (endpoint!=$('#catoServer').val()) {
+		// 	loadApiSchema();
+		// } else {
 			$('#catoServer').val(endpoint);
 			$('#catoQuery').val('');
 			$('#catoVariables').val('');
@@ -242,7 +241,7 @@ function changeOperation() {
 				$.gritter.add({ title: 'ERROR', text: "No object definition for '" + curOperationObj.curOfType.name + "' in schema for operation '" + curOperationObj.name + "'." });
 			}
 			renderParamsHtml();
-		}
+		// }
 	}
 }
 

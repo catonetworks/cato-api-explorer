@@ -28,7 +28,7 @@ function initApiKeySettingsButtons(){ // work through adding a new user in UI, a
 
 function set_addNewApiKey() {
 	var str = '<tr class="new_api_key current">';
-	str += '<td>'+renderServers(obj.id+';|;endpoint',null)+'</td>';
+	str += '<td>'+renderServers('',null)+'</td>';
 	str += '<td><input type="text" class="description" value="" /></td>';
 	str += '<td><input type="text" class="account_id" value="" /></td>';
 	str += '<td><input type="password" class="api_key" value="" /></td>';
