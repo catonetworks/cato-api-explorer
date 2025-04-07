@@ -47,9 +47,19 @@ var catoConfig = {
 
 var intStringParams = {"networkRangeId":true}
 
+// Add parent field name here to force child operations
+var childOperationParent = {
+	"xdr":true,
+	"policy":true,
+	"site":true
+}
+// Add ofType name here to force child operations
 var childOperationObjects = {
 	"ipAddressRange":true,
-	"fqdn":true
+	"fqdn":true,
+	"PolicyQueries":true,
+	"ContainerQueries":true,
+	"SiteQueries":true
 }
 
 var catoGetObjectActionMapping = {

@@ -84,7 +84,8 @@ function parseApiSchema(schema) {
 		} else if (type.kind == "OBJECT") {
 			if (type.name == "Query") {
 				for (j in type.fields) {
-					if (type.fields[j].name == "xdr") {
+					if (childOperationParent[type.fields[j].name] != undefined) {
+						console.log(type.fields[j]);
 						queryOperationsTMP[type.fields[j].name] = copy(type.fields[j]);
 					} else {
 						catoApiSchema["Query Operations"]["query." + type.fields[j].name] = copy(type.fields[j]);
@@ -134,7 +135,8 @@ function getChildOperations(operationType, curType, parentType, parentPath) {
 	var hasChildren = false;
 	for (i in curOfType.fields) {
 		var curFieldObject = copy(curOfType.fields[i]);
-		if ((curFieldObject.args != null && curFieldObject.args.length > 0) || childOperationObjects[curFieldObject.name]!=undefined) {
+		console.log(curFieldObject.name);
+		if ((curFieldObject.args != null && curFieldObject.args.length > 0) || childOperationObjects[curFieldObject.name]!=undefined || childOperationObjects[curOfType.name]!=undefined) {
 			hasChildren = true;
 			curParentType = copy(parentType);
 			curFieldObject.args = getNestedArgDefinitions(curFieldObject.args, curFieldObject.name);
