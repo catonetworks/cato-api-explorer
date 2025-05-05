@@ -26,7 +26,7 @@ function init() {
 			$('<option></option>').val(endpoint).text(name+" - "+endpoint)
 		);
 	});
-	$('#catoApiKeys').change(function () { changeOperation(); });
+	$('#catoApiKeys').change(function () { loadApiSchema(); });
 	$('#catoOperations').change(function () { changeOperation(); });
 	$('#execute').click(function () { makeCall(); });
 	// Cato API credential management
@@ -85,7 +85,7 @@ function parseApiSchema(schema) {
 			if (type.name == "Query") {
 				for (j in type.fields) {
 					if (childOperationParent[type.fields[j].name] != undefined) {
-						console.log(type.fields[j]);
+						// console.log(type.fields[j]);
 						queryOperationsTMP[type.fields[j].name] = copy(type.fields[j]);
 					} else {
 						catoApiSchema["Query Operations"]["query." + type.fields[j].name] = copy(type.fields[j]);
@@ -135,7 +135,7 @@ function getChildOperations(operationType, curType, parentType, parentPath) {
 	var hasChildren = false;
 	for (i in curOfType.fields) {
 		var curFieldObject = copy(curOfType.fields[i]);
-		console.log(curFieldObject.name);
+		// console.log(curFieldObject.name);
 		if ((curFieldObject.args != null && curFieldObject.args.length > 0) || childOperationObjects[curFieldObject.name]!=undefined || childOperationObjects[curOfType.name]!=undefined) {
 			hasChildren = true;
 			curParentType = copy(parentType);
@@ -628,10 +628,10 @@ function renderInputNestedFieldsHtml(param, parentContainerId) {
 		for (i in fieldKeys) {
 			field = param.type.definition.fields[fieldKeys[i]];
 			if (field.type.definition && field.type.definition.fields) {
-				console.log("field.path render nested", field.path);
+				// console.log("field.path render nested", field.path);
 				renderInputNestedFieldsHtml(field, param.id_str);
 			} else {
-				console.log("field.path render field", field.path);
+				// console.log("field.path render field", field.path);
 				$("#" + param.id_str + "_tbl").append(renderParamHTML(field));
 			}
 		}
