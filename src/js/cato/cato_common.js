@@ -1079,6 +1079,7 @@ function renderParamListValues(response, input_id) {
 
 // Main AJAX function to proxy API calls
 function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
+	if (callback == undefined && query == undefined) $('#catoResult').val('processing...');
 	var operationName = "introspectionQuery";
 	var url = "/ajax/cato_api_post.php?server=" + (endpoint!=undefined ? endpoint : $('#catoServer').val()) + "&operation=" + operationName;
 	var method = "POST";
@@ -1091,7 +1092,7 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 			url = catoConfig.schema.fileName;
 			method = "GET";
 		}
-	}
+	} 
 	if (api_key == null || api_key == undefined) {
 		var usrObj = getCurApiKey();
 		api_key = usrObj.api_key;
