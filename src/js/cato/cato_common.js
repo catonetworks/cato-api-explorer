@@ -1128,7 +1128,7 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 			}
 			if (data != null) {
 				responseObj = data;
-				if (input_id == undefined || input_id == null) $('#catoResult').val(JSON.stringify(data));
+				if (input_id == undefined || input_id == null) $('#catoResult').val(JSON.stringify(data, null, 4));
 				if (callback != undefined) {
 					if (input_id != null && input_id != undefined && input_id != 'dest') {
 						return callback(data, input_id);
