@@ -1,7 +1,9 @@
 var catoConfig = {
 	"servers":{
 		"Ireland":"https://api.catonetworks.com/api/v1/graphql2",
-		"US1":"https://api.us1.catonetworks.com/api/v1/graphql2"
+		"US1":"https://api.us1.catonetworks.com/api/v1/graphql2",
+		"Eng Test":"https://api.test.catonet.works/api/v1/graphql2",
+		"Eng Dev": "https://api.dev.catonet.works/api/v1/graphql2"
 	},
 	"version":"1.0.3",
 	"schema":{
