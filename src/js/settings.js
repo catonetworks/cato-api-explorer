@@ -5,7 +5,7 @@ var catoConfig = {
 		"Eng Test":"https://api.test.catonet.works/api/v1/graphql2",
 		"Eng Dev": "https://api.dev.catonet.works/api/v1/graphql2"
 	},
-	"version":"1.0.3",
+	"version":"1.0.5",
 	"schema":{
 		"loadFromLocal":false,
 		"fileName":"introspection.json"
