@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=UTF-8');
 header('Cache-Control: no-store, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
@@ -9,6 +10,7 @@ header('Expires: 0');
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <meta HTTP-EQUIV="Pragma" CONTENT="no-cache" />
 <meta HTTP-EQUIV="Expires" CONTENT="-1" />
+<meta charset="UTF-8">
 <title>Cato Networks: API Explorer</title>
 
 <script src="js/cato_pop/d3.js"></script>

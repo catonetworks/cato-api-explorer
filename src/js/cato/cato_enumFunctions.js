@@ -316,7 +316,7 @@ function initSiteLocationAutocomplete() {
 		recordStr += " - "+item.city;
 		return $('<li></li>')
 			.data("item.autocomplete", item)
-			.append('<a>'+recordStr+'</a>')
+			.append($('<a>').text(recordStr))
 			.appendTo(ul);
 	};
 	
