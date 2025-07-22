@@ -67,6 +67,9 @@ function loadCredentials() {
 
 function loadApiSchema() {
 	$('#catoOperations').html('<option value="">loading...</option>');
+	userObj = getCurApiKey();
+	endpoint = userObj.endpoint!=undefined ? catoConfig.servers[userObj.endpoint] : catoConfig.servers.Ireland;
+	$('#catoServer').val(endpoint);
 	var query = fmtQuery(`{"query":"query IntrospectionQuery { __schema { description } }","operationName":"IntrospectionQuery"}`);
 	$.gritter.add({ title: 'Initializing', text: 'Retrieving intropspection API schema.' });
 	makeCall(parseApiSchema, query, 'set');
@@ -84,8 +87,8 @@ function parseApiSchema(schema) {
 		} else if (type.kind == "OBJECT") {
 			if (type.name == "Query") {
 				for (j in type.fields) {
+					// console.log("childOperationParent",type.fields[j]);
 					if (childOperationParent[type.fields[j].name] != undefined) {
-						// console.log(type.fields[j]);
 						queryOperationsTMP[type.fields[j].name] = copy(type.fields[j]);
 					} else {
 						catoApiSchema["Query Operations"]["query." + type.fields[j].name] = copy(type.fields[j]);
@@ -135,7 +138,7 @@ function getChildOperations(operationType, curType, parentType, parentPath) {
 	var hasChildren = false;
 	for (i in curOfType.fields) {
 		var curFieldObject = copy(curOfType.fields[i]);
-		// console.log(curFieldObject.name);
+		// console.log("curFieldObject.name",curFieldObject.name);
 		if ((curFieldObject.args != null && curFieldObject.args.length > 0) || childOperationObjects[curFieldObject.name]!=undefined || childOperationObjects[curOfType.name]!=undefined) {
 			hasChildren = true;
 			curParentType = copy(parentType);
