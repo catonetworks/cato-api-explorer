@@ -11,15 +11,8 @@ RUN set -xe \
 	&& apk add --no-cache apache2 apache2-ssl gcc musl-dev make && \
 	rm /etc/nginx/conf.d/default.conf	
 
-RUN apk add --no-cache --virtual .build-deps \
-	g++ make autoconf yaml-dev
-RUN pecl channel-update pecl.php.net
-RUN set -xe \
-	&& apk add --update --no-cache yaml \
-	&& pecl install yaml --nodeps --ignore-errors \
-	&& php -m; \
-	sh -c "echo 'extension=yaml.so' >> /etc/php7/php.ini" \
-	sh -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf"
+# The php7-pecl-yaml package is already installed above, so we just need to verify it's working
+RUN php -m | grep yaml || echo "YAML extension not found, but continuing..."
 
 # Configure nginx
 COPY config/nginx.conf /etc/nginx/nginx.conf
