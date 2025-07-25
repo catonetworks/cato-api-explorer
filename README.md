@@ -20,7 +20,7 @@ To deploy a container based on this image, follow the steps below.  The instruct
 1. Change into the `~/cato-api-explorer` folder.
    - `host# cd ~/cato-api-explorer`
 1. Pull the latest image from the registry:
-   - `host# docker compose build`
+   - `host# docker compose pull`
 1. Use **docker-compose** to bring up the container:
    - `host# docker compose up -d`
 
