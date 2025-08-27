@@ -49,7 +49,7 @@ function loadCredentials() {
 	if (localStorage.getItem('CATO_API_KEYS') == null) localStorage.setItem('CATO_API_KEYS', '{}');
 	CATO_API_KEYS = JSON.parse(localStorage.getItem('CATO_API_KEYS'));
 	$('#catoApiKeys').html('').removeClass('highlight');
-	$('#catoOperations').html('').removeClass('highlight');
+	$('#catoOperations').val('').removeClass('highlight');
 	$('.cato_account_input').val('').removeClass('highlight').attr('placeholder', '');
 	$('#cato_add_new_api_key').removeClass('highlight');
 	$.each(CATO_API_KEYS, function (index_id, usrObj) {
@@ -66,7 +66,7 @@ function loadCredentials() {
 }
 
 function loadApiSchema() {
-	$('#catoOperations').html('<option value="">loading...</option>');
+	$('#catoOperations').attr('placeholder', 'Loading...');
 	userObj = getCurApiKey();
 	endpoint = userObj.endpoint!=undefined ? catoConfig.servers[userObj.endpoint] : catoConfig.servers.Ireland;
 	$('#catoServer').val(endpoint);
@@ -194,21 +194,46 @@ function getNestedArgDefinitions(argsAry, parentParamPath) {
 }
 
 function renderApiOperations() {
-	$('#catoOperations').html("");
+	$('#catoOperations').attr('placeholder', 'Select an API operation...');
+	// Initialize searchable dropdown if not already done
+	if (typeof searchableDropdown !== 'undefined' && !searchableDropdown.initialized) {
+		searchableDropdown.init();
+		searchableDropdown.initialized = true;
+	}
+
+	// Build options array for searchable dropdown
+	var optionsData = [];
 	for (type in catoApiSchema) {
-		$('#catoOperations').append('<optgroup label="' + type + '">');
 		var operations = Object.keys(catoApiSchema[type]).sort();
 		for (i in operations) {
 			var operation = operations[i];
-			$('#catoOperations').append('<option value="' + operation + '">' + operation + '()</option>');
+			optionsData.push({
+				value: operation,
+				text: operation + '()',
+				group: type
+			});
 		}
-		$('#catoOperations').append('</optgroup>');
 	}
+
+	// Set options in searchable dropdown
+	if (typeof searchableDropdown !== 'undefined') {
+		searchableDropdown.setOptions(optionsData);
+		searchableDropdown.clear();
+	}
+
 	changeOperation();
 }
 
 function changeOperation() {
-	if ($('#catoOperations').val() != null && $('#catoOperations').val() != '') {
+	// Check if we have a valid operation selected
+	var hasValidOperation = false;
+	if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
+		hasValidOperation = searchableDropdown.getValue() !== null && searchableDropdown.getValue() !== '';
+	} else {
+		hasValidOperation = $('#catoOperations').val() != null && $('#catoOperations').val() != '';
+	}
+	
+	if (hasValidOperation) {
 		userObj = getCurApiKey();
 		endpoint = userObj.endpoint!=undefined ? catoConfig.servers[userObj.endpoint] : catoConfig.servers.Ireland;
 		$('#catoServer').val(endpoint);
@@ -760,7 +785,15 @@ function updateRequestData() {
 			}
 		});
 		
-		var queryStr = renderParentPath($('#catoOperations').val());
+		// Get selected operation value from either searchable dropdown or regular input
+		var selectedOperation = '';
+		if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
+			selectedOperation = searchableDropdown.getValue();
+		} else {
+			selectedOperation = $('#catoOperations').val();
+		}
+		
+		var queryStr = renderParentPath(selectedOperation);
 		queryStr += " ( " + variableStr + ") {\n";
 		queryStr += indent + curOperationObj.name + " ( ";
 		
@@ -1086,9 +1119,18 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 	var operationName = "introspectionQuery";
 	var url = "/ajax/cato_api_post.php?server=" + (endpoint!=undefined ? endpoint : $('#catoServer').val()) + "&operation=" + operationName;
 	var method = "POST";
-	if ($('#catoOperations').val()!=null) {
-		var operationAry = $('#catoOperations').val().split(".");
-		operationName = (!$('#catoOperations').val() == '') ? operationAry[1] : "introspectionQuery";
+	
+	// Get selected operation from either searchable dropdown or regular input
+	var selectedOperation = null;
+	if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
+		selectedOperation = searchableDropdown.getValue();
+	} else {
+		selectedOperation = $('#catoOperations').val();
+	}
+	
+	if (selectedOperation != null) {
+		var operationAry = selectedOperation.split(".");
+		operationName = (selectedOperation != '') ? operationAry[1] : "introspectionQuery";
 	}
 	if (operationName=="introspectionQuery") {
 		if (catoConfig.schema.loadFromLocal==true) {
@@ -1104,10 +1146,17 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 	operationAry = operationName.split(".")
 	operationType = operationAry.pop(0)
 	if (query == undefined) {
+		// Get selected operation for renderParentPath
+		var selectedOp = null;
+		if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
+			selectedOp = searchableDropdown.getValue();
+		} else {
+			selectedOp = $('#catoOperations').val();
+		}
 		query = fmtQuery(`{
 			"query":"`+ $('#catoQuery').val() + `",
 			"variables":`+ $('#catoVariables').val() + `,
-			"operationName":"`+ renderParentPath($('#catoOperations').val()).split(" ").pop()+`"
+			"operationName":"`+ renderParentPath(selectedOp).split(" ").pop()+`"
 		}`);
 		// "operationName":"`+ renderCamelCase($('#catoOperations').val().split(".").slice(1).join(".")) + `"
 	} else {
@@ -1303,9 +1352,24 @@ function copy(obj) {
 }
 
 function getCurrentOperation() {
-	var operationType = $('#catoOperations option:selected').prevAll('optgroup').attr('label');
-	var operationName = $('#catoOperations').val();
-	return catoApiSchema[operationType][operationName];
+	// Check if using searchable dropdown
+	if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
+		var operationName = searchableDropdown.getValue();
+		if (operationName) {
+			// Find the operation in the schema
+			for (type in catoApiSchema) {
+				if (catoApiSchema[type][operationName]) {
+					return catoApiSchema[type][operationName];
+				}
+			}
+		}
+		return null;
+	} else {
+		// Fallback for old select structure
+		var operationType = $('#catoOperations option:selected').prevAll('optgroup').attr('label');
+		var operationName = $('#catoOperations').val();
+		return catoApiSchema[operationType][operationName];
+	}
 }
 
 function initSearch() {

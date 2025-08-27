@@ -14,7 +14,14 @@ function transformToCLI(auth = getCurApiKey($('#catoApiKeys').val())){
         var variables = JSON.parse($('#catoVariables').val());
         delete variables.accountID;
         delete variables.accountId;
-		cliStr = "catocli " +$("#catoOperations").val().replaceAll("."," ")+" -accountID="+auth.account_id+" '"+JSON.stringify(variables)+"'";
+	// Get selected operation from either searchable dropdown or regular input
+	var selectedOperation = '';
+	if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
+		selectedOperation = searchableDropdown.getValue();
+	} else {
+		selectedOperation = $('#catoOperations').val();
+	}
+	cliStr = "catocli " + selectedOperation.replaceAll("."," ")+" -accountID="+auth.account_id+" '"+JSON.stringify(variables)+"'";
 	}
 	return cliStr;
 }
@@ -31,7 +38,7 @@ function transformToCURL(requestUrl = $('#catoServer').val(), auth = getCurApiKe
 	    var query = JSON.stringify({ 
 			"query": fmtQuery(reqObj), 
 			"variables": JSON.parse($('#catoVariables').val()),
-			"operationName": renderParentPath($('#catoOperations').val()).split(" ").pop()
+		"operationName": renderParentPath((typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) ? searchableDropdown.getValue() : $('#catoOperations').val()).split(" ").pop()
 		});
 		curlStr = "curl -k -X POST" + headersStr + "'" + requestUrl +"' --data '"+query+"'";
 	}

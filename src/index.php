@@ -50,7 +50,184 @@ $.extend($.gritter.options, {
 });
 </script>
 <style>
-textarea { width:510px; height:200px; }
+/* Basic layout styles */
+body, html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	overflow-x: auto;
+	/* Cato Networks website background */
+	background: linear-gradient(0deg,#0e3046,#2f7a5b);
+	background-attachment: fixed;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+#wrapper {
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Cato Networks Header Styling */
+#header {
+	background: #FFF;
+	border-bottom: 3px solid #00d4aa;
+	border-radius: 0 0 3rem 3rem;
+    padding-bottom: 9px;
+    padding-inline-end: 9px;
+    padding-inline-start: 20px;
+    padding-top: 9px;
+}
+
+#logo {
+	display: flex;
+	align-items: left;
+	justify-content: left;
+	width: auto;
+	position: relative;
+}
+
+#logo img {
+	height: 32px;
+	width: auto;
+	position: absolute;
+	left: 0;
+}
+
+#logo .logo-text {
+	color: #158864;
+	font-size: 30px;
+	font-weight: 600;
+	margin: 0;
+	text-align: center;
+	padding-left: 90px;
+	padding-top: 5px;
+}
+
+#header_bar {
+	background: linear-gradient(90deg, #00d4aa 0%, #1a73e8 100%);
+	color: white;
+	padding: 15px 20px;
+	border: none;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#header_bar h1 {
+	margin: 0;
+	font-size: 28px;
+	font-weight: 600;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#contentWrapper {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+#mainNav {
+	flex: 1;
+	overflow: hidden !important;
+	overflow-x: hidden !important;
+	overflow-y: hidden !important;
+	position: relative;
+	height: 100%;
+	max-height: 100% !important;
+}
+
+/* Make navigation tabs sticky */
+#mainNav > ul {
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	background: white;
+	border-bottom: 2px solid #00d4aa;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	margin: 0;
+	padding: 0;
+}
+
+/* Make content area scrollable */
+#CatoAPI {
+	height: calc(100vh - 160px); /* Adjust based on header heights */
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	padding: 0 5px !important;
+}
+
+#CatoAPI > table {
+	flex: 1;
+	height: 100%;
+	table-layout: fixed;
+	border-spacing: 10px;
+}
+
+#CatoAPI > table > tbody > tr:nth-child(2) {
+	height: 100%;
+}
+
+/* Column widths - Even distribution across three columns */
+#CatoAPI > table > tbody > tr:nth-child(2) > td:nth-child(1) {
+	width: 33.333%;
+	min-width: 350px;
+	vertical-align: top;
+}
+
+#CatoAPI > table > tbody > tr:nth-child(2) > td:nth-child(2),
+#CatoAPI > table > tbody > tr:nth-child(2) > td:nth-child(3) {
+	width: 33.333%;
+	vertical-align: top;
+}
+
+/* Fieldset styling */
+fieldset {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 10px;
+	box-sizing: border-box;
+}
+
+/* Left column fieldsets - fit content only */
+fieldset:not(#catoAPIRequest):not(#catoAPIResponse) {
+	height: auto;
+	min-height: auto;
+	flex-shrink: 0;
+}
+
+/* Request and Response fieldsets - take remaining space */
+#catoAPIRequest,
+#catoAPIResponse {
+	height: calc(100vh - 200px);
+	min-height: 500px;
+	flex: 1;
+}
+
+/* Textarea styling */
+textarea {
+	width: 100%;
+	height: 200px;
+	box-sizing: border-box;
+	resize: vertical;
+	font-family: 'Courier New', monospace;
+	font-size: 12px;
+}
+
+textarea#catoQuery,
+textarea#catoVariables {
+	height: 45%;
+	min-height: 150px;
+	max-height: 500px;
+}
+
+textarea#catoResult {
+	flex: 1;
+	min-height: 200px;
+	resize: both;
+}
+
+/* Form element styling */
 #catoBodyParams select {
     width: 200px;
 }
@@ -68,7 +245,7 @@ textarea { width:510px; height:200px; }
 }
 
 #catoResponseObject textarea {
-	width: 350px;
+	width: 100%;
 	height: 200px;
 }
 #catoResponseObject textarea.parent,
@@ -77,22 +254,106 @@ textarea { width:510px; height:200px; }
 	height: 50px;
 }
 
-textarea#catoQuery,
-textarea#catoResult {
-	width: 510px;
-	height: 450px;
+/* Code examples styling */
+.codeExample textarea {
+	height: 60px;
+	width: 100%;
+	min-height: 40px;
+}
+
+/* Searchable dropdown styles */
+.searchable-dropdown {
+	position: relative;
+	width: 200px;
+	display: inline-block;
+}
+
+.searchable-dropdown input {
+	width: 200px;
+	padding: 4px 8px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.dropdown-options {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	min-width: 100%;
+	max-width: 600px;
+	max-height: min(70vh, 600px); /* Use 70% of viewport height or 600px, whichever is smaller */
+	overflow-y: auto;
+	background: white;
+	border: 1px solid #ccc;
+	border-top: none;
+	border-radius: 0 0 4px 4px;
+	z-index: 1000;
+	display: none;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	white-space: nowrap;
+}
+
+.dropdown-options.show {
+	display: block;
+}
+
+.dropdown-group {
+	border-bottom: 1px solid #eee;
+}
+
+.dropdown-group:last-child {
+	border-bottom: none;
+}
+
+.dropdown-group-header {
+	padding: 6px 12px;
+	background: #f5f5f5;
+	font-weight: bold;
+	font-size: 12px;
+	color: #666;
+	border-bottom: 1px solid #ddd;
+}
+
+.dropdown-option {
+	padding: 8px 12px;
+	cursor: pointer;
+	border-bottom: 1px solid #eee;
+	color: #333;
+	font-size: 13px;
+}
+
+.dropdown-option:last-child {
+	border-bottom: none;
+}
+
+.dropdown-option:hover,
+.dropdown-option.highlighted {
+	background-color: #e6f3ff;
+	color: #0066cc;
+}
+
+.dropdown-option.selected {
+	background-color: #0066cc;
+	color: white;
+}
+
+.no-results {
+	padding: 12px;
+	text-align: center;
+	color: #666;
+	font-style: italic;
 }
 </style>
 </head>
 <body>
 	<div id="wrapper">
-		<div id="header" class="ui-widget">
-			<div id="logo" class="ui-corner-all dropshadow"></div>
+		<div id="header">
+			<div id="logo">
+				<span class="logo-text">| Cato API Explorer</span>
+			</div>
 		</div>
 		<div id="contentWrapper" class="ui-widget">
-			<div id="header_bar" class="ui-widget-header ui-corner-top">
-				<h1>Cato API Explorer</h1>
-			</div>
 			<div id="mainNav" class="ui-widget-content content">
 				<ul>
 					<li><a id="CatoAPIBtn" href="#CatoAPI">GraphQL API Explorer</a></li>
@@ -118,8 +379,13 @@ textarea#catoResult {
 										<tr><td align="right"><label for="catoServer">Server: </label></td>
 										  <td><select id="catoServer" style="width: 200px;"></select></td></tr>
 										<tr id="catoOperationtr">
-											<td align="right"><label for="catocatoOperations">API Operations: </label></td>
-											<td><select name="catoOperations" class="cato_operations_select" id="catoOperations"></select></td>
+											<td align="right"><label for="catoOperations">API Operations: </label></td>
+											<td>
+												<div class="searchable-dropdown">
+													<input type="text" name="catoOperations" class="cato_operations_select" id="catoOperations" placeholder="Select an API operation..." autocomplete="off" />
+													<div class="dropdown-options" id="catoOperationsDropdown"></div>
+												</div>
+											</td>
 										</tr>
 									</table>
 								</fieldset>
@@ -211,16 +477,195 @@ textarea#catoResult {
 						</table>
 					</div>
 				</div>
+			</div>
+			<div id="footer">
 				<div class="ui-widget-content ui-corner-bottom footer">
 					<p><span id="version" style="float: right;"><?=(getenv('VERSION', true) ?: getenv('VERSION'))?></span>Copyright ©<?=date("Y")?> Cato Networks. All Rights Reserved.  <a href="https://www.catonetworks.com/privacypolicy/">Privacy &amp; Legal</a></p>
 				</div>
-			</div>
-			<div id="footer">
 			</div>
 		</div>
 	</div>
 
 <script>
+// Searchable dropdown functionality
+var searchableDropdown = {
+	allOptions: [],
+	filteredOptions: [],
+	currentHighlight: -1,
+	selectedValue: '',
+
+	init: function() {
+		var $input = $('#catoOperations');
+		var $dropdown = $('#catoOperationsDropdown');
+		
+		// Input event handlers
+		$input.on('input', this.handleInput.bind(this));
+		$input.on('focus', this.handleFocus.bind(this));
+		$input.on('blur', this.handleBlur.bind(this));
+		$input.on('keydown', this.handleKeydown.bind(this));
+		
+		// Click outside to close
+		$(document).on('click', function(e) {
+			if (!$(e.target).closest('.searchable-dropdown').length) {
+				$dropdown.removeClass('show');
+			}
+		});
+	},
+
+	setOptions: function(optionsData) {
+		this.allOptions = optionsData;
+		this.filteredOptions = [...optionsData];
+		this.renderOptions();
+	},
+
+	handleInput: function(e) {
+		var searchTerm = e.target.value.toLowerCase();
+		this.filterOptions(searchTerm);
+		this.currentHighlight = -1;
+		this.renderOptions();
+		$('#catoOperationsDropdown').addClass('show');
+	},
+
+	handleFocus: function(e) {
+		this.filterOptions(e.target.value.toLowerCase());
+		this.renderOptions();
+		$('#catoOperationsDropdown').addClass('show');
+	},
+
+	handleBlur: function(e) {
+		// Delay hiding to allow clicks on dropdown items
+		setTimeout(function() {
+			$('#catoOperationsDropdown').removeClass('show');
+		}, 150);
+	},
+
+	handleKeydown: function(e) {
+		var $dropdown = $('#catoOperationsDropdown');
+		
+		switch(e.key) {
+			case 'ArrowDown':
+				e.preventDefault();
+				this.currentHighlight = Math.min(this.currentHighlight + 1, this.filteredOptions.length - 1);
+				this.updateHighlight();
+				break;
+			case 'ArrowUp':
+				e.preventDefault();
+				this.currentHighlight = Math.max(this.currentHighlight - 1, -1);
+				this.updateHighlight();
+				break;
+			case 'Enter':
+				e.preventDefault();
+				if (this.currentHighlight >= 0 && this.currentHighlight < this.filteredOptions.length) {
+					this.selectOption(this.filteredOptions[this.currentHighlight]);
+				}
+				break;
+			case 'Escape':
+				$dropdown.removeClass('show');
+				$('#catoOperations').blur();
+				break;
+		}
+	},
+
+	filterOptions: function(searchTerm) {
+		if (!searchTerm) {
+			this.filteredOptions = [...this.allOptions];
+		} else {
+			this.filteredOptions = this.allOptions.filter(function(option) {
+				return option.value.toLowerCase().includes(searchTerm) || 
+					   option.text.toLowerCase().includes(searchTerm);
+			});
+		}
+	},
+
+	renderOptions: function() {
+		var $dropdown = $('#catoOperationsDropdown');
+		var $input = $('#catoOperations');
+		$dropdown.empty();
+
+		if (this.filteredOptions.length === 0) {
+			$dropdown.append('<div class="no-results">No matching operations found</div>');
+			return;
+		}
+
+		var currentGroup = '';
+		var optionIndex = 0;
+		var maxWidth = 0;
+		
+		// Create a temporary element to measure text width
+		var $measurer = $('<div style="position: absolute; visibility: hidden; white-space: nowrap; font-size: 13px; padding: 8px 12px;"></div>').appendTo('body');
+		
+		this.filteredOptions.forEach(function(option, index) {
+			if (option.group !== currentGroup) {
+				currentGroup = option.group;
+				$dropdown.append('<div class="dropdown-group-header">' + currentGroup + '</div>');
+				
+				// Measure group header width
+				$measurer.text(currentGroup);
+				maxWidth = Math.max(maxWidth, $measurer.outerWidth());
+			}
+			
+			var $option = $('<div class="dropdown-option" data-value="' + option.value + '">' + option.text + '</div>');
+			$option.on('click', function() {
+				searchableDropdown.selectOption(option);
+			});
+			
+			// Measure option width
+			$measurer.text(option.text);
+			maxWidth = Math.max(maxWidth, $measurer.outerWidth());
+			
+			$dropdown.append($option);
+			optionIndex++;
+		});
+		
+		// Remove the measurer
+		$measurer.remove();
+		
+		// Set the dropdown width to fit content, but respect min/max constraints
+		var inputWidth = $input.outerWidth();
+		var dropdownWidth = Math.max(inputWidth, Math.min(maxWidth + 20, 600)); // Add 20px for padding/scrollbar
+		
+		$dropdown.css('width', dropdownWidth + 'px');
+	},
+
+	updateHighlight: function() {
+		var $options = $('#catoOperationsDropdown .dropdown-option');
+		$options.removeClass('highlighted');
+		
+		if (this.currentHighlight >= 0 && this.currentHighlight < $options.length) {
+			$options.eq(this.currentHighlight).addClass('highlighted');
+			// Scroll into view if needed
+			var highlightedOption = $options.eq(this.currentHighlight)[0];
+			if (highlightedOption) {
+				highlightedOption.scrollIntoView({ block: 'nearest' });
+			}
+		}
+	},
+
+	selectOption: function(option) {
+		this.selectedValue = option.value;
+		$('#catoOperations').val(option.text);
+		$('#catoOperationsDropdown').removeClass('show');
+		
+		// Trigger change event to maintain compatibility with existing code
+		$('#catoOperations').trigger('change');
+	},
+
+	getValue: function() {
+		return this.selectedValue;
+	},
+
+	setValue: function(value, text) {
+		this.selectedValue = value || '';
+		$('#catoOperations').val(text || '');
+	},
+
+	clear: function() {
+		this.selectedValue = '';
+		$('#catoOperations').val('');
+		$('#catoOperationsDropdown').removeClass('show');
+	}
+};
+
 	const map = L.map('CatoPOPs').setView([47.81, 15], 3);
 	const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,

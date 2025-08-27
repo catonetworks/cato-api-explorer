@@ -2,10 +2,10 @@
 body { font: 62.5% "Trebuchet MS", sans-serif; font-size: .75em;  
 	background-color:#fff; margin: 0; min-height: 100%; }
 #wrapper { margin: 0 auto; position: relative; width: 100%; }
-#header { background-color:#fff; background-size: cover; padding: 10px 0px 0px 10px; margin: 0px 0px 25px 0px; height: 64px; border-bottom: 1px solid #cfd8dc; }
+#header { background-color:#fff; background-size: cover; padding: 10px 0px 0px 10px; margin: 0px; height: 64px; border-bottom: 1px solid #cfd8dc; }
 /* #header { background: url('../images/bg_head_cut.png') top right no-repeat; background-size: auto; padding: 25px 0px 0px 25px; height: 105px; } */
-#logo { background: url('../images/cato-logo.png') left center no-repeat; width:300px; height:54px; margin-left: 45px;  }
-
+#logo { background: url('../images/cato-logo.svg') left center no-repeat; width:300px; height:54px; margin: 0 45px;  }
+/* #logo span.logo-text { background: url('../images/cato-logo.svg') left center no-repeat; width:300px; height:54px; margin-left: 45px;  } */
 #dialog_link {padding: .4em 1em .4em 20px; text-decoration: none; position: relative;}
 #dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
 ul#icons {margin: 0; padding: 0;}
@@ -76,6 +76,7 @@ ul#icons span.ui-icon {float: left; margin: 0 4px;}
 #contentWrapper { margin: 0px 50px; }
 #contentWrapper h1 { padding:7px 15px 10px 15px; margin:0px; }
 #contentWrapper .content { padding: 15px 15px 5px; overflow: auto; }
+#contentWrapper .content#mainNav { padding: 0 15px 5px;  }
 #contentWrapper .footer { padding: 0 15px; }
 #contentWrapper .footer { padding: 0 15px; }
 #contentWrapper div.colL { float:left; display: block; width: 400px; }
