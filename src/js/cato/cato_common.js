@@ -66,7 +66,7 @@ function loadCredentials() {
 }
 
 function loadApiSchema() {
-	$('#catoOperations').attr('placeholder', 'Loading...');
+	$('#catoOperations').attr('placeholder', 'Loading...').addClass('loading');;
 	userObj = getCurApiKey();
 	endpoint = userObj.endpoint!=undefined ? catoConfig.servers[userObj.endpoint] : catoConfig.servers.Ireland;
 	$('#catoServer').val(endpoint);
@@ -194,7 +194,7 @@ function getNestedArgDefinitions(argsAry, parentParamPath) {
 }
 
 function renderApiOperations() {
-	$('#catoOperations').attr('placeholder', 'Select an API operation...');
+	$('#catoOperations').attr('placeholder', 'Select an API operation...').removeClass('loading');;
 	// Initialize searchable dropdown if not already done
 	if (typeof searchableDropdown !== 'undefined' && !searchableDropdown.initialized) {
 		searchableDropdown.init();
@@ -227,13 +227,13 @@ function renderApiOperations() {
 function changeOperation() {
 	// Check if we have a valid operation selected
 	var hasValidOperation = false;
+	
 	if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
 		hasValidOperation = searchableDropdown.getValue() !== null && searchableDropdown.getValue() !== '';
 	} else {
 		hasValidOperation = $('#catoOperations').val() != null && $('#catoOperations').val() != '';
 	}
-	
-	if (hasValidOperation) {
+	if (hasValidOperation && $('#catoOperations').val()!="") {
 		userObj = getCurApiKey();
 		endpoint = userObj.endpoint!=undefined ? catoConfig.servers[userObj.endpoint] : catoConfig.servers.Ireland;
 		$('#catoServer').val(endpoint);
@@ -272,6 +272,13 @@ function changeOperation() {
 			}
 			renderParamsHtml();
 		// }
+	} else {
+		$('#catoQuery').val('');
+		$('#catoVariables').val('');
+		$('#catoResult').val('');
+		$('#responseObject').val('');
+		$('#catoBodyParams_tbl').html("");
+		$('.codeExample textarea').html("");
 	}
 }
 
@@ -626,10 +633,10 @@ function renderInputNestedFieldsHtml(param, parentContainerId) {
 			}
 	}
 
-	str += '</table><br clear="all" />';
+	str += '</table><br clear="all" /><div class="links_row">';
 	str += '<a href="javascript:void(0);" id="' + param.id_str + '_cancel" class="cancel_param_link param_link">Close</a>';
 	str += '<a href="javascript:void(0);" id="' + param.id_str + '_add" class="add_param_link param_link">Add</a>';
-	str += '</fieldset>';
+	str += '</div></fieldset>';
 	str += '</td><td></td>';
 	// str += (argType == "responseArg") ? '<td valign="top"><a id="' + param.id_str + '_toggle" title="Remove this argument from response." class="toggleField ui-button-icon ui-icon ui-icon-cancel"></a></td>' : "<td></td>";
 	str += '</tr>';

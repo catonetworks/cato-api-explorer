@@ -2,7 +2,7 @@
 body { font: 62.5% "Trebuchet MS", sans-serif; font-size: .75em;  
 	background-color:#fff; margin: 0; min-height: 100%; }
 #wrapper { margin: 0 auto; position: relative; width: 100%; }
-#header { background-color:#fff; background-size: cover; padding: 10px 0px 0px 10px; margin: 0px; height: 64px; border-bottom: 1px solid #cfd8dc; }
+#header { background-color:#fff; background-size: cover; padding: 10px 0px 0px 10px; margin: 0 0 8px 0; height: 64px; border-bottom: 1px solid #cfd8dc; }
 /* #header { background: url('../images/bg_head_cut.png') top right no-repeat; background-size: auto; padding: 25px 0px 0px 25px; height: 105px; } */
 #logo { background: url('../images/cato-logo.svg') left center no-repeat; width:300px; height:54px; margin: 0 45px;  }
 /* #logo span.logo-text { background: url('../images/cato-logo.svg') left center no-repeat; width:300px; height:54px; margin-left: 45px;  } */
@@ -291,7 +291,15 @@ ul.ui-autocomplete { overflow: scroll; max-height: 280px; height: auto; }
 .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
 .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
 .ui-tabs-vertical .ui-tabs-panel { padding: 1em; width: 100%; }
-
+.ui-button { width: min-content !important; }
+.links_row {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	gap: 10px;
+	justify-content: flex-end;
+	padding: 5px 0 0 0;
+}
 #header_bar {
 	background: #0084d6;
 	border: 1px solid #FFF;
