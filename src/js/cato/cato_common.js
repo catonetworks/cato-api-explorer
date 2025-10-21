@@ -481,6 +481,19 @@ function renderParamsHtml() {
 	$('.add_param_link').unbind().click(function () { addObjectToParent(this); updateRequestData(); });
 	initSiteLocationAutocomplete();
 	initSearch();
+	// Add event listeners for timeframe options dropdowns
+	$('#catoBodyParams select.timeframe-options').unbind().change(function() {
+		var selectedValue = $(this).val();
+		var targetInputId = $(this).attr('id').replace('_options', '');
+		var $targetInput = $('#' + targetInputId);
+		
+		if (selectedValue && selectedValue !== 'custom') {
+			$targetInput.val(selectedValue);
+			updateRequestData();
+		} else if (selectedValue === 'custom') {
+			$targetInput.val('').focus();
+		}
+	});
 	// $(".datepicker").parent().click(function(){ $(".datepicker").trigger('blur'); });
 	// $(".datepicker").datetimepicker();
 	renderResponseArguments();
@@ -545,27 +558,28 @@ function renderParamHTML(param) {
 			$.each(paramValIndex, function (i, val) { str += '<option value="' + val + '">' + val + '</option>'; });
 			str += '</select>';
 		} else if (paramValType == "timeframe") {
-			str += '<select name="' + paramName + '" title="' + (param.varName ? param.varName : param.name) +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
+			// Create dropdown for timeframe options
+			str += '<input type="text" title="' + (param.varName ? param.varName : param.name) +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" name="' + paramName + '" id="' + param.id_str + '" value="" placeholder="timeframe value"' + required + ' /><br />';
+			str += '<select name="' + paramName + '_options" title="Timeframe Options" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + ' timeframe-options" id="' + param.id_str + '_options">';
+			str += '<option value="">-- Example TimeFrame --</option>';
 			str += '<option value="last.PT5M">Previous 5 minutes</option>';
-			str += '<option value="last.PT15M">Previous 15 minutes</option>';
-			str += '<option value="last.PT30M">Previous 30 minutes</option>';
 			str += '<option value="last.PT45M">Previous 45 minutes</option>';
 			str += '<option value="last.PT1H">Previous 1 hour</option>';
-			str += '<option value="last.PT2H">Previous 2 hours</option>';
-			str += '<option value="last.PT4H">Previous 4 hours</option>';
-			str += '<option value="last.PT6H">Previous 6 hours</option>';
 			str += '<option value="last.PT8H">Previous 8 hours</option>';
-			str += '<option value="last.PT10H">Previous 10 hours</option>';
 			str += '<option value="last.P1D">Previous 1 day</option>';
-			str += '<option value="last.P1D">Previous 2 day</option>';
-			str += '<option value="last.P7D">Previous 7 day</option>';
-			str += '<option value="last.P14D">Previous 14 day</option>';
-			str += '<option value="last.P21D">Previous 21 day</option>';
-			str += '<option value="last.P1M">Previous 1 months</option>';
-			str += '<option value="last.P2M">Previous 2 months</option>';
+			str += '<option value="last.P14D">Previous 14 days</option>';
+			str += '<option value="last.P1M">Previous 1 month</option>';
 			str += '<option value="last.P89D">Previous 3 months</option>';
-			str += '<option value="custom">Custom</option>';
+			// Dynamically populate single day date range option with current year and month
+			var now = new Date();
+			var year = now.getFullYear();
+			var month = String(now.getMonth() + 1).padStart(2, '0');
+			str += `<option value="utc.${year}-${month}-{28/00:00:00--28/23:59:59}">Date Range - Single day</option>`;
+			str += `<option value="utc.${year}-${month}-{25/00:00:00--28/23:59:59}">Date Range - Multiple days</option>`;
+			str += `<option value="utc.${year}-${month}-{28/09:00:00--28/17:00:00}">Date Range - Specific hours</option>`;
+			str += `<option value="utc.${year}-{01-28/00:00:00--02-03/23:59:59}">Date Range - Across months</option>`;
 			str += '</select>';
+			// Create text input for actual timeframe value
 		} else if (paramValType == "boolean") {
 			str += '<select name="' + paramName + '" title="' + (param.varName ? param.varName : param.name) +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
 			str += ((param.required) ? '' : '<option value="">-- select --</option>') + '<option value="true">true</option><option value="false">false</option>';
@@ -946,7 +960,7 @@ function updateRequestData() {
 		queryStr += ") {\n" + renderArgsAndFields("", curOperationObj, curOperationObj.type.definition, "    ") + "  }" + indent + "\n}";
 		$('#catoQuery').val(queryStr);
 		var variablesObj = {};
-		$.each($(bodyParamsStr + '.param:not(".hidden, .disabled"), ' + bodyParamsStr + '.param1:not(".hidden, .disabled"), ' + bodyParamsStr + '.searchParam:not(".hidden, .disabled")'), function (i, param) {
+		$.each($(bodyParamsStr + '.param:not(".hidden, .disabled"), ' + bodyParamsStr + '.param1:not(".hidden, .disabled"), ' + bodyParamsStr + '.searchParam:not(".hidden, .disabled")').not('.timeframe-options'), function (i, param) {
 			var inputObj = $('#' + param.id);
 			// console.log("param", param);
 			// console.log("var", [curOperationObj.operationArgs[$(param).attr("title")].varName]);
