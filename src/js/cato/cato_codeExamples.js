@@ -1,27 +1,94 @@
 function generateCodeExamples(){
-	$('#catoCLIUnixExample').html(transformToCLI());
-    $('#catoCLIWinExample').html(String(transformToCLI()).replaceAll('"','\\"'));
-    $('#catoCurlExample').html(transformToCURL());
-    $('#catoPythonExample').html(transformToPython());
+    $('#catoCLIUnixExample').val(transformToCLIUnix());
+    $('#catoCLIWinExample').val(transformToCLIPowerShell());
+    $('#catoCurlExample').val(transformToCURL());
+    $('#catoPythonExample').val(transformToPython());
     
-    var curTabInput = $("#catoExamplesNav .ui-state-active a").prop("id");
-	$("#"+curTabInput.substr(0,curTabInput.length-3)).height("5px").height((5+$("#"+curTabInput.substr(0,curTabInput.length-3)).prop('scrollHeight'))+"px")		
+    // Auto-resize textareas to fit content with 5px padding and min-height of 60px
+    $('#catoExamplesNav .codeExample textarea').each(function() {
+        var $textarea = $(this);
+        var $parent = $textarea.closest('.codeExample');
+        var wasHidden = $parent.is(':hidden');
+        
+        // Temporarily show hidden tabs to get accurate scrollHeight
+        if (wasHidden) {
+            $parent.show();
+        }
+        
+        // Reset height to auto to get accurate scrollHeight
+        this.style.height = 'auto';
+        // Calculate new height: content height + 5px padding, minimum 60px
+        var newHeight = Math.max(this.scrollHeight + 5, 60);
+        // Set the calculated height
+        this.style.height = newHeight + 'px';
+        
+        // Hide the tab again if it was hidden
+        if (wasHidden) {
+            $parent.hide();
+        }
+    });
 }
 
-function transformToCLI(auth = getCurApiKey($('#catoApiKeys').val())){
+function transformToCLIUnix(auth = getCurApiKey($('#catoApiKeys').val())){
     var cliStr = '';
 	if (checkCatoForm()) {
         var variables = JSON.parse($('#catoVariables').val());
         delete variables.accountID;
         delete variables.accountId;
-	// Get selected operation from either searchable dropdown or regular input
-	var selectedOperation = '';
-	if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
-		selectedOperation = searchableDropdown.getValue();
-	} else {
-		selectedOperation = $('#catoOperations').val();
+        // Get selected operation from either searchable dropdown or regular input
+        var selectedOperation = '';
+        if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
+            selectedOperation = searchableDropdown.getValue();
+        } else {
+            selectedOperation = $('#catoOperations').val();
+        }
+        // Check for MSP accountID
+        var accountIDStr = ''
+        if ($("#accountID").val()!=auth.account_id){
+            accountIDStr = " -accountID="+$("#accountID").val();
+        }
+        // Check for empty variables object
+        var foramttedVars = ''
+        if (!(Object.keys(variables).length === 0)) {
+            // Format JSON with proper indentation for PowerShell multi-line string
+            var formattedJson = JSON.stringify(variables, null, 4);
+            foramttedVars = " '" + formattedJson + "'"
+        }
+        cliStr = "catocli " + selectedOperation.replaceAll("."," ") + accountIDStr + foramttedVars;
 	}
-	cliStr = "catocli " + selectedOperation.replaceAll("."," ")+" -accountID="+auth.account_id+" '"+JSON.stringify(variables)+"'";
+	return cliStr;
+}
+
+function transformToCLIPowerShell(auth = getCurApiKey($('#catoApiKeys').val())){
+    var cliStr = '';
+	if (checkCatoForm()) {
+        var variables = JSON.parse($('#catoVariables').val());
+        delete variables.accountID;
+        delete variables.accountId;
+        // Get selected operation from either searchable dropdown or regular input
+        var selectedOperation = '';
+        if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
+            selectedOperation = searchableDropdown.getValue();
+        } else {
+            selectedOperation = $('#catoOperations').val();
+        }
+        // Check for MSP accountID
+        var accountIDStr = ''
+        if ($("#accountID").val()!=auth.account_id){
+            accountIDStr = " -accountID="+$("#accountID").val();
+        }
+        // Check for empty variables object
+        var foramttedVars = ''
+        if (!(Object.keys(variables).length === 0)) {
+            // Format JSON with proper indentation for PowerShell multi-line string
+            var formattedJson = JSON.stringify(variables, null, 4)
+                .replaceAll('"', '\\"')  // Escape double quotes
+                .split('\n')            // Split into lines
+                //.map(line => '  ' + line)  // Add indentation
+                .join('\n');            // Rejoin
+            foramttedVars = " @'\n" + formattedJson + "\n'@"
+        }
+        cliStr = "catocli " + selectedOperation.replaceAll("."," ") + accountIDStr + foramttedVars;
 	}
 	return cliStr;
 }

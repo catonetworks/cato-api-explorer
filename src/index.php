@@ -31,6 +31,10 @@ header('Expires: 0');
 <script src="js/plugins/jquery.datetimepicker.full.js"></script>
 <link type="text/css" href="css/common.css" rel="stylesheet" />
 <link type="text/css" href="css/jquery.datetimepicker.css" rel="stylesheet" />
+<script>
+// Inject version from Docker environment variable
+window.DOCKER_VERSION = '<?=(getenv('VERSION', true) ?: getenv('VERSION') ?: '1.0.9')?>';
+</script>
 <script src="js/settings.js"></script>
 <script src="js/countries.js"></script>
 <script src="js/timezones.js"></script>
@@ -49,337 +53,45 @@ $.extend($.gritter.options, {
 	time: 5000 // hang on the screen for...
 });
 </script>
-<style>
-/* Basic layout styles */
-body, html {
-	margin: 0;
-	padding: 0;
-	height: 100%;
-	overflow-x: auto;
-	/* Cato Networks website background */
-	background: linear-gradient(0deg,#0e3046,#2f7a5b);
-	background-attachment: fixed;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-}
-
-#wrapper {
-	height: 100vh;
-	display: flex;
-	flex-direction: column;
-}
-
-/* Cato Networks Header Styling */
-#header {
-	background: #FFF;
-	border-bottom: 3px solid #00d4aa;
-	border-radius: 0 0 3rem 3rem;
-    padding-bottom: 9px;
-    padding-inline-end: 9px;
-    padding-inline-start: 20px;
-    padding-top: 9px;
-}
-
-#logo {
-	display: flex;
-	align-items: left;
-	justify-content: left;
-	width: auto;
-	position: relative;
-}
-
-#logo img {
-	height: 32px;
-	width: auto;
-	position: absolute;
-	left: 0;
-}
-
-#logo .logo-text {
-	color: #158864;
-	font-size: 30px;
-	font-weight: 600;
-	margin: 0;
-	text-align: center;
-	padding-left: 90px;
-	padding-top: 5px;
-}
-
-#header_bar {
-	background: linear-gradient(90deg, #00d4aa 0%, #1a73e8 100%);
-	color: white;
-	padding: 15px 20px;
-	border: none;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#header_bar h1 {
-	margin: 0;
-	font-size: 28px;
-	font-weight: 600;
-	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-#contentWrapper {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-}
-
-#mainNav {
-	flex: 1;
-	overflow: hidden !important;
-	overflow-x: hidden !important;
-	overflow-y: hidden !important;
-	position: relative;
-	height: 100%;
-	max-height: 100% !important;
-}
-
-/* Make navigation tabs sticky */
-#mainNav > ul {
-	position: sticky;
-	top: 0;
-	z-index: 100;
-	background: white;
-	border-bottom: 2px solid #00d4aa;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	margin: 0;
-	padding: 0;
-}
-
-/* Make content area scrollable */
-#CatoAPI {
-	height: calc(100vh - 160px); /* Adjust based on header heights */
-	display: flex;
-	flex-direction: column;
-	overflow-y: auto;
-	padding: 0 5px !important;
-}
-
-#CatoAPI > table {
-	flex: 1;
-	height: 100%;
-	table-layout: fixed;
-	border-spacing: 10px;
-}
-
-#CatoAPI > table > tbody > tr:nth-child(2) {
-	height: 100%;
-}
-
-/* Column widths - Even distribution across three columns */
-#CatoAPI > table > tbody > tr:nth-child(2) > td:nth-child(1) {
-	width: 33.333%;
-	min-width: 350px;
-	vertical-align: top;
-}
-
-#CatoAPI > table > tbody > tr:nth-child(2) > td:nth-child(2),
-#CatoAPI > table > tbody > tr:nth-child(2) > td:nth-child(3) {
-	width: 33.333%;
-	vertical-align: top;
-}
-
-/* Fieldset styling */
-fieldset {
-	display: flex;
-	flex-direction: column;
-	margin-bottom: 10px;
-	box-sizing: border-box;
-}
-
-/* Left column fieldsets - fit content only */
-fieldset:not(#catoAPIRequest):not(#catoAPIResponse) {
-	height: auto;
-	min-height: auto;
-	flex-shrink: 0;
-}
-
-/* Request and Response fieldsets - take remaining space */
-#catoAPIRequest,
-#catoAPIResponse {
-	height: calc(100vh - 200px);
-	min-height: 500px;
-	flex: 1;
-}
-
-/* Textarea styling */
-textarea {
-	width: 100%;
-	height: 200px;
-	box-sizing: border-box;
-	resize: vertical;
-	font-family: 'Courier New', monospace;
-	font-size: 12px;
-}
-
-textarea#catoQuery,
-textarea#catoVariables {
-	height: 45%;
-	min-height: 150px;
-	max-height: 500px;
-}
-
-textarea#catoResult {
-	flex: 1;
-	min-height: 200px;
-	resize: both;
-}
-
-/* Form element styling */
-#catoBodyParams select {
-    width: 200px;
-}
-
-#catoBodyParams input {
-    width: 200px;
-}
-
-#catoBodyParams select.searchParam {
-	width: 165px;
-	height: 110px;
-}
-#catoBodyParams input.searchParam {
-	width: 140px;
-}
-
-#catoResponseObject textarea {
-	width: 100%;
-	height: 200px;
-}
-#catoResponseObject textarea.parent,
-#catoBodyParams textarea.parent {
-	width: 90%;
-	height: 50px;
-}
-
-/* Code examples styling */
-.codeExample textarea {
-	height: 60px;
-	width: 100%;
-	min-height: 40px;
-}
-
-/* Searchable dropdown styles */
-.searchable-dropdown {
-	position: relative;
-	width: 200px;
-	display: inline-block;
-}
-
-.searchable-dropdown input {
-	width: 200px;
-	padding: 4px 8px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-sizing: border-box;
-}
-
-.dropdown-options {
-	position: absolute;
-	top: 100%;
-	left: 0;
-	min-width: 100%;
-	max-width: 600px;
-	max-height: min(70vh, 600px); /* Use 70% of viewport height or 600px, whichever is smaller */
-	overflow-y: auto;
-	background: white;
-	border: 1px solid #ccc;
-	border-top: none;
-	border-radius: 0 0 4px 4px;
-	z-index: 1000;
-	display: none;
-	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-	white-space: nowrap;
-}
-
-.dropdown-options.show {
-	display: block;
-}
-
-.dropdown-group {
-	border-bottom: 1px solid #eee;
-}
-
-.dropdown-group:last-child {
-	border-bottom: none;
-}
-
-.dropdown-group-header {
-	padding: 6px 12px;
-	background: #f5f5f5;
-	font-weight: bold;
-	font-size: 12px;
-	color: #666;
-	border-bottom: 1px solid #ddd;
-}
-
-.dropdown-option {
-	padding: 8px 12px;
-	cursor: pointer;
-	border-bottom: 1px solid #eee;
-	color: #333;
-	font-size: 13px;
-}
-
-.dropdown-option:last-child {
-	border-bottom: none;
-}
-
-.dropdown-option:hover,
-.dropdown-option.highlighted {
-	background-color: #e6f3ff;
-	color: #0066cc;
-}
-
-.dropdown-option.selected {
-	background-color: #0066cc;
-	color: white;
-}
-
-.no-results {
-	padding: 12px;
-	text-align: center;
-	color: #666;
-	font-style: italic;
-}
-</style>
 </head>
 <body>
 	<div id="wrapper">
-		<div id="header">
-			<div id="logo">
-				<span class="logo-text">| Cato API Explorer</span>
+		<!-- Top Header -->
+		<div id="topHeader">
+			<div class="header-left">
+				<span class="logo-text">Cato API Explorer</span>
+			</div>
+			<div class="header-right">
+				<a href="#settings" class="header-btn" id="settingsBtn">Settings</a>
+				<a href="https://api.catonetworks.com/documentation/" target="_blank" class="header-btn primary">Documentation</a>
+				<div title="Change Mode (Dark/Light)" class="header-btn theme-toggle" onclick="toggleTheme()">🌙</div>
 			</div>
 		</div>
+		
 		<div id="contentWrapper" class="ui-widget">
 			<div id="mainNav" class="ui-widget-content content">
 				<ul>
-					<li><a id="CatoAPIBtn" href="#CatoAPI">GraphQL API Explorer</a></li>
+					<li><a id="CatoAPIBtn" href="#CatoAPI">GraphQL API</a></li>
 					<li><a id="CatoPOPsBtn" href="#CatoPOPs">Cato POPs</a></li>
-					<li><a id="settingsBtn" href="#settings">Settings</a></li>
-				</ul>		
+					<li class="hidden-tab"><a id="settingsTabBtn" href="#settings">Settings</a></li>
+				</ul>
 				<div id="CatoAPI">
 					<table>
 						<tr>
-							<td></td>
-							<td valign="top">
-								<input id="execute" value="execute call" class="disabled button param_link" type="submit" /> 
-							</td>
-						<tr>
-							<td valign="top" style="padding: 0px 10px 0px 0px;">
+							<td valign="top" style="padding: 0px 10px 0px 0px;" id="api-authentication-column">
+								<div class="fieldset-header">API Authentication</div>
 								<fieldset>
-									<legend>API Authentication</legend>
-									<table class="tableColL"-->
+									<table class="tableColL">
 										<tr id="catoAccountsListtr">
-											<td align="right"><label for="catoApiKeys">API Key: </label></td>
+											<td><label for="catoApiKeys">API Key</label></td>
 											<td><select name="catoApiKeys" class="cato_api_keys_select" id="catoApiKeys"></select></td>
 										</tr>
-										<tr><td align="right"><label for="catoServer">Server: </label></td>
-										  <td><select id="catoServer" style="width: 200px;"></select></td></tr>
+										<tr>
+											<td><label for="catoServer">Server</label></td>
+											<td><select id="catoServer" style="width: 200px;"></select></td>
+										</tr>
 										<tr id="catoOperationtr">
-											<td align="right"><label for="catoOperations">API Operations: </label></td>
+											<td><label for="catoOperations">API Operation</label></td>
 											<td>
 												<div class="searchable-dropdown">
 													<input type="text" name="catoOperations" class="cato_operations_select" id="catoOperations" placeholder="Select an API operation..." autocomplete="off" />
@@ -388,56 +100,56 @@ textarea#catoResult {
 											</td>
 										</tr>
 									</table>
-								</fieldset>
+								</fieldset><br />
+								<div class="fieldset-header">Input Arguments</div>
 								<fieldset id="catoBodyParams">
-									<legend>Input Arguments and Variables</legend>
 									<table class="tableColL" id="catoBodyParams_tbl"></table>
 								</fieldset>
-								<fieldset id="catoResponseObject">
-									<legend>Response Object</legend>
-									<table class="tableColL" id="catoResponseObject_tbl">
-										<tr><td>
-											<textarea title="Response Object" class="responseObject bodyParams" name="responseObject" id="responseObject" placeholder="{}" required=""></textarea>
-										</td></tr>
-									</table>
-								</fieldset>
 							</td>
-							<td valign="top" style="padding: 0px 10px 0px 0px;">
+							<td valign="top" style="padding: 0px 10px 0px 0px;" id="graphql-query-column">
+								<div class="fieldset-header">
+									<span>GraphQL Query</span>
+									<button class="collapse-button expanded" title="Collapse/Expand GraphQL Query"></button>
+								</div>
 								<fieldset id="catoAPIRequest">
-									<legend>API Request</legend>
-									<label for="catoQuery">Request Query: </label><span id="catorequestdataspan"></span><br clear="all" />
-									<textarea id="catoQuery"></textarea><br clear="all" /><br clear="all" />
-									<label for="catoVariables">Request Variables: </label><span id="catorequestdataspan"></span><br clear="all" />
-									<textarea id="catoVariables"></textarea><br clear="all" /><br clear="all" />
+									<label for="catoQuery">Request Query</label><span id="catorequestdataspan"></span>
+									<textarea id="catoQuery"></textarea>
+									<label for="catoVariables">Request Variables</label><span id="catorequestdataspan"></span>
+									<textarea id="catoVariables"></textarea>
+									<div style="text-align: center; margin-top: 16px;">
+										<input id="execute" value="Execute Query" class="disabled button param_link" type="submit" /> 
+									</div>
 								</fieldset>
 							</td>
-							<td valign="top" style="padding: 0px 10px 0px 0px;">
+							<td valign="top" style="padding: 0px 10px 0px 0px;" id="api-response-column">
+								<div class="fieldset-header">
+									<span>API Response</span>
+									<button class="collapse-button expanded" title="Collapse/Expand API Response"></button>
+								</div>
 								<fieldset id="catoAPIResponse">
-									<legend>API Response</legend>
-									<label for="catoResult">Response:</label><br clear="all" />
-									<textarea id="catoResult"></textarea><br clear="all" /><br />
-									<label for="catoExamplesNav">Code Examples: 
-										<span style="float: right;">
-											<label for="cato_configMaskSecretKey">Mask secret key: </label>
+									<label for="catoResult">Response</label>
+									<textarea id="catoResult" placeholder="Execute query to see response..."></textarea>
+									<div style="display: flex; justify-content: space-between; align-items: center; margin: 16px 0 8px 0;">
+										<label for="catoExamplesNav">Code Examples</label>
+										<div style="display: flex; align-items: center; gap: 8px;">
+											<label for="cato_configMaskSecretKey" style="font-size: 12px; font-weight: normal;">Mask secret key</label>
 											<input id="cato_configMaskSecretKey" type="checkbox" checked="checked" value="maskSecretKey" />
-										</span><br clear="all" />
-									</label>
+										</div>
+									</div>
 									<div id="catoExamplesNav" class="ui-widget-content content">
 										<ul>
-											<li><a id="catoCLIUnixExampleBtn" class="codeExampleBtn" href="#catoCLIUnixExampleDiv">[Cato CLI (unix)]</a></li>
-											<li><a id="catoCLIWinExampleBtn" class="codeExampleBtn" href="#catoCLIWinExampleDiv">[Cato CLI (windows)]</a></li>
-											<li><a id="catoCurlExampleBtn" class="codeExampleBtn" href="#catoCurlExampleDiv">[CURL]</a></li>
-											<li><a id="catoPythonExampleBtn" class="codeExampleBtn" href="#catoPythonExampleDiv">[Python]</a></li>
+											<li><a id="catoCLIUnixExampleBtn" class="codeExampleBtn" href="#catoCLIUnixExampleDiv">Cato CLI (Unix)</a></li>
+											<li><a id="catoCLIWinExampleBtn" class="codeExampleBtn" href="#catoCLIWinExampleDiv">Cato CLI (PowerShell)</a></li>
+											<li><a id="catoPythonExampleBtn" class="codeExampleBtn" href="#catoPythonExampleDiv">Python</a></li>
+											<li><a id="catoCurlExampleBtn" class="codeExampleBtn" href="#catoCurlExampleDiv">cURL</a></li>
 										</ul>
 										<div id="catoCLIUnixExampleDiv" class="codeExample"><textarea readonly id="catoCLIUnixExample" style="height: 60px;"></textarea></div>
 										<div id="catoCLIWinExampleDiv" class="codeExample"><textarea readonly id="catoCLIWinExample" style="height: 60px;"></textarea></div>
 										<div id="catoCurlExampleDiv" class="codeExample">
 											<textarea readonly id="catoCurlExample" style="height: 60px;"></textarea><br clear="all" />
 										</div>
-										<div id="catoPythonExampleDiv" class="codeExample"><textarea readonly id="catoPythonExample" style="height: 60px;"></textarea></div>
-									</div><br clear="all" />
-									<a href="https://api.catonetworks.com/documentation/" target="_blank">Cato API Documentation</a><br />
-									<a href="https://api.catonetworks.com/api/schema" target="_blank">Cato GraphQL API Schema</a>
+									<div id="catoPythonExampleDiv" class="codeExample"><textarea readonly id="catoPythonExample" style="height: 60px;"></textarea></div>
+								</div>
 								</fieldset>
 							</td>
 						</tr>
@@ -447,34 +159,19 @@ textarea#catoResult {
 					
 				</div>
 				<div id="settings">
-					<div id="settingsNav">
-						<table>
-							<tr valign="top">
-								<td style="width: 13em;">		
-									<ul>
-										<li><span>&nbsp;</span></li>
-										<li><a href="#cato_api_keys" title="Manage Cato API Keys">Cato API Keys</a></li>
-									</ul>
-								</td>
-								<td>
-									<div id="cato_api_keys">
-										<fieldset>
-											<legend>Manage Cato API Keys</legend>
-											<table id="cato_api_keys_tbl">
-												<thead><tr>
-													<th>Endpoint</th>
-													<th>Description</th>
-													<th>Account ID</th>
-													<th>API KEY</th>
-													<th><a id="cato_add_new_api_key" style="padding:0px;" title="Add new Cato API Key" class="ui-icon ui-icon-plusthick"></a></th>
-												</tr></thead>
-												<tbody></tbody>
-											</table>
-										</fieldset>
-									</div>
-								</td>
-							</tr>
-						</table>
+					<div id="cato_api_keys">
+						<fieldset>
+							<table id="cato_api_keys_tbl">
+								<thead><tr>
+									<th>Name</th>
+									<th>Endpoint</th>
+									<th>Account ID</th>
+									<th>API KEY</th>
+									<th><button id="cato_add_new_api_key" class="api-action-btn add-btn" title="Add new Cato API Key">Add</button></th>
+								</tr></thead>
+								<tbody></tbody>
+							</table>
+						</fieldset>
 					</div>
 				</div>
 			</div>
@@ -688,6 +385,48 @@ var searchableDropdown = {
 			L.marker([data.Latitude, data.Longitude], {icon: catoIcon}).addTo(map).bindPopup(pop_up_desc);
 		}
 	)
+
+	// Theme Management
+	function toggleTheme() {
+		const html = document.documentElement;
+		const currentTheme = html.getAttribute('data-theme');
+		const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+		
+		html.setAttribute('data-theme', newTheme);
+		localStorage.setItem('theme', newTheme);
+		
+		// Update theme toggle button
+		const themeToggle = document.querySelector('.theme-toggle');
+		themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+	}
+
+	// Initialize theme from localStorage
+	function initializeTheme() {
+		const savedTheme = localStorage.getItem('theme');
+		// Default to dark theme to match the design
+		const theme = savedTheme || 'dark';
+		
+		document.documentElement.setAttribute('data-theme', theme);
+		const themeToggle = document.querySelector('.theme-toggle');
+		if (themeToggle) {
+			themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+		}
+	}
+
+	// Initialize theme on page load
+	document.addEventListener('DOMContentLoaded', initializeTheme);
+	
+	// Handle Settings button in header
+	$(document).ready(function() {
+		$('#topHeader #settingsBtn').click(function(e) {
+			e.preventDefault();
+			$('#mainNav').tabs('option', 'active', 2); // Activate Settings tab
+		});
+	});
+
+	// Make functions global
+	window.toggleTheme = toggleTheme;
+
 </script>
 
 </body>

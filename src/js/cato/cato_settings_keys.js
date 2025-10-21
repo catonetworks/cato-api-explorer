@@ -28,13 +28,13 @@ function initApiKeySettingsButtons(){ // work through adding a new user in UI, a
 
 function set_addNewApiKey() {
 	var str = '<tr class="new_api_key current">';
-	str += '<td>'+renderServers('',null)+'</td>';
 	str += '<td><input type="text" class="description" value="" /></td>';
+	str += '<td>'+renderServers('',null)+'</td>';
 	str += '<td><input type="text" class="account_id" value="" /></td>';
 	str += '<td><input type="password" class="api_key" value="" /></td>';
 	str += '<td class="td_new_api_key">';
-	str += '  <a class="cato_save_api_key ui-icon ui-icon-disk" title="Save"></a>';
-	str += '  <a class="cato_cancel_api_key ui-icon ui-icon-cancel" title="Cancel"></a>';
+	str += '  <button class="cato_save_api_key api-action-btn save-btn" title="Save">Save</button>';
+	str += '  <button class="cato_cancel_api_key api-action-btn cancel-btn" title="Cancel">Cancel</button>';
 	str += '</td></tr>';
 	$('#cato_api_keys_tbl tbody').append(str);
 	$('#cato_add_new_api_key').removeClass('highlight');
@@ -46,13 +46,13 @@ function set_editApiKey(obj) {
 	$(obj).parent().parent().addClass("current");
 	CATO_API_KEYS = JSON.parse(localStorage.getItem('CATO_API_KEYS'));
 	var usrObj = CATO_API_KEYS[idsAry[2] + ';|;' + idsAry[3]];
-	var str = '<td>'+renderServers(obj.id+';|;endpoint',usrObj.endpoint)+'</td>';
-	str += '<td><input type="text" class="description" name="'+obj.id+';|;description" id="'+obj.id+';|;description" value="'+usrObj.description+'" /></td>';
+	var str = '<td><input type="text" class="description" name="'+obj.id+';|;description" id="'+obj.id+';|;description" value="'+usrObj.description+'" /></td>';
+	str += '<td>'+renderServers(obj.id+';|;endpoint',usrObj.endpoint)+'</td>';
 	str += '<td><input type="text" class="account_id" name="'+obj.id+';|;account_id" id="'+obj.id+';|;account_id" value="'+usrObj.account_id+'" readonly="readonly" /></td>';	
 	str += '<td><input type="password" class="api_key" name="' + obj.id + ';|;api_key" id="' + obj.id + ';|;api_key" value="' + usrObj.api_key +'" readonly="readonly" /></td>';	
 	str += '<td class="nobr">';
-	str += '  <a id="save;|;'+obj.id+'" class="cato_save_api_key ui-icon ui-icon-disk" title="Save"></a>';
-	str += '  <a id="cancel;|;'+obj.id+'" class="cato_cancel_api_key ui-icon ui-icon-cancel" title="Cancel"></a>';
+	str += '  <button id="save;|;'+obj.id+'" class="cato_save_api_key api-action-btn save-btn" title="Save">Save</button>';
+	str += '  <button id="cancel;|;'+obj.id+'" class="cato_cancel_api_key api-action-btn cancel-btn" title="Cancel">Cancel</button>';
 	str += '</td>';
 	$(obj).parent().parent().html(str);
 	initApiKeySettingsButtons();
@@ -77,13 +77,13 @@ function renderServers(id, selectedServer){
 }
 
 function set_renderApiKeyHTML(usrObj){
-	var str = '<td class="usrattr endpoint">' + (usrObj.endpoint!=undefined ? usrObj.endpoint : "Ireland") +'</td>';
-	str += '<td class="usrattr description">' + usrObj.description +'</td>';
+	var str = '<td class="usrattr description">' + usrObj.description +'</td>';
+	str += '<td class="usrattr endpoint">' + (usrObj.endpoint!=undefined ? usrObj.endpoint : "Ireland") +'</td>';
 	str += '<td class="usrattr account_id">'+usrObj.account_id+'</td>';
 	str += '<td class="usrattr api_key">'+starStr.substr(0,usrObj.api_key.length)+'</td>';
 	str += '<td id="td_' + usrObj.description + ';|;' + usrObj.account_id + ';|;' + usrObj.api_key + '">';
-	str += '  <a id="edit;|;' + usrObj.description + ';|;' + usrObj.account_id + ';|;' + usrObj.api_key +'" class="settings_btn cato_edit_api_key ui-icon ui-icon-pencil" title="Edit"></a>';
-	str += '  <a id="del;|;' + usrObj.description + ';|;' + usrObj.account_id + ';|;' + usrObj.api_key +'" class="settings_btn cato_delete_api_key ui-icon ui-icon-trash" title="Delete"></a>';
+	str += '  <button id="edit;|;' + usrObj.description + ';|;' + usrObj.account_id + ';|;' + usrObj.api_key +'" class="settings_btn cato_edit_api_key api-action-btn cancel-btn" title="Edit"><span class="ui-icon ui-icon-pencil"></span>Edit</button>';
+	str += '  <button id="del;|;' + usrObj.description + ';|;' + usrObj.account_id + ';|;' + usrObj.api_key +'" class="settings_btn cato_delete_api_key api-action-btn delete-btn" title="Delete"><span class="ui-icon ui-icon-trash"></span>Delete</button>';
 	str += '</td>';
 	return str;
 }

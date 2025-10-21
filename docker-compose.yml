@@ -1,15 +1,27 @@
 services:
   cato-api-explorer:
     container_name: cato-api-explorer
-    image: ghcr.io/catonetworks/cato-api-explorer:latest
-    #build:
-    #  context: .
-    #  dockerfile: Dockerfile
-    #volumes:
-    #- ./src/:/var/www/html
+    # image: ghcr.io/catonetworks/cato-api-explorer:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+    - ./src/:/var/www/html
     ports:
-    - 8080:8080
+    - 8084:8080
     - 8443:443
     environment:
       TZ: ${TZ:-UTC}
       CONTAINER_NAME: cato-api-explorer
+
+  cato-api-explorer-dev:
+    container_name: cato-api-explorer-dev
+    image: ghcr.io/catonetworks/cato-api-explorer:latest
+    ports:
+    - 8080:8080
+    environment:
+      TZ: ${TZ:-UTC}
+      CONTAINER_NAME: cato-api-explorer-dev
+
+
+  

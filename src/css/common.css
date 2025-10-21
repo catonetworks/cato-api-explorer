@@ -1,21 +1,1291 @@
+/* CSS Variables for Theme Support - Default Dark Theme */
+:root {
+	--bg-primary: #1e293b;
+	--bg-secondary: #334155;
+	--bg-tertiary: #475569;
+	--bg-card: #2d3748;
+	--text-primary: #f8fafc;
+	--text-secondary: #e2e8f0;
+	--text-muted: #94a3b8;
+	--border-primary: #475569;
+	--border-secondary: #64748b;
+	--accent-primary: #00d4aa;
+	--accent-secondary: #3b82f6;
+	--accent-hover: #00b896;
+	--success: #10b981;
+	--warning: #f59e0b;
+	--error: #ef4444;
+	--shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+}
 
-body { font: 62.5% "Trebuchet MS", sans-serif; font-size: .75em;  
-	background-color:#fff; margin: 0; min-height: 100%; }
-#wrapper { margin: 0 auto; position: relative; width: 100%; }
-#header { background-color:#fff; background-size: cover; padding: 10px 0px 0px 10px; margin: 0 0 8px 0; height: 64px; border-bottom: 1px solid #cfd8dc; }
-/* #header { background: url('../images/bg_head_cut.png') top right no-repeat; background-size: auto; padding: 25px 0px 0px 25px; height: 105px; } */
-#logo { background: url('../images/cato-logo.svg') left center no-repeat; width:300px; height:54px; margin: 0 45px;  }
-/* #logo span.logo-text { background: url('../images/cato-logo.svg') left center no-repeat; width:300px; height:54px; margin-left: 45px;  } */
+/* Light theme override */
+[data-theme="light"] {
+	--bg-primary: #ffffff;
+	--bg-secondary: #f8fafc;
+	--bg-tertiary: #f1f5f9;
+	--bg-card: #ffffff;
+	--text-primary: #1e293b;
+	--text-secondary: #64748b;
+	--text-muted: #94a3b8;
+	--border-primary: #e2e8f0;
+	--border-secondary: #cbd5e1;
+	--accent-primary: #10b981;
+	--accent-hover: #059669;
+	--shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+	--imput-bg: rgba(0, 0, 0, 0.05);
+	--button1-color: #4338ca;
+	--button1-bg: #e0eaff;
+	--button1-bg-hover: #4f46e5;
+	--button1-color-hover: #fff;
+	--button2-color: #fee2e2;
+	--button2-bg: #dc2626;
+	--button2-bg-hover: #ef4444;
+	--button2-color-hover: #fff;
+}
+
+/* Dark theme colors */
+[data-theme="dark"] {
+	--bg-primary: #1e293b;
+	--bg-secondary: #334155;
+	--bg-tertiary: #475569;
+	--bg-card: #2d3748;
+	--text-primary: #f8fafc;
+	--text-secondary: #e2e8f0;
+	--text-muted: #94a3b8;
+	--border-primary: #475569;
+	--border-secondary: #64748b;
+	--accent-primary: #00d4aa;
+	--accent-secondary: #3b82f6;
+	--accent-hover: #00b896;
+	--success: #10b981;
+	--warning: #f59e0b;
+	--error: #ef4444;
+	--shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+	--imput-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Modern Base Styles */
+body, html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	overflow-x: auto;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+	font-size: 14px;
+	line-height: 1.5;
+	background: var(--bg-primary);
+	color: var(--text-primary);
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#wrapper {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	position: relative;
+	width: 100%;
+}
+
+
+/* Top Header */
+#topHeader {
+	background: var(--bg-card);
+	border-bottom: 1px solid var(--border-primary);
+	padding: 16px 24px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: sticky;
+	top: 0;
+	z-index: 1001;
+	box-shadow: var(--shadow);
+}
+
+#topHeader .header-left {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+#topHeader .logo-text {
+	color: var(--accent-primary);
+	font-size: 24px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+#topHeader .header-right {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.header-btn {
+	background: var(--bg-secondary);
+	border: 1px solid var(--border-primary);
+	border-radius: 8px;
+	padding: 8px 16px;
+	color: var(--text-secondary);
+	text-decoration: none;
+	font-size: 14px;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	cursor: pointer;
+}
+
+.header-btn:hover {
+	background: var(--bg-tertiary);
+	border-color: var(--border-secondary);
+	color: var(--text-primary);
+	text-decoration: none;
+}
+
+.header-btn.primary {
+	background: var(--accent-secondary);
+	border-color: var(--accent-secondary);
+	color: white;
+}
+
+.header-btn.primary:hover {
+	background: #2563eb;
+	border-color: #2563eb;
+}
+
+/* Main Navigation */
+#contentWrapper {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 0;
+	background: transparent !important;
+	border: none !important;
+}
+
+#mainNav {
+	flex: 1;
+	position: relative;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+#mainNav.ui-widget {
+	background: transparent !important;
+	border: none !important;
+}
+
+#mainNav ul.ui-tabs-nav {
+	background: var(--bg-secondary) !important;
+	border: none !important;
+	border-bottom: 1px solid var(--border-primary) !important;
+	margin: 0;
+	padding: 12px 24px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 8px;
+	position: relative;
+	z-index: 1000;
+	box-shadow: none;
+}
+
+#mainNav ul.ui-tabs-nav li {
+	background: transparent !important;
+	border: none !important;
+	margin: 0;
+	padding: 0;
+	float: none;
+	list-style: none;
+	display: flex;
+	align-items: center;
+}
+
+/* Navigation tabs container */
+#mainNav ul.ui-tabs-nav li {
+	flex-shrink: 0;
+}
+
+/* Hide Settings tab in navigation (controlled by header button) */
+#mainNav ul.ui-tabs-nav li.hidden-tab {
+	display: none;
+}
+
+#mainNav ul.ui-tabs-nav li a {
+	display: block;
+	padding: 10px 20px;
+	text-decoration: none;
+	color: var(--text-secondary) !important;
+	font-weight: 500;
+	border-radius: 8px;
+	transition: all 0.2s ease;
+	font-size: 14px;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	background: transparent !important;
+	float: none;
+}
+
+#mainNav ul.ui-tabs-nav li a:hover {
+	color: var(--text-primary) !important;
+	background: rgba(255, 255, 255, 0.05) !important;
+}
+
+#mainNav ul.ui-tabs-nav li.ui-state-active a,
+#mainNav ul.ui-tabs-nav li a.ui-state-active {
+	background: rgba(16, 185, 129, 0.1) !important;
+	border-color: #999 !important;
+	color: var(--accent-primary) !important;
+}
+
+/* Light mode: Add light grey border for non-active navigation buttons */
+[data-theme="light"] #mainNav ul.ui-tabs-nav li:not(.ui-state-active) a:not(.ui-state-active) {
+	border-color: #d1d5db !important;
+}
+
+/* Tab panels */
+#mainNav .ui-tabs-panel {
+	background: transparent !important;
+	border: none !important;
+	padding: 24px !important;
+}
+
+/* Main Content Area */
+#CatoAPI {
+	display: flex;
+	flex-direction: column;
+	padding: 16px 16px 0 16px;
+	/* gap: 24px; */
+	background: var(--bg-primary);
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+#CatoAPI > table {
+	table-layout: auto; /* Allow columns to expand naturally based on content */
+	border-spacing: 0;
+	border-collapse: separate;
+	width: 100%;
+	min-width: 0; /* Allow table to shrink */
+}
+
+#CatoAPI > table > tbody > tr:first-child {
+	height: auto;
+}
+
+
+/* Execute Button Row */
+#CatoAPI > table > tbody > tr:first-child > td {
+	padding: 0 0 16px 0;
+	text-align: center;
+}
+
+#execute {
+	background: var(--accent-primary) !important;
+	color: white !important;
+	border: none !important;
+	border-radius: 8px !important;
+	padding: 12px 24px !important;
+	font-weight: 600 !important;
+	cursor: pointer !important;
+	transition: all 0.2s ease !important;
+	font-size: 14px !important;
+	opacity: 1 !important;
+}
+
+/* Light mode execute button - ensure it's green */
+[data-theme="light"] #execute {
+	background: #10b981 !important;
+}
+
+#execute:hover:not(.disabled) {
+	background: var(--accent-hover);
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-lg);
+}
+
+#execute.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	background: var(--text-muted);
+}
+
+/* Column Layout - Responsive sizing with natural expansion */
+#CatoAPI > table > tbody > tr:nth-child(1) > td {
+	vertical-align: top;
+	padding: 0 12px;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	transition: width 0.3s ease;
+	position: relative;
+	min-width: 0; /* Allow flex children to shrink */
+}
+
+/* Equal column distribution - start at 33% each, expand naturally based on content */
+#CatoAPI > table > tbody > tr:nth-child(1) > td:first-child {
+	width: 33.33%;
+	min-width: 250px;
+	max-width: none; /* Allow natural expansion */
+	padding-left: 0;
+}
+
+/* Second and third columns - equal distribution */
+#CatoAPI > table > tbody > tr:nth-child(1) > td:nth-child(2),
+#CatoAPI > table > tbody > tr:nth-child(1) > td:nth-child(3) {
+	width: 33.33%;
+	min-width: 250px;
+	max-width: none; /* Allow natural expansion */
+}
+
+
+#CatoAPI > table > tbody > tr:nth-child(1) > td:last-child {
+	padding-right: 0;
+}
+
+/* Responsive column behavior for smaller screens */
+@media (max-width: 1200px) {
+	/* On smaller screens, allow first column to be smaller */
+	#CatoAPI > table > tbody > tr:nth-child(1) > td:first-child {
+		min-width: 200px;
+	}
+	
+	#CatoAPI > table > tbody > tr:nth-child(1) > td:nth-child(2),
+	#CatoAPI > table > tbody > tr:nth-child(1) > td:nth-child(3) {
+		min-width: 200px;
+	}
+}
+
+/* Collapsed column states */
+#CatoAPI > table > tbody > tr:nth-child(1) > td.column-collapsed {
+	min-width: 40px !important;
+	max-width: 40px !important;
+	width: 40px !important;
+	overflow: hidden;
+}
+
+#CatoAPI > table > tbody > tr:nth-child(1) > td.column-collapsed fieldset {
+	width: 40px;
+	min-height: 40px;
+	padding: 0;
+	overflow: hidden;
+}
+
+#CatoAPI > table > tbody > tr:nth-child(1) > td.column-collapsed .fieldset-header {
+	writing-mode: vertical-lr;
+	text-orientation: mixed;
+	min-width: 40px;
+	width: 40px;
+	height: 120px;
+	justify-content: center;
+	text-align: center;
+	border-radius: 12px;
+	margin: 0;
+	padding: 8px 4px;
+}
+
+#CatoAPI > table > tbody > tr:nth-child(1) > td.column-collapsed .fieldset-header .collapse-button {
+	writing-mode: horizontal-tb;
+	margin: 0;
+	margin-top: 8px;
+}
+
+#CatoAPI > table > tbody > tr:nth-child(1) > td.column-collapsed fieldset > *:not(.fieldset-header) {
+	display: none;
+}
+
+/* Hide Code Examples section when API Response is collapsed */
+#api-response-column.column-collapsed div[style*="display: flex"],
+#api-response-column.column-collapsed #catoExamplesNav,
+#api-response-column.column-collapsed .codeExample,
+#api-response-column.column-collapsed a[href*="api.catonetworks.com"],
+#api-response-column.column-collapsed br[clear="all"] {
+	display: none !important;
+}
+
+/* Modern Fieldset Styling */
+fieldset {
+	display: flex;
+	flex-direction: column;
+	/* margin-bottom: 24px; */
+	box-sizing: border-box;
+	background: var(--bg-card);
+	border: 1px solid var(--border-primary);
+	border-radius: 12px;
+	padding: 20px;
+	box-shadow: var(--shadow);
+	position: relative;
+	overflow: visible;
+	flex-shrink: 0;
+	align-items: stretch;
+}
+	max-width: 100%; /* Prevent expansion beyond container */
+}
+
+/* Parent container for fieldset headers */
+td {
+	text-align: left !important;
+}
+
+/* Custom Fieldset Headers */
+.fieldset-header {
+	padding: 8px 16px;
+	font-weight: 600;
+	font-size: 12px;
+	color: var(--text-primary);
+	margin: 0 0 -1px 0;
+	border: 1px solid #0000A0;
+	border-bottom: none;
+	border-radius: 12px 12px 0 0;
+	background: var(--bg-card);
+	box-shadow: var(--shadow);
+	transition: all 0.3s ease;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+	z-index: 1;
+	text-align: left;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* Collapse Button - specific to column headers */
+.fieldset-header .collapse-button {
+	background: none !important;
+	border: none !important;
+	color: var(--text-secondary) !important;
+	cursor: pointer;
+	padding: 4px !important;
+	border-radius: 4px !important;
+	transition: all 0.2s ease;
+	font-size: 14px !important;
+	margin-left: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px !important;
+	height: 20px !important;
+	box-shadow: none !important;
+	outline: none !important;
+}
+
+.fieldset-header .collapse-button:hover {
+	background: var(--bg-secondary) !important;
+	color: var(--text-primary) !important;
+}
+
+.fieldset-header .collapse-button.collapsed::before {
+	content: '\25B6' !important;
+}
+
+.fieldset-header .collapse-button.expanded::before {
+	content: '\25BC' !important;
+}
+
+.fieldset-header .collapse-button::before {
+	content: '\25BC' !important; /* Default to expanded state */
+	display: inline-block;
+	font-family: inherit;
+}
+
+/* Light mode fieldset header styling */
+[data-theme="light"] .fieldset-header {
+	background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+	color: white !important;
+	border-color: #6366f1 !important;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Light mode fieldset styling */
+[data-theme="light"] fieldset {
+	background: #ffffff !important;
+	border-color: #d1d5db !important;
+}
+
+/* Light mode label and text styling */
+[data-theme="light"] label {
+	color: #374151 !important;
+}
+
+[data-theme="light"] td {
+	color: #374151 !important;
+}
+
+/* Light mode collapse button styling */
+[data-theme="light"] .fieldset-header .collapse-button {
+	color: rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-theme="light"] .fieldset-header .collapse-button:hover {
+	color: white !important;
+	background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Light mode header styling */
+[data-theme="light"] #topHeader {
+	background: #ffffff !important;
+	border-color: #e5e7eb !important;
+}
+
+[data-theme="light"] #topHeader .logo-text {
+	color: #6366f1 !important;
+}
+
+[data-theme="light"] .header-btn {
+	background: #f9fafb !important;
+	border-color: #d1d5db !important;
+	color: #6b7280 !important;
+}
+
+[data-theme="light"] .header-btn:hover {
+	background: #f3f4f6 !important;
+	border-color: #9ca3af !important;
+	color: #374151 !important;
+}
+
+[data-theme="light"] .header-btn.primary {
+	background: #3b82f6 !important;
+	border-color: #3b82f6 !important;
+	color: white !important;
+}
+
+[data-theme="light"] .header-btn.primary:hover {
+	background: #2563eb !important;
+	border-color: #2563eb !important;
+}
+
+/* Dark mode border color for fieldset headers and fieldsets */
+html[data-theme="dark"] fieldset {
+	border-color: #475569 !important;
+}
+
+html[data-theme="dark"] .fieldset-header {
+	border-color: #475569 !important;
+}
+
+/* Remove default fieldset legend styling */
+fieldset legend {
+	display: none;
+}
+
+/* Left column fieldsets - fit content only */
+fieldset:not(#catoAPIRequest):not(#catoAPIResponse) {
+	height: auto;
+	min-height: 60px;
+	flex-shrink: 0;
+}
+
+/* Request and Response fieldsets - natural height */
+#catoAPIRequest,
+#catoAPIResponse {
+	min-height: 500px;
+}
+
 #dialog_link {padding: .4em 1em .4em 20px; text-decoration: none; position: relative;}
-#dialog_link span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+/* #logo span.logo-text { background: url('../images/cato-logo.svg') left center no-repeat; width:300px; height:54px; margin-left: 45px;  } */
+/* Form Controls and Inputs - exclude jQuery UI buttons */
+input:not(.ui-button):not([type="submit"]):not([type="button"]):not(.collapse-button), 
+select:not(.ui-button), 
+textarea:not(.ui-button) {
+	background: var(--imput-bg) !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	border-radius: 8px !important;
+	padding: 10px 14px !important;
+	font-family: inherit;
+	font-size: 14px !important;
+	color: var(--text-primary) !important;
+	transition: all 0.2s ease;
+	box-sizing: border-box;
+}
+
+
+input:not(.ui-button):not([type="submit"]):not([type="button"]):not(.collapse-button):focus, 
+select:not(.ui-button):focus, 
+textarea:not(.ui-button):focus {
+	outline: none !important;
+	border-color: var(--accent-primary) !important;
+	box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+input:not(.ui-button):not([type="submit"]):not([type="button"]):not(.collapse-button):hover, 
+select:not(.ui-button):hover, 
+textarea:not(.ui-button):hover {
+	border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Light mode form element backgrounds */
+[data-theme="light"] input:not(.ui-button):not([type="submit"]):not([type="button"]):not(.collapse-button),
+[data-theme="light"] select:not(.ui-button),
+[data-theme="light"] textarea:not(.ui-button) {
+	border: 1px solid #d1d5db !important;
+	color: #374151 !important;
+}
+
+[data-theme="light"] input:not(.ui-button):not([type="submit"]):not([type="button"]):not(.collapse-button):hover,
+[data-theme="light"] select:not(.ui-button):hover,
+[data-theme="light"] textarea:not(.ui-button):hover {
+	border-color: #9ca3af !important;
+}
+
+[data-theme="light"] input:not(.ui-button):not([type="submit"]):not([type="button"]):not(.collapse-button):focus,
+[data-theme="light"] select:not(.ui-button):focus,
+[data-theme="light"] textarea:not(.ui-button):focus {
+	border-color: #6366f1 !important;
+	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+[data-theme="light"] .searchable-dropdown input {
+	background: #ffffff !important;
+	border: 1px solid #d1d5db !important;
+	color: #374151 !important;
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+/* Textarea Styling */
+textarea {
+	width: 100%;
+	/* height: 200px; */
+	box-sizing: border-box;
+	resize: both !important;
+	font-family: 'Monaco', 'Courier New', 'SF Mono', 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace !important;
+	font-size: 13px;
+	line-height: 1.4;
+	background: rgba(0, 0, 0, 0.3) !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	/* min-height: 150px; */
+	min-width: 120px !important;
+	max-width: 100%; /* Prevent exceeding container */
+	flex-shrink: 1; /* Allow shrinking in flex containers */
+}
+
+textarea#catoQuery,
+textarea#catoVariables {
+	height: 45%;
+	min-height: 235px;
+	max-height: none;
+	background: var(--imput-bg) !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	resize: both !important;
+	max-width: 100%;
+	flex-shrink: 1;
+}
+
+textarea#catoResult {
+	min-height: 365px;
+	resize: both !important;
+	background: var(--imput-bg) !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	max-width: 100%;
+	flex-shrink: 1;
+}
+
+/* Form Labels */
+label {
+	font-weight: 600;
+	color: var(--text-primary);
+	margin-bottom: 6px;
+	display: block;
+	font-size: 14px;
+}
+
+/* Table Styling */
+.tableColL {
+	width: 100%;
+}
+
+.tableColL td {
+	padding: 8px 4px;
+	vertical-align: top;
+}
+
+.tableColL td:first-child {
+	text-align: right;
+	padding-right: 12px;
+	width: 120px;
+	white-space: nowrap;
+}
+
+.tableColL td:last-child {
+	padding-left: 4px;
+	padding-right: 8px;
+}
+
+/* Specific styling for catoBodyParams tables to contain checkboxes */
+#catoBodyParams .tableColL td:last-child {
+	padding-right: 24px; /* Extra padding to contain checkbox */
+	min-width: 200px; /* Ensure minimum width for content + checkbox */
+}
+
+/* Form Element Sizing - Leave space for toggle checkboxes */
+#catoBodyParams select,
+#catoBodyParams input {
+	width: calc(100% - 30px); /* Leave space for toggle checkbox */
+	max-width: calc(100% - 30px);
+	min-width: 150px; /* Maintain minimum usable width */
+	box-sizing: border-box;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#catoBodyParams select.searchParam {
+	width: 70% !important; /* 30% less to accommodate search button and toggle checkbox */
+	max-width: 70% !important;
+	min-width: 120px !important; /* Maintain minimum usable width */
+	height: 110px !important;
+	box-sizing: border-box !important;
+	display: inline-block !important;
+	vertical-align: middle !important;
+}
+
+#catoBodyParams input.searchParam {
+	width: 70% !important; /* 30% less to accommodate search button and toggle checkbox */
+	max-width: 70% !important;
+	min-width: 100px !important; /* Maintain minimum usable width */
+	box-sizing: border-box !important;
+	display: inline-block !important;
+	vertical-align: middle !important;
+}
+
+/* Additional specific selectors to ensure searchParam width is applied */
+input[id*="search"].searchParam,
+select[id*="search"].searchParam,
+input.searchParam[placeholder*="Search"],
+input[id*="xxsearch"],
+select[id*="xxleft"],
+.searchParam {
+	width: 70% !important;
+	max-width: 70% !important;
+	box-sizing: border-box !important;
+	display: inline-block !important;
+	vertical-align: middle !important;
+}
+
+/* Ultra-specific selector for dynamic search elements */
+#catoBodyParams input[id$="xxsearch"],
+#catoBodyParams select[id$="xxleft"],
+#catoBodyParams .searchParam,
+.tableColL .searchParam,
+table .searchParam {
+	width: 75% !important;
+	max-width: 75% !important;
+	min-width: 100px !important;
+}
+
+/* Force override any inline styles on searchParam elements */
+[class*="searchParam"] {
+	width: 70% !important;
+	max-width: 70% !important;
+}
+
+/* Specific rules for API Authentication column form elements */
+/* #api-authentication-column .searchable-dropdown  */
+#api-authentication-column select,
+#api-authentication-column input:not(.ui-button,.searchParam)
+{
+	width: 100% !important;
+	max-width: 100% !important;
+	box-sizing: border-box !important;
+}
+
+#api-authentication-column .searchable-dropdown input {
+	width: 100% !important;
+	max-width: 100% !important;
+}
+
+#catoResponseObject textarea {
+	width: 100%;
+	height: 200px;
+}
+
+#catoResponseObject textarea.parent,
+#catoBodyParams textarea.parent {
+	height: 30px;
+	min-width: 150px;
+	max-width: calc(100% - 30px); /* Leave space for toggle checkbox */
+	resize: both !important;
+	flex-shrink: 1;
+	width: calc(100% - 30px); /* Leave space for toggle checkbox */
+	display: inline-block;
+	vertical-align: middle;
+}
+
+/* Code Examples */
+.codeExample textarea {
+	height: 60px;
+	width: 100%;
+	min-height: 40px;
+	max-width: none;
+	background: var(--bg-tertiary);
+	border: 1px solid var(--border-primary);
+	padding: 12px;
+	font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+	font-size: 12px;
+	resize: both !important;
+	box-sizing: border-box;
+}
+
+/* Specific styling for all code example textareas to fill container naturally */
+#catoCLIUnixExample,
+#catoCLIWinExample,
+#catoPythonExample,
+#catoCurlExample {
+	width: 100% !important;
+	max-width: 100% !important;
+	box-sizing: border-box;
+}
+
+/* Modern Searchable Dropdown */
+.searchable-dropdown {
+	position: relative;
+	width: 100%; /* Fill available width */
+	max-width: 100%;
+	min-width: 150px; /* Maintain minimum usable width */
+	display: block; /* Take full width instead of inline-block */
+	box-sizing: border-box;
+}
+
+.searchable-dropdown input {
+	width: 100%; /* Fill container width */
+	max-width: 100%;
+	padding: 10px 14px !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	border-radius: 8px !important;
+	box-sizing: border-box;
+	background: rgba(0, 0, 0, 0.3) !important;
+	color: var(--text-primary) !important;
+	transition: all 0.2s ease;
+}
+
+.searchable-dropdown input:focus {
+	border-color: var(--accent-primary) !important;
+	box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+.dropdown-options {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	min-width: 100%;
+	max-width: 600px;
+	max-height: min(70vh, 600px);
+	overflow-y: auto;
+	background: var(--bg-card);
+	border: 1px solid var(--border-primary);
+	border-top: none;
+	border-radius: 0 0 6px 6px;
+	z-index: 1000;
+	display: none;
+	box-shadow: var(--shadow-lg);
+	white-space: nowrap;
+}
+
+.dropdown-options.show {
+	display: block;
+}
+
+.dropdown-group {
+	border-bottom: 1px solid var(--border-primary);
+}
+
+.dropdown-group:last-child {
+	border-bottom: none;
+}
+
+.dropdown-group-header {
+	padding: 8px 12px;
+	background: var(--bg-secondary);
+	font-weight: 600;
+	font-size: 12px;
+	color: var(--text-muted);
+	border-bottom: 1px solid var(--border-primary);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.dropdown-option {
+	padding: 10px 12px;
+	cursor: pointer;
+	border-bottom: 1px solid var(--border-primary);
+	color: var(--text-primary);
+	font-size: 13px;
+	transition: all 0.15s ease;
+	text-align: left;
+}
+
+.dropdown-option:last-child {
+	border-bottom: none;
+}
+
+.dropdown-option:hover,
+.dropdown-option.highlighted {
+	background-color: var(--bg-secondary);
+	color: var(--accent-primary);
+}
+
+.dropdown-option.selected {
+	background-color: var(--accent-primary);
+	color: white;
+}
+
+.no-results {
+	padding: 12px;
+	text-align: center;
+	color: var(--text-muted);
+	font-style: italic;
+}
+
+/* Code Examples Navigation - Override main nav positioning */
+#catoExamplesNav {
+	padding: 0 !important;
+	border: none !important;
+	margin-top: 16px;
+	background: transparent !important;
+	position: relative !important; /* Override fixed positioning */
+	width: 100% !important;
+	box-sizing: border-box;
+}
+
+#catoExamplesNav .ui-tabs-panel {
+	padding: 12px !important;
+	border: none !important;
+	background: var(--bg-card) !important;
+	border-radius: 0;
+	margin: 0 !important;
+	margin-top: 0 !important;
+}
+
+/* Override main nav tab styling for code examples */
+#catoExamplesNav .ui-tabs-nav {
+	padding: 0 5px !important;
+	border: none !important;
+	background: transparent !important;
+	display: flex !important;
+	gap: 4px;
+	margin: 0 !important;
+	margin-bottom: 0 !important;
+	position: relative !important; /* Override fixed positioning */
+	top: auto !important;
+	left: auto !important;
+	transform: none !important;
+	z-index: auto !important;
+	justify-content: flex-start !important;
+	width: 100% !important;
+	box-sizing: border-box;
+}
+
+#catoExamplesNav .ui-tabs-nav li {
+	list-style: none;
+	margin: 0;
+	border: none !important;
+	background: transparent !important;
+	float: none !important;
+}
+
+#catoExamplesNav .ui-tabs-nav li a {
+	display: block;
+	padding: 8px 16px !important;
+	background: var(--bg-secondary) !important;
+	border: 1px solid var(--border-primary) !important;
+	border-radius: 6px 6px 0 0 !important;
+	text-decoration: none;
+	color: var(--text-secondary) !important;
+	font-size: 12px !important;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	border-bottom: none;
+	float: none !important;
+}
+
+#catoExamplesNav .ui-tabs-nav li a:hover {
+	background: var(--bg-tertiary) !important;
+	color: var(--text-primary) !important;
+}
+
+#catoExamplesNav .ui-tabs-nav .ui-state-active a,
+#catoExamplesNav .ui-tabs-nav .ui-tabs-active a {
+	background: var(--accent-primary) !important;
+	color: white !important;
+	border-color: var(--accent-primary) !important;
+}
+
+/* Fix code example textareas */
+#catoExamplesNav textarea {
+	background: var(--bg-tertiary) !important;
+	border: 1px solid var(--border-primary) !important;
+	border-radius: 8px !important;
+	color: var(--text-primary) !important;
+	font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace !important;
+	padding: 16px !important;
+	font-size: 13px !important;
+	line-height: 1.4 !important;
+	box-shadow: var(--shadow) !important;
+}
+
+/* Fix jQuery UI overrides for dark theme */
+.ui-widget {
+	background: transparent !important;
+	border: none !important;
+	color: var(--text-primary) !important;
+}
+
+.ui-widget-content {
+	background: transparent !important;
+	border: none !important;
+	color: var(--text-primary) !important;
+}
+
+.ui-widget-header {
+	background: transparent !important;
+	border: none !important;
+	color: var(--text-primary) !important;
+}
+
+/* Fix tabs background */
+.ui-tabs {
+	background: transparent !important;
+	border: none !important;
+}
+
+.ui-tabs .ui-tabs-panel {
+	background: var(--bg-card) !important;
+	border: 1px solid var(--border-primary) !important;
+	border-radius: 8px;
+	padding: 16px !important;
+}
+
+.ui-tabs .ui-tabs-nav {
+	background: transparent !important;
+	border: none !important;
+}
+
+.ui-tabs .ui-tabs-nav li {
+	background: transparent !important;
+	border: none !important;
+}
+
+.ui-tabs .ui-tabs-nav li a {
+	background: var(--bg-secondary) !important;
+	color: var(--text-secondary) !important;
+	border: 1px solid var(--border-primary) !important;
+	border-radius: 6px !important;
+	margin-right: 4px;
+}
+
+.ui-tabs .ui-tabs-nav li.ui-state-active a,
+.ui-tabs .ui-tabs-nav li.ui-tabs-active a {
+	background: var(--accent-primary) !important;
+	color: white !important;
+	border-color: var(--accent-primary) !important;
+}
+
+.ui-tabs .ui-tabs-nav li a:hover {
+	background: var(--bg-tertiary) !important;
+	color: var(--text-primary) !important;
+}
+
+/* Footer styling */
+#footer {
+	background: transparent !important;
+	border-top: 1px solid var(--border-primary) ;
+	padding: 16px 24px;
+}
+
+.footer {
+	background: transparent !important;
+	border: none !important;
+	color: var(--text-muted) !important;
+}
+
+.footer p {
+	color: var(--text-muted) !important;
+	margin: 0;
+}
+
+.footer a {
+	color: var(--accent-primary) !important;
+	text-decoration: none;
+}
+
+.footer a:hover {
+	color: var(--accent-hover) !important;
+	text-decoration: underline;
+}
+
+/* Force dark theme on all content areas */
+#CatoAPI,
+#CatoPOPs,
+#settings {
+	background: var(--bg-primary) !important;
+	color: var(--text-primary) !important;
+}
+
+/* Settings page styling */
+#settingsNav {
+	background: transparent !important;
+	color: var(--text-primary) !important;
+}
+
+#settingsNav table {
+	background: transparent !important;
+	color: var(--text-primary) !important;
+}
+
+#settingsNav td {
+	background: transparent !important;
+	color: var(--text-primary) !important;
+}
+
+
+/* Override any remaining white backgrounds */
+* {
+	box-sizing: border-box;
+}
+
+body * {
+	/* Force inheritance of theme colors */
+}
+
+/* Force table backgrounds */
+table {
+	background: transparent !important;
+	color: var(--text-primary) !important;
+}
+
+td, th {
+	background: transparent !important;
+	color: var(--text-primary) !important;
+}
+
+/* Force textarea resize behavior - override any jQuery UI conflicts */
+textarea,
+textarea#catoQuery,
+textarea#catoVariables, 
+textarea#catoResult,
+.codeExample textarea,
+#catoExamplesNav textarea {
+	resize: both !important;
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+	accent-color: var(--accent-primary);
+	background: var(--bg-secondary);
+	border: 1px solid var(--border-primary);
+	margin: 2px 4px 2px 0;
+	vertical-align: middle;
+	position: relative;
+	z-index: 1;
+}
+
+/* Site IDs Selection Area */
+.site-selection {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-top: 16px;
+}
+
+.site-selection label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text-secondary);
+	margin-bottom: 8px;
+}
+
+.site-search {
+	width: 100%;
+	padding: 8px 12px;
+	margin-bottom: 12px;
+}
+
+.site-controls {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	justify-content: flex-end;
+	margin-bottom: 12px;
+}
+
+.site-item {
+	background: var(--bg-secondary);
+	border: 1px solid var(--border-primary);
+	border-radius: 8px;
+	padding: 12px 16px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: 40px;
+	margin-bottom: 8px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.site-item:last-child {
+	margin-bottom: 0;
+}
+
+.site-item:hover {
+	background: var(--bg-tertiary);
+	border-color: var(--border-secondary);
+}
+
+.site-item.selected {
+	background: var(--accent-primary) !important;
+	color: white !important;
+	border-color: var(--accent-primary) !important;
+}
+
+.site-item .site-name {
+	font-weight: 500;
+	font-size: 14px;
+	color: inherit;
+}
+
+.nav-buttons {
+	display: flex;
+	gap: 4px;
+	flex-wrap: wrap;
+}
+
+.nav-button {
+	width: 32px;
+	height: 32px;
+	border: 1px solid var(--border-primary);
+	background: var(--bg-secondary);
+	border-radius: 6px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 12px;
+	color: var(--text-secondary);
+	transition: all 0.2s ease;
+	font-weight: bold;
+	user-select: none;
+}
+
+.nav-button:hover {
+	background: var(--bg-tertiary);
+	border-color: var(--border-secondary);
+	color: var(--text-primary);
+}
+
 ul#icons {margin: 0; padding: 0;}
-ul#icons li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
+ul#icons li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left; list-style: none;}
 ul#icons span.ui-icon {float: left; margin: 0 4px;}
+#dialog_link {padding: .4em 1em .4em 20px; text-decoration: none; position: relative;}
+#dialog_link span.ui-icon {margin: 0 5px 0 0; position: absolute; left: .2em; top: 50%; margin-top: -8px;}
 .overlay { opacity: 0.3; }
-.button { float:right; }
+/* Specific button positioning - avoid conflicting with jQuery UI */
+/* Remove generic .button rule that interfered with jQuery UI buttons */
+/* .button { float:right; } - REMOVED */
 .aarowBtn { text-decoration: none; }
 .btn { float:right; }
-#execute { margin: 0px 10px;}
 .info {
     background: url('../images/icon_info_16x16.jpg') center center no-repeat;
     display: inline-block;
@@ -73,11 +1343,10 @@ ul#icons span.ui-icon {float: left; margin: 0 4px;}
 .wrap3 { padding:0 4px 4px 0; background:url('../images/shadow/corner_tr.gif') right top no-repeat;  }
 .wrap3 div { display:block; }
 
-#contentWrapper { margin: 0px 50px; }
+#contentWrapper { margin: 0; }
 #contentWrapper h1 { padding:7px 15px 10px 15px; margin:0px; }
 #contentWrapper .content { padding: 15px 15px 5px; overflow: auto; }
 #contentWrapper .content#mainNav { padding: 0 15px 5px;  }
-#contentWrapper .footer { padding: 0 15px; }
 #contentWrapper .footer { padding: 0 15px; }
 #contentWrapper div.colL { float:left; display: block; width: 400px; }
 #contentWrapper div.colR { float:right; display: block; width: auto; text-align: left; }
@@ -128,14 +1397,7 @@ input.listInput { background:url('../images/down.png') right center no-repeat; p
 
 .disabled { color:#444; opacity: 0.5; filter: alpha(opacity=50); }
 .content input.disabled { padding: 3px; border: #ccc 1px solid; } 
-.content input.disabled:focus { color: #000; border-color: #999999; } 
-
-fieldset { padding: 0; }
-
-fieldset legend {
-	padding:5px 10px 5px;
-	font-weight:bold;
-}
+.content input.disabled:focus { color: #000; border-color: #999999; }
 
 /* layout modifications for flex-box */
 /* 
@@ -179,6 +1441,11 @@ textarea#catoResult {
 
 .fieldwrapper fieldset.nested_param {
 	border: 1px solid #999;
+	display: none;
+}
+
+/* Hide nested buttons row initially */
+.nested-buttons-row {
 	display: none;
 }
 
@@ -249,9 +1516,31 @@ table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSo
 /* Site Templates */
 table th.min, table td.min { width:24px; }
 
-.disabled { color:#444; opacity: 0.5; filter: alpha(opacity=50); pointer-events: none; }
 .error { color: red; padding: 2px 0 3px 0px; border: 2px solid red; }
-.errors { color: red; background:url('../images/error.jpg') left top no-repeat; padding: 2px 0 3px 12px; border: 2px solid red; }
+/* Error styling with maximum specificity to override form inputs */
+input:not(.ui-button):not([type="submit"]):not([type="button"]):not(.collapse-button).errors,
+select:not(.ui-button).errors,
+textarea:not(.ui-button).errors,
+input.errors,
+select.errors,
+textarea.errors {
+	color: white !important;
+	background: #ef4444 !important;
+	border: 2px solid #dc2626 !important;
+	padding: 4px 8px !important;
+	border-radius: 4px !important;
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Generic .errors class for backwards compatibility */
+.errors {
+	color: white !important;
+	background: #ef4444 !important;
+	border: 2px solid #dc2626 !important;
+	padding: 4px 8px !important;
+	border-radius: 4px !important;
+	box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
 .highlight { padding: 2px 0 3px 0px; border: 2px solid orange; }
 #requestUrl.errors { width:498px !important; background:url('../images/error.jpg') left top no-repeat; }
 textarea#SSrequestUrl { height:45px; resize:none; }
@@ -271,15 +1560,13 @@ select.multiPolicy { height: 505px; }
     font: -webkit-small-control;
     overflow: auto;
     padding: 2px;
-    resize: both;
-} 
+    resize: vertical;
+}
 
 #requestUrl { width:510px; }
 .tableColL { width: 400px; }
 table.top td { vertical-align: top; }
 label { font-weight: bold; white-space: nowrap; }
-fieldset { margin: 0px 0px 10px 0px; padding: 10px; border-color:#0000A0; }
-legend { margin: 0px 0px 0px 10px; font-size: 1.5em; color: #0000A0; }
 #sites legend { font-size: 1.25em; }
 .ui-icon { display: inline-block; }
 ul.ui-autocomplete { overflow: scroll; max-height: 280px; height: auto; }
@@ -291,7 +1578,16 @@ ul.ui-autocomplete { overflow: scroll; max-height: 280px; height: auto; }
 .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
 .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
 .ui-tabs-vertical .ui-tabs-panel { padding: 1em; width: 100%; }
-.ui-button { width: min-content !important; }
+.ui-button { 
+	background: var(--button1-bg) !important;
+	color: var(--button1-color) !important;
+	padding: .4em 1em !important;
+	font-size: .9em !important;
+}
+.ui-button:hover { 
+	background: var(--button1-bg-hover) !important;
+	color: var(--button1-color-hover) !important;
+}
 .links_row {
 	display: flex;
 	flex-direction: row;
@@ -299,6 +1595,196 @@ ul.ui-autocomplete { overflow: scroll; max-height: 280px; height: auto; }
 	gap: 10px;
 	justify-content: flex-end;
 	padding: 5px 0 0 0;
+}
+
+/* Nested button row styling - removed background rule to avoid conflicts */
+
+.nested-buttons-cell {
+	padding: 8px 0;
+	text-align: right;
+}
+
+.nested-buttons-cell .links_row {
+	justify-content: flex-end;
+	padding: 0;
+	margin-top: 8px;
+}
+
+/* Enhanced inline toggle button styling */
+.toggleField.inline-toggle {
+	display: inline-block;
+	margin-left: 8px;
+	vertical-align: middle;
+	width: 20px !important;
+	height: 20px !important;
+	padding: 0 !important;
+	font-size: 14px !important;
+	border-radius: 4px !important;
+	background: var(--bg-secondary) !important;
+	border: 2px solid var(--border-primary) !important;
+	color: var(--text-muted) !important;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	position: relative;
+	text-align: center;
+	line-height: 16px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.toggleField.inline-toggle:hover {
+	background: var(--accent-primary) !important;
+	border-color: var(--accent-primary) !important;
+	color: white !important;
+	transform: scale(1.1);
+	box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+/* Active state when parameter is enabled */
+.toggleField.inline-toggle.ui-icon-cancel {
+	background: var(--accent-primary) !important;
+	border-color: var(--accent-primary) !important;
+	color: white !important;
+}
+
+/* Inactive state when parameter is disabled */
+.toggleField.inline-toggle.ui-icon-circle-plus {
+	background: var(--bg-secondary) !important;
+	border-color: var(--border-primary) !important;
+	color: var(--text-muted) !important;
+}
+
+.toggleField.inline-toggle.ui-icon-circle-plus:hover {
+	background: var(--success) !important;
+	border-color: var(--success) !important;
+	color: white !important;
+}
+
+/* Add tooltip-like indication for toggle buttons */
+.toggleField.inline-toggle {
+	title: "Click to toggle this parameter";
+}
+
+.toggleField.inline-toggle.ui-icon-cancel::after {
+	content: '✓';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 1;
+}
+
+.toggleField.inline-toggle.ui-icon-circle-plus::after {
+	content: '+';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 1;
+}
+
+/* Light mode enhanced toggle styling */
+[data-theme="light"] .toggleField.inline-toggle {
+	background: #ffffff !important;
+	border-color: #d1d5db !important;
+	color: #6b7280 !important;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] .toggleField.inline-toggle:hover {
+	background: #6366f1 !important;
+	border-color: #6366f1 !important;
+	color: white !important;
+	box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3) !important;
+}
+
+/* Light mode active state */
+[data-theme="light"] .toggleField.inline-toggle.ui-icon-cancel {
+	background: #6366f1 !important;
+	border-color: #6366f1 !important;
+	color: white !important;
+}
+
+/* Light mode inactive state */
+[data-theme="light"] .toggleField.inline-toggle.ui-icon-circle-plus {
+	background: #ffffff !important;
+	border-color: #d1d5db !important;
+	color: #6b7280 !important;
+}
+
+[data-theme="light"] .toggleField.inline-toggle.ui-icon-circle-plus:hover {
+	background: #10b981 !important;
+	border-color: #10b981 !important;
+	color: white !important;
+}
+
+/* Ensure proper spacing in table cells with form elements and toggle buttons */
+.fieldwrapper td {
+	white-space: nowrap;
+}
+
+.fieldwrapper td > * {
+	vertical-align: middle;
+}
+
+/* Recursive nesting support with indentation */
+.nested_param {
+	margin-left: 0;
+	padding-left: 0;
+}
+
+.nested_param .tableColL {
+	margin-left: 20px;
+	border-left: 2px solid var(--border-primary);
+	padding-left: 16px;
+}
+
+.nested_param .nested_param .tableColL {
+	margin-left: 20px;
+	border-left: 2px solid var(--border-secondary);
+}
+
+.nested_param .nested_param .nested_param .tableColL {
+	border-left: 2px solid var(--text-muted);
+}
+
+/* Light mode recursive nesting */
+[data-theme="light"] .nested_param .tableColL {
+	border-left-color: #e5e7eb;
+}
+
+[data-theme="light"] .nested_param .nested_param .tableColL {
+	border-left-color: #d1d5db;
+}
+
+[data-theme="light"] .nested_param .nested_param .nested_param .tableColL {
+	border-left-color: #9ca3af;
+}
+
+/* Light mode error styling with maximum specificity */
+[data-theme="light"] input:not(.ui-button):not([type="submit"]):not([type="button"]):not(.collapse-button).errors,
+[data-theme="light"] select:not(.ui-button).errors,
+[data-theme="light"] textarea:not(.ui-button).errors,
+[data-theme="light"] input.errors,
+[data-theme="light"] select.errors,
+[data-theme="light"] textarea.errors {
+	color: white !important;
+	background: #dc2626 !important;
+	border: 2px solid #b91c1c !important;
+	padding: 4px 8px !important;
+	border-radius: 4px !important;
+	box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+/* Generic light mode .errors for backwards compatibility */
+[data-theme="light"] .errors {
+	color: white !important;
+	background: #dc2626 !important;
+	border-color: #b91c1c !important;
+	box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
 }
 #header_bar {
 	background: #0084d6;
@@ -326,11 +1812,142 @@ ul.ui-autocomplete { overflow: scroll; max-height: 280px; height: auto; }
 	padding: 8px 0px 8px 5px; display: block; 
 }
 #settingsNav table { width: auto; }
-#settingsNav #cato_api_keys { width: 600px; } 
-#settingsNav thead { text-align: left; }
-#settingsNav td { margin: 1px; }
-.usrattr { border: 1px solid #fff ; }
-#settingsNav td.editable { border: 1px solid #D3D3D3 ; }
+/* API Keys Table Styling */
+#cato_api_keys {
+	width: auto;
+	max-width: 100%;
+	display: flex;
+	justify-content: center;
+	margin: 20px 0;
+}
+
+#cato_api_keys_tbl {
+	width: auto !important;
+	min-width: 800px;
+	border-collapse: collapse;
+	background: var(--bg-card);
+	border: 1px solid var(--border-primary);
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: var(--shadow);
+}
+
+#cato_api_keys_tbl thead {
+	background: var(--bg-secondary);
+	text-align: left;
+}
+
+#cato_api_keys_tbl th {
+	padding: 12px 16px;
+	font-weight: 600;
+	color: var(--text-primary);
+	border-bottom: 1px solid var(--border-primary);
+	white-space: nowrap;
+}
+
+#cato_api_keys_tbl td {
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--border-primary);
+	color: var(--text-primary);
+	vertical-align: middle;
+}
+
+#cato_api_keys_tbl tbody tr:last-child td {
+	border-bottom: none;
+}
+
+#cato_api_keys_tbl tbody tr:hover {
+	background: var(--bg-secondary);
+}
+
+.usrattr { 
+	border: 1px solid var(--border-primary);
+	background: transparent;
+	color: var(--text-primary);
+}
+
+.usrattr.editable { 
+	border: 1px solid var(--accent-primary);
+	background: var(--bg-secondary);
+}
+
+/* API Action Buttons */
+.api-action-btn {
+	padding: 6px 12px;
+	border: 1px solid var(--border-primary);
+	border-radius: 6px;
+	background: var(--bg-secondary);
+	color: var(--text-primary);
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	margin: 0 2px;
+	text-transform: capitalize;
+}
+
+.api-action-btn:hover {
+	background: var(--bg-tertiary);
+	border-color: var(--border-secondary);
+}
+
+.api-action-btn.add-btn {
+	background: var(--accent-primary);
+	color: white;
+	border-color: var(--accent-primary);
+}
+
+.api-action-btn.add-btn:hover {
+	background: var(--accent-hover);
+	border-color: var(--accent-hover);
+}
+
+.api-action-btn.save-btn {
+	background: var(--button1-bg);
+	color: var(--button1-color);
+	border-color: var(--success);
+}
+
+.api-action-btn.save-btn:hover {
+	background: var(--button1-bg-hover);
+	color: var(--button1-color-hover);
+	border-color: #059669;
+}
+
+.api-action-btn.delete-btn {
+	background: var(--button2-bg);
+	color: var(--button2-color);
+	border-color: var(--error);
+}
+
+.api-action-btn.delete-btn:hover {
+	background: var(--button2-bg-hover);
+	color: var(--button2-color-hover);
+	border-color: #dc2626;
+}
+
+.api-action-btn.edit-btn {
+	background: var(--button1-bg);
+	color: var(--button1-color);
+	border-color: var(--warning);
+}
+
+.api-action-btn.edit-btn:hover {
+	background: var(--button1-bg-hover);
+	color: var(--button1-color-hover);
+	border-color: #d97706;
+}
+
+.api-action-btn.cancel-btn {
+	background: var(--button1-bg);
+	color: var(--button1-color);
+	border-color: var(--text-muted);
+}
+
+.api-action-btn.cancel-btn:hover {
+	background: var(--button1-bg-hover);
+	color: var(--button1-color-hover);
+}
 
 td select.auto { width: auto; }
 .nobr { white-space: nowrap; }
@@ -338,10 +1955,10 @@ td select.auto { width: auto; }
 #settingsNav #cato_api_keys input.api_key { width: 200px;}
 #catoExamplesNav { padding:0 !important; border: none !important; }
 #catoExamplesNav .ui-tabs-panel { padding:0 !important; border: none !important; }
-#catoExamplesNav .ui-tabs-nav { padding:0 !important; border: none !important; background: none !important; }
+/* #catoExamplesNav .ui-tabs-nav { padding:0 !important; border: none !important; background: none !important; } */
 /* #ExamplesNav .codeExample { border: 1px solid #999 !important; } */
 
-#catoExamplesNav .codeExample textarea { border: 1px solid #999 !important; background: #F8F8F8; padding: 5px; }
+/* Legacy rule - now handled by main codeExample textarea styles */
 
 #CatoPOPs {
 	height: 800px;
@@ -385,3 +2002,61 @@ td select.auto { width: auto; }
 	  flex: 1;
 	}
 } */
+
+/* FINAL OVERRIDE: Ensure all textareas can be resized both horizontally and vertically */
+body textarea,
+body .ui-widget textarea,
+body .ui-widget-content textarea,
+body fieldset textarea,
+body div textarea {
+	resize: both !important;
+	overflow: auto !important;
+}
+
+/* Fix flexbox width issues with textareas */
+fieldset textarea,
+.ui-tabs-panel textarea {
+	max-width: 100% !important;
+	flex-shrink: 1 !important;
+	min-width: 0 !important; /* Allow shrinking below content size */
+}
+
+/* Override inline styles set by JavaScript */
+textarea[style*="width"],
+textarea[style*="height"] {
+	/* resize: both !important;
+	width: auto !important; */
+	min-width: 150px !important;
+}
+
+/* Ensure nested param textareas have adequate width and can resize */
+.nested_param textarea,
+.fieldwrapper textarea.parent,
+textarea.parent,
+textarea.bodyParams {
+	min-width: 150px !important;
+	max-width: 400px !important;
+	flex-shrink: 0;
+	flex-grow: 0;
+	width: auto !important;
+	height: auto !important;
+}
+
+/* Ensure table cells containing textareas have adequate width */
+.param_tbl_level1 td:has(textarea),
+.param_tbl_level2 td:has(textarea),
+.param_tbl_level3 td:has(textarea),
+.param_tbl_level4 td:has(textarea),
+.param_tbl_level5 td:has(textarea),
+td:has(textarea.parent) {
+	min-width: 180px !important;
+}
+
+/* Alternative approach for better browser support */
+.param_tbl_level1 td,
+.param_tbl_level2 td,
+.param_tbl_level3 td,
+.param_tbl_level4 td,
+.param_tbl_level5 td {
+	min-width: 150px;
+}

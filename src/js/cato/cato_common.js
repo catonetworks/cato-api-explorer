@@ -21,6 +21,7 @@ $().ready(function () {
 });
 
 function init() {
+	checkForUpdates();
 	$.each(catoConfig.servers, function(name, endpoint) {
 		$('#catoServer').append(
 			$('<option></option>').val(endpoint).text(name+" - "+endpoint)
@@ -35,7 +36,10 @@ function init() {
 	$('#catoDeleteAllCredentials').click(function () { set_deleteAllApiKeys(); });
 	$('#cato_configMaskSecretKey').click(function () { generateCodeExamples() });
 	$('#catoQuery').blur(function () { generateCodeExamples() });
+	// Check for version updates
 	catoLoadAll();
+	// Initialize column collapse functionality
+	initColumnCollapse();
 }
 
 function catoLoadAll() {
@@ -52,8 +56,23 @@ function loadCredentials() {
 	$('#catoOperations').val('').removeClass('highlight');
 	$('.cato_account_input').val('').removeClass('highlight').attr('placeholder', '');
 	$('#cato_add_new_api_key').removeClass('highlight');
+	// Sort API keys alphabetically by description name
+	var sortedApiKeys = [];
 	$.each(CATO_API_KEYS, function (index_id, usrObj) {
-		$("#catoApiKeys").append('<option title="account_id: ' + usrObj.account_id + ' | api_id: ' + usrObj.api_id + '" value="' + index_id + '">' + usrObj.description + ' (' + usrObj.account_id + ')</option>');
+		sortedApiKeys.push({
+			index_id: index_id,
+			usrObj: usrObj
+		});
+	});
+	
+	// Sort by description (case-insensitive)
+	sortedApiKeys.sort(function(a, b) {
+		return a.usrObj.description.toLowerCase().localeCompare(b.usrObj.description.toLowerCase());
+	});
+	
+	// Add sorted options to select
+	$.each(sortedApiKeys, function (i, item) {
+		$("#catoApiKeys").append('<option title="account_id: ' + item.usrObj.account_id + ' | api_id: ' + item.usrObj.api_id + '" value="' + item.index_id + '">' + item.usrObj.description + ' (' + item.usrObj.account_id + ')</option>');
 	});
 	if ($('#catoApiKeys').children('option').length == 0) {
 		$("#catoApiKeys").addClass('highlight').html('<option value="">Add api_key under Settings tab</option>');
@@ -410,6 +429,11 @@ function renderParamsHtml() {
 			$("#catoBodyParams_tbl").append(renderParamHTML(param));
 		}
 	}
+	
+	// Check column width constraints after rendering parameters
+	if (typeof window.checkColumnWidthConstraints === 'function') {
+		setTimeout(window.checkColumnWidthConstraints, 100);
+	}
 
 	// Now that all parameters are rendered, populate dynamic ENUMs
 	$.each($('#catoBodyParams .dynamic'), function (i, input) {
@@ -484,8 +508,8 @@ function renderParamHTML(param) {
 			str += ((param.required == true) ? '<span title="Required field" class="required">*</span> ' : '') + (param.varName ? param.varName : param.name) + ': </label></td>';
 			str += '<td id="' + param.id_str + '_field_td" class="' + ((isMulti) ? "array_" + paramValType : paramValType) + '">';
 			str += '<select name="' + paramName + '" title="' + (param.varName ? param.varName : param.name) +'" class="dynamic ' + optionalClass + ' ' + ((isMulti) ? "array_" + paramValType : paramValType) + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + ' ' + ((isMulti) ? ' multiple' : '') + '><option value="">loading...</option></select>';
+			str += ((param.required != true)) ? ' <a id="' + param.id_str + '_toggle" title="Add/Remove Argument" class="toggleField inline-toggle ui-button-icon ui-icon ui-icon-cancel"></a>' : '';
 			str += '</td>';
-			str += ((param.required != true)) ? '<td valign="top"><a id="' + param.id_str + '_toggle" title="Remove this argument from request variables and response." class="toggleField button ui-button-icon ui-icon ui-icon-cancel"></a></td>' : "<td></td>";
 			str += '</tr>';
 		}
 	} else {
@@ -495,7 +519,7 @@ function renderParamHTML(param) {
 		str += ((param.required == true) ? '<span title="Required field" class="required">*</span> ' : '') + (param.varName ? param.varName : param.name) + ': </label></td>';
 		str += '<td id="' + param.id_str + '_field_td" class="' + ((isMulti) ? "array_" + paramValType : paramValType) + '">';
 		if (param.name == "timezone") {
-			str += '<select name="' + paramName + '" title="' + param.varName +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
+			str += '<select name="' + paramName + '" title="' + (param.varName ? param.varName : param.name) +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
 			$.each(timezones, function (i, timezone) { str += '<option value="' + timezone + '">' + timezone + '</option>'; });
 			str += '</select>';
 		} else if (param.type.indexType != undefined && param.type.indexType == "enum") {
@@ -507,7 +531,7 @@ function renderParamHTML(param) {
 			$.each(paramValIndex, function (i, val) { str += '<option value="' + val + '">' + val + '</option>'; });
 			str += '</select>';
 		} else if (paramValType == "timeframe") {
-			str += '<select name="' + paramName + '" title="' + param.varName +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
+			str += '<select name="' + paramName + '" title="' + (param.varName ? param.varName : param.name) +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
 			str += '<option value="last.PT5M">Previous 5 minutes</option>';
 			str += '<option value="last.PT15M">Previous 15 minutes</option>';
 			str += '<option value="last.PT30M">Previous 30 minutes</option>';
@@ -529,20 +553,20 @@ function renderParamHTML(param) {
 			str += '<option value="custom">Custom</option>';
 			str += '</select>';
 		} else if (paramValType == "boolean") {
-			str += '<select name="' + paramName + '" title="' + param.varName +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
+			str += '<select name="' + paramName + '" title="' + (param.varName ? param.varName : param.name) +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
 			str += ((param.required) ? '' : '<option value="">-- select --</option>') + '<option value="true">true</option><option value="false">false</option>';
 			str += '</select>';
 		} else if (paramValType == "map") {
-			str += '<textarea class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '"  name="' + paramName + '" id="' + param.id_str + '" title="' + param.varName +'" style="width:200px; height: 50px;"' + required + '>' + param.jsonStr + '</textarea>';
+			str += '<textarea class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '"  name="' + paramName + '" id="' + param.id_str + '" title="' + (param.varName ? param.varName : param.name) +'"' + required + '>' + param.jsonStr + '</textarea>';
 		} else {
 			if (param.type.kind.includes("LIST")) {
-				str += '<input type="text" title="' + param.varName +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + ' list" name="' + paramName + '" id="' + param.id_str + '" value="" placeholder="' + paramValType + "1," + paramValType + '2"' + required + ' />';
+				str += '<input type="text" title="' + (param.varName ? param.varName : param.name) +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + ' list" name="' + paramName + '" id="' + param.id_str + '" value="" placeholder="' + paramValType + "1," + paramValType + '2"' + required + ' />';
 			} else {
-				str += '<input type="text" title="' + param.varName +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" name="' + paramName + '" id="' + param.id_str + '" value="" placeholder="' + paramValType + '"' + required + ' />';
+				str += '<input type="text" title="' + (param.varName ? param.varName : param.name) +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" name="' + paramName + '" id="' + param.id_str + '" value="" placeholder="' + paramValType + '"' + required + ' />';
 			}
 		}
+		str += (!param.required) ? ' <a id="' + param.id_str + '_toggle" title="Add/Remove Argument" class="toggleField inline-toggle ui-button-icon ui-icon ui-icon-cancel"></a>' : '';
 		str += '</td>'
-		str += (!param.required) ? '<td valign="top"><a id="' + param.id_str + '_toggle" title="Remove this argument from response." class="toggleField ui-button-icon ui-icon ui-icon-cancel"></a></td>' : "<td></td>"
 		str += '</tr>';
 	}
 	return str;
@@ -558,12 +582,12 @@ function renderDynamicParamHTML(paramActionObj, param, paramLevel, isParent, opt
 		`: </label></td>
 			<td id="` + param.id_str + `_field_td">
 				<input type="text" id="`+ param.id_str + `xxsearch" placeholder="Search" class="searchParam" />
-				<a id="`+ param.id_str + `xxbtn" class="searchBtn param_link">search</a><br clear="all" />
-			</td> `+
-		((!param.required) ? `<td valign="top"><a id="` + param.id_str + `_toggle" title="Remove this argument from response." class="toggleField ui-button-icon ui-icon ui-icon-cancel"></a></td>` : `<td></td>`) + `
+				<a id="`+ param.id_str + `xxbtn" class="searchBtn param_link">search</a>`+
+				((!param.required) ? ` <a id="` + param.id_str + `_toggle" title="Add/Remove Argument" class="toggleField inline-toggle ui-button-icon ui-icon ui-icon-cancel"></a>` : ``) + `<br clear="all" />
+			</td>
 		</tr>
 		<tr id = "` + param.id_str + `tr" class="fieldwrapper ` + optionalClass + `" >
-			<td colspan="3">
+			<td colspan="2">
 				<table class="tableColL" id="` + param.id_str + `_tbl">
 					<tr>`;
 	if (paramActionObj.singleValue != true) {
@@ -620,7 +644,7 @@ function renderInputNestedFieldsHtml(param, parentContainerId) {
 			str += '<td id="' + param.id_str + '_template_td" class="">';
 			str += '<input name="' + param.name + '_searchLocal" title="' + param.varName +'" class="autocomplete" id="' + param.id_str + '_template" value="" placeholder="seach: country, state, or city" /> <hr />';
 			str += '</td>';
-			// str += (argType == "responseArg") ? '<td valign="top"><a id="' + param.id_str + '_toggle" title="Remove this argument from response." class="toggleField ui-button-icon ui-icon ui-icon-cancel"></a></td>' : "<td></td>";
+			// str += (argType == "responseArg") ? '<td valign="top"><a id="' + param.id_str + '_toggle" title="Add/Remove Argument" class="toggleField ui-button-icon ui-icon ui-icon-cancel"></a></td>' : "<td></td>";
 			str += '</tr>';
 		} else {
 			str += '<tr id="' + param.id_str + '_templatetr" class="">';
@@ -628,17 +652,23 @@ function renderInputNestedFieldsHtml(param, parentContainerId) {
 			str += '<td id="' + param.id_str + '_template_td" class="">';
 			str += '<select name="' + param.name + '_template" title="' + param.varName +'" class="template" id="' + param.id_str + '_template"><option value="">loading...</option></select>';
 			str += '</td>';
-			// str += (argType == "responseArg") ? '<td valign="top"><a id="' + param.id_str + '_toggle" title="Remove this argument from response." class="toggleField ui-button-icon ui-icon ui-icon-cancel"></a></td>' : "<td></td>";
+			// str += (argType == "responseArg") ? '<td valign="top"><a id="' + param.id_str + '_toggle" title="Add/Remove Argument" class="toggleField ui-button-icon ui-icon ui-icon-cancel"></a></td>' : "<td></td>";
 			str += '</tr>';
 			}
 	}
 
-	str += '</table><br clear="all" /><div class="links_row">';
+	str += '</table></fieldset>';
+	str += '</td>';
+	str += '</tr>';
+	// Add buttons in their own row with consistent 2-column structure
+	str += '<tr id="' + param.id_str + '_buttons_row" class="nested-buttons-row">';
+	str += '<td></td>'; // Empty first column to align with labels
+	str += '<td class="nested-buttons-cell">';
+	str += '<div class="links_row">';
 	str += '<a href="javascript:void(0);" id="' + param.id_str + '_cancel" class="cancel_param_link param_link">Close</a>';
 	str += '<a href="javascript:void(0);" id="' + param.id_str + '_add" class="add_param_link param_link">Add</a>';
-	str += '</div></fieldset>';
-	str += '</td><td></td>';
-	// str += (argType == "responseArg") ? '<td valign="top"><a id="' + param.id_str + '_toggle" title="Remove this argument from response." class="toggleField ui-button-icon ui-icon ui-icon-cancel"></a></td>' : "<td></td>";
+	str += '</div>';
+	str += '</td>';
 	str += '</tr>';
 	$("#" + parentContainerId + "_tbl").append(str);
 
@@ -684,23 +714,70 @@ function addObjectToParent(input) {
 	var parentClasses = $("#" + parentId).attr("class").split(" ");
 	var level = parentClasses[parentClasses.findIndex(element => element.startsWith("param"))];
 	var childLevel = "param" + (String(parseInt(level.substr(level.length - 1, level.length), 10) + 1));
-	if (checkCatoForm('#' + parentId + "_fieldset ." + childLevel)) {
-		var curObject = {};
-		if (!IsJsonString($('#' + parentId).val())) {
-			$.gritter.add({ title: 'ERROR', text: "Malformed parameter: '" + $('#' + parentId).attr("title") + "' is not valid '" + $('#' + parentId).parent().prop("class") + "' syntax. Clearing field." });
-		}
-		$.each($('#' + parentId + "_fieldset ." + childLevel), function (i, param) {
-			if (param.value != '') {
-				var val = parseParamValue($('#' + param.id));
-				if (typeof val === "object") {
-					if (String(JSON.stringify(val)) != String("{}")) curObject[param.name] = val;
-				// } else if (typeof val === "array") {
-				} else if ((val != null && val != "") || val == 0) {
-					curObject[param.name] = val;
-				}
+	
+	// Check form validity and show appropriate feedback
+	var isFormValid = checkCatoForm('#' + parentId + "_fieldset ." + childLevel);
+	if (!isFormValid) {
+		// Count required fields that are empty
+		var requiredFields = [];
+		$('#' + parentId + "_fieldset ." + childLevel + '[required]').each(function() {
+			if ($(this).val() == '' || ($(this).hasClass('errors'))) {
+				requiredFields.push($(this).attr('title') || $(this).attr('name') || 'Unnamed field');
 			}
 		});
-		if (String(JSON.stringify(curObject)) != String("{}")) {
+		
+		if (requiredFields.length > 0) {
+			$.gritter.add({ 
+				title: 'Validation Error', 
+				text: 'Please fill in all required fields: ' + requiredFields.join(', '),
+				class_name: 'gritter-error',
+				time: 6000
+			});
+		} else {
+			$.gritter.add({ 
+				title: 'Validation Error', 
+				text: 'Please fix the highlighted errors before adding to parent object.',
+				class_name: 'gritter-error',
+				time: 6000
+			});
+		}
+		return false;
+	}
+	
+	var curObject = {};
+	var hasValidData = false;
+	
+	// Validate parent textarea JSON
+	if (!IsJsonString($('#' + parentId).val())) {
+		$.gritter.add({ 
+			title: 'JSON Error', 
+			text: "Invalid JSON in parent field: '" + $('#' + parentId).attr("title") + "'. Please fix the JSON syntax.",
+			class_name: 'gritter-error',
+			time: 6000
+		});
+		return false;
+	}
+	
+	// Process child fields
+	$.each($('#' + parentId + "_fieldset ." + childLevel), function (i, param) {
+		if (param.value != '') {
+			var val = parseParamValue($('#' + param.id));
+			if (typeof val === "object") {
+				if (String(JSON.stringify(val)) != String("{}")) {
+					curObject[param.name] = val;
+					hasValidData = true;
+				}
+			} else if ((val != null && val != "") || val == 0) {
+				curObject[param.name] = val;
+				hasValidData = true;
+			}
+		}
+	});
+	
+	// Only add if there's valid data
+	if (hasValidData && String(JSON.stringify(curObject)) != String("{}")) {
+		var parentFieldName = $('#' + parentId).attr("title") || "object";
+		try {
 			if ($('#' + parentId).parent().prop("class") == 'object') {
 				$('#' + parentId).val(JSON.stringify(curObject));
 			} else {
@@ -708,9 +785,44 @@ function addObjectToParent(input) {
 				parentParamAry.push(curObject);
 				$('#' + parentId).val(JSON.stringify(parentParamAry));
 			}
+			
+			// Success notification
+			$.gritter.add({ 
+				title: 'Success', 
+				text: 'Successfully added data to ' + parentFieldName,
+				class_name: 'gritter-success',
+				time: 3000
+			});
+			
+			// Clear the form fields after successful add
+			$('#' + parentId + "_fieldset ." + childLevel).each(function() {
+				if (!$(this).prop('required')) {
+					$(this).val('');
+				}
+				$(this).removeClass('errors');
+			});
+			
+		} catch (error) {
+			$.gritter.add({ 
+				title: 'JSON Error', 
+				text: 'Error processing JSON data: ' + error.message,
+				class_name: 'gritter-error',
+				time: 6000
+			});
+			return false;
 		}
+	} else {
+		$.gritter.add({ 
+			title: 'No Data', 
+			text: 'Please enter some data before adding to the parent object.',
+			class_name: 'gritter-warning',
+			time: 4000
+		});
+		return false;
 	}
+	
 	checkCatoForm("#catoBodyParams .parent");
+	return true;
 }
 
 function parseParamValue(input) {
@@ -770,7 +882,7 @@ function parseParamValue(input) {
 }
 
 function updateRequestData() {
-	indent = '	';
+	indent = '  ';
 	var queryStr = "";
 	// checkCatoForm mark
 	// if (checkCatoForm()) {
@@ -817,7 +929,7 @@ function updateRequestData() {
 				}
 			}
 		});
-		queryStr += ") {\n" + renderArgsAndFields("", curOperationObj, curOperationObj.type.definition, "		") + "	}" + indent + "\n}";
+		queryStr += ") {\n" + renderArgsAndFields("", curOperationObj, curOperationObj.type.definition, "    ") + "  }" + indent + "\n}";
 		$('#catoQuery').val(queryStr);
 		var variablesObj = {};
 		$.each($(bodyParamsStr + '.param:not(".hidden, .disabled"), ' + bodyParamsStr + '.param1:not(".hidden, .disabled"), ' + bodyParamsStr + '.searchParam:not(".hidden, .disabled")'), function (i, param) {
@@ -890,7 +1002,7 @@ function renderArgsAndFields(responseArgStr, curOperation, definition, indent) {
 			responseArgStr += " {\n";
 			$.each(field.type.definition.fields, function (subFieldIndex, subfield) {
 				var subfieldName = (curOperationObj.fieldTypes[subfield.type.name] && !subfield.type.kind.includes("SCALAR")) ? (subfield.name + field.type.definition.name + ": " + subfield.name) : subfield.name;
-				responseArgStr += indent + "	" + subfieldName;
+				responseArgStr += indent + "  " + subfieldName;
 				if (Object.keys(subfield.args).length > 0) {
 					argsPresent = false;
 					var argStr = " ( ";
@@ -910,51 +1022,51 @@ function renderArgsAndFields(responseArgStr, curOperation, definition, indent) {
 					if (argsPresent==true) responseArgStr += argStr;
 				}
 				if (subfield.type && subfield.type.definition && (subfield.type.definition.fields != null || subfield.type.definition.inputFields != null)) {
-					responseArgStr += " {\n";
-					responseArgStr = renderArgsAndFields(responseArgStr, curOperation, subfield.type.definition, indent + "		");						
+					responseArgStr += "  {\n";
+					responseArgStr = renderArgsAndFields(responseArgStr, curOperation, subfield.type.definition, indent + "    ");						
 					if (subfield.type.definition.possibleTypes != null) {
 						$.each(subfield.type.definition.possibleTypes, function (possibleTypeIndex, possibleType) {
 							if ((possibleType.fields != null && Object.keys(possibleType.fields).length > 0) || (possibleType.inputFields != null && Object.keys(possibleType.inputFields).length > 0)) {
-								responseArgStr += indent + "		... on " + possibleType.name + " {\n";
-								responseArgStr = renderArgsAndFields(responseArgStr, curOperation, possibleType, indent + "			");
-								responseArgStr += indent + "		}\n";
+								responseArgStr += indent + "    ... on " + possibleType.name + " {\n";
+								responseArgStr = renderArgsAndFields(responseArgStr, curOperation, possibleType, indent + "      ");
+								responseArgStr += indent + "    }\n";
 							}
 						});
 					}
-					responseArgStr += indent + "	}";
+					responseArgStr += indent + "  }";
 				} else if (subfield.type && subfield.type.definition && subfield.type.definition.possibleTypes != null) {
-					responseArgStr += " {\n";
-					responseArgStr += indent + "		__typename\n";
+					responseArgStr += "  {\n";
+					responseArgStr += indent + "    __typename\n";
 					$.each(subfield.type.definition.possibleTypes, function (possibleTypeIndex, possibleType) {
 						if ((possibleType.fields != null && Object.keys(possibleType.fields).length > 0) || (possibleType.inputFields != null && Object.keys(possibleType.inputFields).length > 0)) {
-							responseArgStr += indent + "		... on " + possibleType.name + " {\n";
-							responseArgStr = renderArgsAndFields(responseArgStr, curOperation, possibleType, indent + "			");
-							responseArgStr += indent + "		}\n";
+							responseArgStr += indent + "    ... on " + possibleType.name + " {\n";
+							responseArgStr = renderArgsAndFields(responseArgStr, curOperation, possibleType, indent + "      ");
+							responseArgStr += indent + "    }\n";
 						}
 					});
-					responseArgStr += indent + " 	}\n";
+					responseArgStr += indent + "    }\n";
 				}
 				responseArgStr += "\n";
 			});
 			if (field.type && field.type.definition && field.type.definition.possibleTypes != null) {
 				$.each(field.type.definition.possibleTypes, function (possibleTypeIndex, possibleType) {
 					if ((possibleType.fields != null && Object.keys(possibleType.fields).length > 0) || (possibleType.inputFields != null && Object.keys(possibleType.inputFields).length > 0)) {
-						responseArgStr += indent + "	... on " + possibleType.name + " {\n";
-						responseArgStr = renderArgsAndFields(responseArgStr, curOperation, possibleType, indent + "		");
-						responseArgStr += indent + "	}\n";
+						responseArgStr += indent + "  ... on " + possibleType.name + " {\n";
+						responseArgStr = renderArgsAndFields(responseArgStr, curOperation, possibleType, indent + "    ");
+						responseArgStr += indent + "  }\n";
 					}
 				});
 			}
 			responseArgStr += indent + "}\n";
 		}
 		if (field.type && field.type.definition && field.type.definition.inputFields != null) {
-			responseArgStr += " {\n";
+			responseArgStr += "  {\n";
 			$.each(field.type.definition.inputFields, function (subFieldIndex, subfield) {
-				responseArgStr += indent + "	" + subfield.name;
+				responseArgStr += indent + "  " + subfield.name;
 				if (subfield.type && subfield.type.definition && ((subfield.type.definition.fields != null && Object.keys(subfield.type.definition.fields).length > 0) || (subfield.type.definition.inputFields != null && Object.keys(subfield.type.definition.inputFields).length > 0))) {
-					responseArgStr += " {\n";
-					responseArgStr = renderArgsAndFields(responseArgStr, curOperation, subfield.type.definition, indent + "		");
-					responseArgStr += indent + "	}\n";
+					responseArgStr += "  {\n";
+					responseArgStr = renderArgsAndFields(responseArgStr, curOperation, subfield.type.definition, indent + "    ");
+					responseArgStr += indent + "  }\n";
 				}
 				// responseArgStr += "\n";
 			});
@@ -962,8 +1074,8 @@ function renderArgsAndFields(responseArgStr, curOperation, definition, indent) {
 				$.each(field.type.definition.possibleTypes, function (possibleTypeIndex, possibleType) {
 					if (possibleType.fields != null || possibleType.inputFields != null) {
 						responseArgStr += indent + "... on " + possibleType.name + " {\n";
-						responseArgStr = renderArgsAndFields(responseArgStr, curOperation, possibleType, indent + "		");
-						responseArgStr += indent + "	}\n";
+						responseArgStr = renderArgsAndFields(responseArgStr, curOperation, possibleType, indent + "    ");
+						responseArgStr += indent + "  }\n";
 					}					
 				});
 			}
@@ -1500,4 +1612,166 @@ function renderParamDisplayName(param) {
 	console.log(param.name, param.id_str, param.path);
 	str = (param.id_str.includes("___") ? param.id_str.split("___").pop() : param.path);
 	return str;
+}
+
+// Version check functionality
+// Column collapse/expand functionality encapsulated here
+function initColumnCollapse() {
+	// Column states
+	if (!window.columnStates) window.columnStates = {
+		'graphql-query-column': 'expanded',
+		'api-response-column': 'expanded'
+	};
+
+	// Attach click handlers only to collapse buttons in fieldset headers
+	$(document).off('click', '.fieldset-header .collapse-button').on('click', '.fieldset-header .collapse-button', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var $td = $(this).closest('td');
+		var columnId = $td.attr('id');
+		if (!columnId) {
+			console.warn('Collapse button clicked but no column ID found');
+			return;
+		}
+		console.log('Collapse button clicked for column:', columnId);
+		toggleColumnWithConstraints(columnId);
+	});
+
+	// Monitor width constraints
+	function checkColumnWidthConstraints() {
+		var $apiAuthColumn = $('#api-authentication-column');
+		var $graphqlColumn = $('#graphql-query-column');
+		var $responseColumn = $('#api-response-column');
+		
+		if (!$apiAuthColumn.length || !$graphqlColumn.length || !$responseColumn.length) return;
+		var $table = $apiAuthColumn.closest('table');
+		if (!$table.length) return;
+		
+		var tableWidth = $table.width();
+		var authWidth = $apiAuthColumn.width();
+		var authPercentage = (authWidth / tableWidth) * 100;
+		
+		// If API Authentication column exceeds 50% width
+		if (authPercentage > 50) {
+			// If both are expanded, collapse API Response
+			if (window.columnStates['graphql-query-column'] === 'expanded' && window.columnStates['api-response-column'] === 'expanded') {
+				$responseColumn.addClass('column-collapsed');
+				$responseColumn.find('.collapse-button').removeClass('expanded').addClass('collapsed');
+				window.columnStates['api-response-column'] = 'collapsed';
+				if ($.gritter) $.gritter.add({ title: 'Column Auto-Collapsed', text: 'API Response collapsed due to API Authentication width > 50%.', time: 3000 });
+			}
+			window.authColumnWide = true;
+		} else {
+			window.authColumnWide = false;
+		}
+	}
+	window.checkColumnWidthConstraints = checkColumnWidthConstraints;
+
+	// Toggle one column (basic)
+	function toggleColumn(columnId) {
+		var $column = $('#' + columnId);
+		var $button = $column.find('.collapse-button');
+		var isCollapsed = window.columnStates[columnId] === 'collapsed';
+		if (isCollapsed) {
+			$column.removeClass('column-collapsed');
+			$button.removeClass('collapsed').addClass('expanded');
+			window.columnStates[columnId] = 'expanded';
+		} else {
+			$column.addClass('column-collapsed');
+			$button.removeClass('expanded').addClass('collapsed');
+			window.columnStates[columnId] = 'collapsed';
+		}
+		setTimeout(checkColumnWidthConstraints, 50);
+	}
+	window.toggleColumn = toggleColumn;
+
+	// Toggle with constraints
+	function toggleColumnWithConstraints(columnId) {
+		var isCollapsed = window.columnStates[columnId] === 'collapsed';
+		var otherColumnId = (columnId === 'graphql-query-column') ? 'api-response-column' : 'graphql-query-column';
+		if (isCollapsed && window.authColumnWide && window.columnStates[otherColumnId] === 'expanded') {
+			var $other = $('#' + otherColumnId);
+			$other.addClass('column-collapsed');
+			$other.find('.collapse-button').removeClass('expanded').addClass('collapsed');
+			window.columnStates[otherColumnId] = 'collapsed';
+			// if ($.gritter) $.gritter.add({ title: 'Column Auto-Collapsed', text: 'Only one column can be expanded when API Authentication > 50%.', time: 3000 });
+		}
+		toggleColumn(columnId);
+	}
+	window.toggleColumnWithConstraints = toggleColumnWithConstraints;
+
+	// Initial checks and observers
+	setTimeout(checkColumnWidthConstraints, 500);
+	$(window).on('resize', function() { setTimeout(checkColumnWidthConstraints, 100); });
+	if (window.MutationObserver) {
+		var authFieldset = document.querySelector('#api-authentication-column fieldset');
+		if (authFieldset) {
+			var observer = new MutationObserver(function() { setTimeout(checkColumnWidthConstraints, 100); });
+			observer.observe(authFieldset, { childList: true, subtree: true, attributes: true });
+		}
+	}
+}
+
+function checkForUpdates() {
+	// Only check once per session to avoid excessive API calls
+	if (sessionStorage.getItem('versionCheckDone')) {
+		return;
+	}
+	
+	var currentVersion = catoConfig.version;
+	
+	// Check GitHub releases API for latest version
+	$.ajax({
+		url: 'https://api.github.com/repos/catonetworks/cato-api-explorer/releases/latest',
+		method: 'GET',
+		timeout: 10000, // 10 second timeout
+		success: function(response) {
+			var latestVersion = response.tag_name.replace(/^v/, ''); // Remove 'v' prefix if present
+			
+			if (isNewerVersion(latestVersion, currentVersion)) {
+				// Show update notification
+				$.gritter.add({
+					title: '🚀 Update Available',
+					text: 'Version ' + latestVersion + ' is available (current: ' + currentVersion + ').<br>' +
+						  '<strong>Upgrade instructions</strong><br>' +
+						  'In a terminal, cd to the folder with the docker-compose.yml and run the following commands:<br><br>' +
+						  '<code>docker compose down</code><br>' +
+						  '<code>docker compose pull</code><br>' +
+						  '<code>docker compose up -d</code>',
+					sticky: true,
+					class_name: 'gritter-info'
+				});
+			}
+			
+			// Mark version check as done for this session
+			sessionStorage.setItem('versionCheckDone', 'true');
+		},
+		error: function(xhr, status, error) {
+			// Silently fail - don't notify users about version check failures
+			console.log('Version check failed:', error);
+			sessionStorage.setItem('versionCheckDone', 'true');
+		}
+	});
+}
+
+// Compare semantic versions (e.g., 1.0.9 vs 1.1.0)
+function isNewerVersion(latest, current) {
+	var latestParts = latest.split('.').map(Number);
+	var currentParts = current.split('.').map(Number);
+	
+	// Pad arrays to same length
+	var maxLength = Math.max(latestParts.length, currentParts.length);
+	while (latestParts.length < maxLength) latestParts.push(0);
+	while (currentParts.length < maxLength) currentParts.push(0);
+	
+	// Compare each part
+	for (var i = 0; i < maxLength; i++) {
+		if (latestParts[i] > currentParts[i]) {
+			return true;
+		} else if (latestParts[i] < currentParts[i]) {
+			return false;
+		}
+	}
+	
+	return false; // Versions are equal
 }

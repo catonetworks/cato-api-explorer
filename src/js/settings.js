@@ -6,7 +6,7 @@ var catoConfig = {
 		"Eng Dev": "https://api.dev.catonet.works/api/v1/graphql2",
 		"Eng Dev US1": "https://system.cc.dev-us1-m1.catonet.works/api/v1/graphql2"
 	},
-	"version":"1.0.9",
+	"version": window.DOCKER_VERSION,
 	"schema":{
 		"loadFromLocal":false,
 		"fileName":"introspection.json"
@@ -71,17 +71,20 @@ var childOperationObjects = {
 var catoGetObjectActionMapping = {
 	"accountID":{
 	  	"default": {
-			function: function (paramActionObj, paramName) { populateAccountID(paramName) },
+			function: function (paramActionObj, paramName) { getAccountIDs(paramActionObj, paramName) },
+			callback: function (response, paramName) { getAccountIDsResponse(response, paramName) }
 	  	}
 	},
 	"accountIDs": {
 		"default": {
-			function: function (paramActionObj, paramName) { populateAccountID(paramName) },
+			function: function (paramActionObj, paramName) { getAccountIDs(paramActionObj, paramName) },
+			callback: function (response, paramName) { getAccountIDsResponse(response, paramName) }
 		}
 	},
 	"accountId": {
 		"default": {
-			function: function (paramActionObj, paramName) { populateAccountID(paramName) },
+			function: function (paramActionObj, paramName) { getAccountIDs(paramActionObj, paramName) },
+			callback: function (response, paramName) { getAccountIDsResponse(response, paramName) }
 		}
 	},
 	"adminID": {

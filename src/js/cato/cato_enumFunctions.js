@@ -46,11 +46,55 @@ function getSiteIDsResponse(response,paramName){
 }
 
 // accountID.default.function()
-function populateAccountID(input_id){
-	var userObj = getCurApiKey();
-	if (userObj.account_id){
-		$("#" + input_id).html('<option value="'+userObj.account_id+'">'+userObj.account_id+'</option>');
+// function populateAccountID(input_id){
+// 	var userObj = getCurApiKey();
+// 	if (userObj.account_id){
+// 		$("#" + input_id).html('<option value="'+userObj.account_id+'">'+userObj.account_id+'</option>');
+// 	}
+// }
+
+// subdomains.default.function()
+function getAccountIDs(paramActionObj, paramName) {
+	var userObj = getCurApiKey()
+	var query = fmtQuery(`{
+		"query":"query entityLookup ( $accountID:ID! $type:EntityType! ) {
+				entityLookup ( accountID:$accountID type:$type  ) {
+				items  {
+					entity {
+						id 
+						name 
+						type 
+					}
+					description
+					helperFields
+				}
+				total 
+			}	
+		}",
+		"variables":{
+			"accountID": "`+ filterStr(userObj.account_id) + `",
+			"from": 0,
+			"limit": 1000,
+			"type": "account"
+		},
+		"operationName":"entityLookup"
+	}`);
+	makeCall(paramActionObj.callback, query, paramName);
+};
+
+function getAccountIDsResponse(response, paramName) {
+	var userObj = getCurApiKey()
+	var dest = $("#" + paramName);
+	if (response.errors != undefined) {
+		$.gritter.add({ title: 'ERROR', text: response.errors[0].message });
+		$('#cato_api_keys_tbl tr.current input').addClass("error");
+	} else {
+		$(dest).html('<option value="'+userObj.account_id+'">'+userObj.description+' ('+userObj.account_id+')</option>');
+		$.each(response.data.entityLookup.items, function (i, item) {
+			dest.append('<option value="' + item.entity.id + '">' + item.entity.name+' ('+item.entity.id+')</option>');
+		});
 	}
+	updateRequestData();
 }
 
 // adminID.default.function()

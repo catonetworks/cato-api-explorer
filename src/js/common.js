@@ -8,8 +8,10 @@ $().ready(function() {
 	$("#settingsNav li").removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
 
 	$(".codeExampleBtn").click(function(){ 
-		var curId = this.id.substr(0,this.id.length-3); 
-		$("#"+curId).height("5px").height((5+$("#"+curId).prop('scrollHeight'))+"px")		
+		var curId = this.id.substr(0,this.id.length-3);
+		var textarea = $("#"+curId);
+		// Allow natural textarea sizing - no auto-height adjustment
+		// Users can now manually resize both horizontally and vertically
 	});
 	$('.param_link').button();
 });
@@ -93,14 +95,25 @@ function fmtQuery(str){
 }
 
 function toggleShowNestedParams(id) {
-	var input = $('#' + id + '_fieldset');
-	if ($('#' + id + '_fieldset').css('display') == 'none') {
-		// || $('#' + id + '_fieldset').css('display')==undefined
-		$('#' + id + '_fieldset').show();
-		$('#' + id + '_toggle').hide();
+	var fieldset = $('#' + id + '_fieldset');
+	var toggleLink = $('#' + id + '_toggle');
+	var buttonsRow = $('#' + id + '_buttons_row');
+	if (fieldset.length > 0) {
+		if (fieldset.css('display') == 'none') {
+			// Show the fieldset and buttons, hide the toggle link
+			fieldset.show();
+			buttonsRow.show();
+			toggleLink.hide();
+			console.log('Showing fieldset and buttons');
+		} else {
+			// Hide the fieldset and buttons, show the toggle link
+			fieldset.hide();
+			buttonsRow.hide();
+			toggleLink.show();
+			console.log('Hiding fieldset and buttons');
+		}
 	} else {
-		$('#' + id + '_fieldset').hide();
-		$('#' + id + '_toggle').show();
+		console.error('Fieldset not found for id:', id);
 	}
 }
 
