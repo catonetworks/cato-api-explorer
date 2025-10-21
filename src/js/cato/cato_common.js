@@ -504,7 +504,7 @@ function renderParamHTML(param) {
 		} else {
 			var str = '<tr id="' + param.id_str + 'tr" class="fieldwrapper ' + optionalClass + '">';
 			str += '<td align="right"><label title="' + param.path.replaceAll("___",".") +'" for="' + param.path + '">';
-			if (param.description != undefined) str += '<span class="info" title="' + filterStr(param.description) + '"> </span> ';
+			if (param.description != undefined) str += '<span class="info" title="' + filterStr(param.description) + '">&#9432;</span> ';
 			str += ((param.required == true) ? '<span title="Required field" class="required">*</span> ' : '') + (param.varName ? param.varName : param.name) + ': </label></td>';
 			str += '<td id="' + param.id_str + '_field_td" class="' + ((isMulti) ? "array_" + paramValType : paramValType) + '">';
 			str += '<select name="' + paramName + '" title="' + (param.varName ? param.varName : param.name) +'" class="dynamic ' + optionalClass + ' ' + ((isMulti) ? "array_" + paramValType : paramValType) + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + ' ' + ((isMulti) ? ' multiple' : '') + '><option value="">loading...</option></select>';
@@ -515,7 +515,7 @@ function renderParamHTML(param) {
 	} else {
 		var str = '<tr id="' + param.id_str + 'tr" class="fieldwrapper optionalArg' + optionalClass + '">';
 		str += '<td align="right"><label title="' + param.path.replaceAll("___", ".") +'" for="' + param.path + '">';
-		if (param.description != undefined) str += '<span class="info" title="' + filterStr(param.description) + '"> </span> ';
+		if (param.description != undefined) str += '<span class="info" title="' + filterStr(param.description) + '">&#9432;</span> ';
 		str += ((param.required == true) ? '<span title="Required field" class="required">*</span> ' : '') + (param.varName ? param.varName : param.name) + ': </label></td>';
 		str += '<td id="' + param.id_str + '_field_td" class="' + ((isMulti) ? "array_" + paramValType : paramValType) + '">';
 		if (param.name == "timezone") {
@@ -576,7 +576,7 @@ function renderDynamicParamHTML(paramActionObj, param, paramLevel, isParent, opt
 	var required = (param.required == true) ? ' required ' : '';
 	var str = `<tr id="` + param.id_str + `searchtr" class="fieldwrapper">
 		<td align="right"><label title="` + param.path.replaceAll("___",".") +`" for="` + param.path + `">
-		` + ((param.description != undefined) ? `<span class="info" title="` + filterStr(param.description) + `"> </span> ` : ``) +
+		` + ((param.description != undefined) ? `<span class="info" title="` + filterStr(param.description) + `">&#9432;</span> ` : ``) +
 		((param.required == true) ? `<span title="Required field" class="required">*</span> ` : ``) +
 		(param.varName ? param.varName : param.name) +
 		`: </label></td>
@@ -628,7 +628,7 @@ function renderInputNestedFieldsHtml(param, parentContainerId) {
 	}
 	var str = '<tr id="' + param.id_str + '_tbltr" class="fieldwrapper ' + param.id_str + '_tbltr">';
 	str += '<td valign="top" align="right" width><label title="' + param.type.definition.name + '" for="">';
-	str += ((param.description != undefined) ? '<span class="info" title="' + param.description + '"> </span> ' : '');
+	str += ((param.description != undefined) ? '<span class="info" title="' + param.description + '">&#9432;</span> ' : '');
 	str += ((param.required == true) ? '<span title="Required field" class="required">*</span> ' : '');
 	str += (param.varName ? param.varName : param.name) + ': </label></td>';
 	str += '<td align="left" class="' + ((paramDataType == 'object') ? paramDataType : paramDataType + '_object') + '">';

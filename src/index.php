@@ -13,12 +13,6 @@ header('Expires: 0');
 <meta charset="UTF-8">
 <title>Cato Networks: API Explorer</title>
 
-<script src="js/cato_pop/d3.js"></script>
-<script src="js/cato_pop/leaflet.js"></script>
-<!-- <script src="js/cato_pop/bootstrap.bundle.min.js"></script> -->
-<link type="text/css" href="css/cato_pop/leaflet.css" rel="stylesheet" />
-<!-- <link type="text/css" href="css/cato_pop/bootstrap.min.css" rel="stylesheet" /> -->
-
 <link rel="shortcut icon" type="image/ico" href="https://www.catonetworks.com/favicon-32x32.png" />
 <link type="text/css" href="css/jquery.gritter.css" rel="stylesheet" />
 <link type="text/css" href="css/jquery-ui.min.css" rel="stylesheet" />
@@ -72,7 +66,6 @@ $.extend($.gritter.options, {
 			<div id="mainNav" class="ui-widget-content content">
 				<ul>
 					<li><a id="CatoAPIBtn" href="#CatoAPI">GraphQL API</a></li>
-					<li><a id="CatoPOPsBtn" href="#CatoPOPs">Cato POPs</a></li>
 					<li class="hidden-tab"><a id="settingsTabBtn" href="#settings">Settings</a></li>
 				</ul>
 				<div id="CatoAPI">
@@ -154,9 +147,6 @@ $.extend($.gritter.options, {
 							</td>
 						</tr>
 					</table><br clear="all" />
-				</div>
-				<div id="CatoPOPs">
-					
 				</div>
 				<div id="settings">
 					<div id="cato_api_keys">
@@ -363,29 +353,6 @@ var searchableDropdown = {
 	}
 };
 
-	const map = L.map('CatoPOPs').setView([47.81, 15], 3);
-	const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		maxZoom: 19,
-		noWrap: true,
-		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-	}).addTo(map);
-
-	var catoIcon = L.icon({
-		iconUrl: 'images/cato_pop_icon.svg',
-		iconSize:     [23, 30], // size of the icon
-		iconAnchor:   [22, 50], // point of the icon which will correspond to marker's location
-		popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-	});
-
-	const data = d3.csv("ajax/parsed_pop_locations_uniq.csv", function(data) {
-			pop_up_desc = "POP: " + data.City
-			if (data.Via.length > 0) {
-				pop_up_desc += " via " + data.Via
-			}
-			L.marker([data.Latitude, data.Longitude], {icon: catoIcon}).addTo(map).bindPopup(pop_up_desc);
-		}
-	)
-
 	// Theme Management
 	function toggleTheme() {
 		const html = document.documentElement;
@@ -420,7 +387,7 @@ var searchableDropdown = {
 	$(document).ready(function() {
 		$('#topHeader #settingsBtn').click(function(e) {
 			e.preventDefault();
-			$('#mainNav').tabs('option', 'active', 2); // Activate Settings tab
+			$('#mainNav').tabs('option', 'active', 1); // Activate Settings tab
 		});
 	});
 
