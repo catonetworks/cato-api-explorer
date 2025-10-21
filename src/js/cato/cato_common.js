@@ -22,11 +22,7 @@ $().ready(function () {
 
 function init() {
 	checkForUpdates();
-	$.each(catoConfig.servers, function(name, endpoint) {
-		$('#catoServer').append(
-			$('<option></option>').val(endpoint).text(name+" - "+endpoint)
-		);
-	});
+	// catoServer is now a read-only text input, populated when user is selected
 	$('#catoApiKeys').change(function () { loadApiSchema(); });
 	$('#catoOperations').change(function () { changeOperation(); });
 	$('#execute').click(function () { makeCall(); });
@@ -87,8 +83,23 @@ function loadCredentials() {
 function loadApiSchema() {
 	$('#catoOperations').attr('placeholder', 'Loading...').addClass('loading');;
 	userObj = getCurApiKey();
-	endpoint = userObj.endpoint!=undefined ? catoConfig.servers[userObj.endpoint] : catoConfig.servers.Ireland;
-	$('#catoServer').val(endpoint);
+	// Get the endpoint URL - check if it's a known server or custom URL
+	var endpointUrl;
+	var displayValue;
+	if (userObj.endpoint && catoConfig.servers[userObj.endpoint]) {
+		// It's a known server name
+		endpointUrl = catoConfig.servers[userObj.endpoint];
+		displayValue = userObj.endpoint + " - " + endpointUrl;
+	} else if (userObj.endpoint) {
+		// It's a custom URL
+		endpointUrl = userObj.endpoint;
+		displayValue = "Custom - " + userObj.endpoint;
+	} else {
+		// Default to Ireland
+		endpointUrl = catoConfig.servers.Ireland;
+		displayValue = "Ireland - " + endpointUrl;
+	}
+	$('#catoServer').val(displayValue);
 	var query = fmtQuery(`{"query":"query IntrospectionQuery { __schema { description } }","operationName":"IntrospectionQuery"}`);
 	$.gritter.add({ title: 'Initializing', text: 'Retrieving intropspection API schema.' });
 	makeCall(parseApiSchema, query, 'set');
@@ -254,12 +265,15 @@ function changeOperation() {
 	}
 	if (hasValidOperation && $('#catoOperations').val()!="") {
 		userObj = getCurApiKey();
-		endpoint = userObj.endpoint!=undefined ? catoConfig.servers[userObj.endpoint] : catoConfig.servers.Ireland;
-		$('#catoServer').val(endpoint);
-		// if (endpoint!=$('#catoServer').val()) {
-		// 	loadApiSchema();
-		// } else {
-			$('#catoServer').val(endpoint);
+		// Get the endpoint URL for API calls
+		if (userObj.endpoint && catoConfig.servers[userObj.endpoint]) {
+			endpoint = catoConfig.servers[userObj.endpoint];
+		} else if (userObj.endpoint) {
+			endpoint = userObj.endpoint;
+		} else {
+			endpoint = catoConfig.servers.Ireland;
+		}
+		// The display value is already set in #catoServer by loadApiSchema()
 			$('#catoQuery').val('');
 			$('#catoVariables').val('');
 			$('#catoResult').val('');
@@ -1236,7 +1250,17 @@ function renderParamListValues(response, input_id) {
 function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 	if (callback == undefined && query == undefined) $('#catoResult').val('processing...');
 	var operationName = "introspectionQuery";
-	var url = "/ajax/cato_api_post.php?server=" + (endpoint!=undefined ? endpoint : $('#catoServer').val()) + "&operation=" + operationName;
+	// Get endpoint URL if not provided
+	if (endpoint == undefined) {
+		var usrObj = getCurApiKey();
+		if (usrObj && usrObj.endpoint) {
+			// Check if it's a known server name or custom URL
+			endpoint = catoConfig.servers[usrObj.endpoint] || usrObj.endpoint;
+		} else {
+			endpoint = catoConfig.servers.Ireland;
+		}
+	}
+	var url = "/ajax/cato_api_post.php?server=" + endpoint + "&operation=" + operationName;
 	var method = "POST";
 	
 	// Get selected operation from either searchable dropdown or regular input

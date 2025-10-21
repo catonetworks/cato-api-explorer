@@ -91,7 +91,7 @@ function filterStr(str){
 }
 
 function fmtQuery(str){
-	return str.replace(/[\n\r\t]/g, ' ').replace("        ", ' ').replace("    ", ' ').replace("  ", ' ').replace("  ", ' ');
+	return str.replace(/[\n\r\t]/g, ' ').replace(/ +/g, ' ');;
 }
 
 function toggleShowNestedParams(id) {

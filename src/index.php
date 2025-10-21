@@ -79,10 +79,10 @@ $.extend($.gritter.options, {
 											<td><label for="catoApiKeys">API Key</label></td>
 											<td><select name="catoApiKeys" class="cato_api_keys_select" id="catoApiKeys"></select></td>
 										</tr>
-										<tr>
-											<td><label for="catoServer">Server</label></td>
-											<td><select id="catoServer" style="width: 200px;"></select></td>
-										</tr>
+								<tr>
+									<td><label for="catoServer">Server</label></td>
+									<td><input type="text" id="catoServer" readonly="readonly" placeholder="Select API Key to populate" style="width: 200px;" /></td>
+								</tr>
 										<tr id="catoOperationtr">
 											<td><label for="catoOperations">API Operation</label></td>
 											<td>

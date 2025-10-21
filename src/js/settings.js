@@ -1,10 +1,7 @@
 var catoConfig = {
 	"servers":{
 		"Ireland":"https://api.catonetworks.com/api/v1/graphql2",
-		"US1":"https://api.us1.catonetworks.com/api/v1/graphql2",
-		"Eng Test":"https://api.test.catonet.works/api/v1/graphql2",
-		"Eng Dev": "https://api.dev.catonet.works/api/v1/graphql2",
-		"Eng Dev US1": "https://system.cc.dev-us1-m1.catonet.works/api/v1/graphql2"
+		"US1":"https://api.us1.catonetworks.com/api/v1/graphql2"
 	},
 	"version": window.DOCKER_VERSION,
 	"schema":{
@@ -159,84 +156,3 @@ var catoGetObjectActionMapping = {
 		}
 	}
 }
-
-
-
-// networkRangeId
-
-// "data": {
-// 		"entityLookup": {
-// 			"items": [
-// 				{
-// 					"entity": {
-// 						"id": "UzMyODE0MA==",
-// 						"name": "SD-Office \\ LAN \\ BA_GUEST",
-
-
-// "countryCode": {
-// 	"default": {
-// 		"function": function () { getCountryCodes(this) },
-// 	},
-// 	"children": ["timezone","stateCode","city"]
-// },
-
-
-// {
-// 	"data": {
-// 		"entityLookup": {
-// 			"items": [
-// 				{
-// 					"entity": {
-// 						"id": "112139",
-// 						"name": "IKEv1 Lab \\ Default",
-
-// relayGroupId
-// query entityLookup ( $accountID:ID! $type:EntityType! ) {
-// 	entityLookup ( accountID:$accountID type:$type  ) {
-// 	items  {
-// 		entity {
-// 			id 
-// 			name 
-// 			type 
-// 		}
-// 		description
-// 		helperFields
-// 	}
-// 	total 
-// }	
-// }
-// {
-// 	"accountID": 10454,
-// 		"type": "dhcpRelayGroup"
-// // }
-// { "data": { "entityLookup": { "items": [], "total": 0 } } }
-
-// host
-// query entityLookup($accountID: ID! $type: EntityType!) {
-// 		entityLookup(accountID: $accountID type: $type) {
-// 	items  {
-// 		entity {
-// 					id
-// 					name
-// 					type
-// 				}
-// 				description
-// 				helperFields
-// 			}
-// 			total
-// 		}
-// 	}
-// {
-//     "accountID": 10454,
-// 	"type": "host"
-// }
-// "data": {
-// 		"entityLookup": {
-// 			"items": [
-// 				{
-// 					"entity": {
-// 						"id": "1286757",
-// 						"name": "AvertX (proconnect-G50636356)",
-// 						"type": "host"
-// 					},
-// 					"description": "192.168.1.110 (SD-Office: LAN)",

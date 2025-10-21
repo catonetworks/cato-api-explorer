@@ -44,7 +44,7 @@ function transformToCLIUnix(auth = getCurApiKey($('#catoApiKeys').val())){
         }
         // Check for MSP accountID
         var accountIDStr = ''
-        if ($("#accountID").val()!=auth.account_id){
+        if ($("#accountID").val()!=auth.account_id && $("#accountID").val()!=undefined && $("#accountID").val()!=""){
             accountIDStr = " -accountID="+$("#accountID").val();
         }
         // Check for empty variables object
@@ -74,7 +74,7 @@ function transformToCLIPowerShell(auth = getCurApiKey($('#catoApiKeys').val())){
         }
         // Check for MSP accountID
         var accountIDStr = ''
-        if ($("#accountID").val()!=auth.account_id){
+        if ($("#accountID").val()!=auth.account_id && $("#accountID").val()!=undefined && $("#accountID").val()!=""){
             accountIDStr = " -accountID="+$("#accountID").val();
         }
         // Check for empty variables object
@@ -93,9 +93,18 @@ function transformToCLIPowerShell(auth = getCurApiKey($('#catoApiKeys').val())){
 	return cliStr;
 }
 
-function transformToCURL(requestUrl = $('#catoServer').val(), auth = getCurApiKey($('#catoApiKeys').val()), reqObj = $('#catoQuery').val(), maskSecretKey = $('#cato_configMaskSecretKey').is(":checked")){
+function transformToCURL(requestUrl = null, auth = getCurApiKey($('#catoApiKeys').val()), reqObj = $('#catoQuery').val(), maskSecretKey = $('#cato_configMaskSecretKey').is(":checked")){
     var curlStr = '';
 	if (checkCatoForm()) {
+		// Get the endpoint URL from user object if not provided
+		if (requestUrl == null) {
+			if (auth && auth.endpoint) {
+				// Check if it's a known server name or custom URL
+				requestUrl = catoConfig.servers[auth.endpoint] || auth.endpoint;
+			} else {
+				requestUrl = catoConfig.servers.Ireland;
+			}
+		}
 	    if (auth.api_key==undefined) auth.api_key="************************************'"
 		var headersStr = ' -H "Accept: application/json" -H "Content-Type: application/json" ';
 		var paramsAry = [];
@@ -115,9 +124,16 @@ function transformToCURL(requestUrl = $('#catoServer').val(), auth = getCurApiKe
 function transformToPython(){
 	var str = '';
     if (checkCatoForm()) {
-        var url=$('#catoServer').val();
+		// Get the endpoint URL from user object
+		var auth=getCurApiKey();
+		var url;
+		if (auth && auth.endpoint) {
+			// Check if it's a known server name or custom URL
+			url = catoConfig.servers[auth.endpoint] || auth.endpoint;
+		} else {
+			url = catoConfig.servers.Ireland;
+		}
         var maskSecretKey=$('#cato_configMaskSecretKey').is(":checked");
-        var auth=getCurApiKey();
         str = `
 ########################################################################################
 # Usage: `+curOperationObj.name+`.py [options]

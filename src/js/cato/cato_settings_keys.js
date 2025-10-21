@@ -3,9 +3,25 @@
 function renderApiKeys(){
 	if (localStorage.getItem('CATO_API_KEYS') == null) localStorage.setItem('CATO_API_KEYS','{}');
 	CATO_API_KEYS = JSON.parse(localStorage.getItem('CATO_API_KEYS'));
+	
+	// Sort API keys alphabetically by description name
+	var sortedApiKeys = [];
+	$.each(CATO_API_KEYS, function(id, usrObj) {
+		sortedApiKeys.push({
+			id: id,
+			usrObj: usrObj
+		});
+	});
+	
+	// Sort by description (case-insensitive)
+	sortedApiKeys.sort(function(a, b) {
+		return a.usrObj.description.toLowerCase().localeCompare(b.usrObj.description.toLowerCase());
+	});
+	
+	// Render sorted API keys
 	var str = '';
-	$.each(CATO_API_KEYS, function(id,usrObj) {
-		str += '<tr id="tr_' + usrObj.account_id + '_' + usrObj.api_id + '">' + set_renderApiKeyHTML(usrObj) + '</tr>';
+	$.each(sortedApiKeys, function(i, item) {
+		str += '<tr id="tr_' + item.usrObj.account_id + '_' + item.usrObj.api_id + '">' + set_renderApiKeyHTML(item.usrObj) + '</tr>';
 	});
 	$('#cato_api_keys_tbl tbody').html(str);
 	initApiKeySettingsButtons();
@@ -63,22 +79,46 @@ function set_cancelApiKey(obj) {
 }
 
 function renderServers(id, selectedServer){
-	var str = '<select class="endpoint" name="'+id+'" id="'+id+'">';
+	// Create a text input with datalist for autocomplete
+	var datalistId = id + '_datalist';
+	var str = '<input type="text" list="' + datalistId + '" class="endpoint" name="'+id+'" id="'+id+'" placeholder="Select or enter custom endpoint" ';
+	
+	// Set the value - always use the actual URL
+	if (selectedServer) {
+		// Check if it's a known server name (stored value) and convert to URL
+		var serverUrl = selectedServer;
+		if (catoConfig.servers[selectedServer]) {
+			// It's a known server name, get the URL
+			serverUrl = catoConfig.servers[selectedServer];
+		}
+		// Always populate with the actual URL
+		str += 'value="' + serverUrl + '"';
+	}
+	str += ' />';
+	
+	// Add datalist with predefined options - use URLs as values
+	str += '<datalist id="' + datalistId + '">';
 	for (var name in catoConfig.servers) {
 		server = catoConfig.servers[name];
-		str += '<option title="'+name+'" value="'+server+'"';
-		if (name == selectedServer) {
-			str += ' selected="selected"';
-		}
-		str += '>'+name+' - '+server+'</option>';
+		str += '<option value="' + server + '">' + name + ' - ' + server + '</option>';
 	}
-	str += '</select>';
+	str += '</datalist>';
 	return str;
 }
 
 function set_renderApiKeyHTML(usrObj){
 	var str = '<td class="usrattr description">' + usrObj.description +'</td>';
-	str += '<td class="usrattr endpoint">' + (usrObj.endpoint!=undefined ? usrObj.endpoint : "Ireland") +'</td>';
+	// Display the endpoint - convert server names to URLs
+	var displayEndpoint = usrObj.endpoint;
+	if (!displayEndpoint) {
+		// No endpoint stored, use default
+		displayEndpoint = 'https://api.catonetworks.com/api/v1/graphql2';
+	} else if (catoConfig.servers[displayEndpoint]) {
+		// It's a known server name, convert to URL
+		displayEndpoint = catoConfig.servers[displayEndpoint];
+	}
+	// Otherwise it's already a custom URL, use as-is
+	str += '<td class="usrattr endpoint">' + displayEndpoint +'</td>';
 	str += '<td class="usrattr account_id">'+usrObj.account_id+'</td>';
 	str += '<td class="usrattr api_key">'+starStr.substr(0,usrObj.api_key.length)+'</td>';
 	str += '<td id="td_' + usrObj.description + ';|;' + usrObj.account_id + ';|;' + usrObj.api_key + '">';
@@ -117,8 +157,19 @@ function set_saveApiKeyResponse(response){
 		$('#cato_api_keys_tbl tr.current input').addClass("error");
 	} else {
 		CATO_API_KEYS = JSON.parse(localStorage.getItem('CATO_API_KEYS'));
+		// Get the endpoint value from the text input (which is now always a URL)
+		var endpointValue = $('#cato_api_keys_tbl tr.current .endpoint').val();
+		// Check if the URL matches a known server, store the name if so, otherwise store the custom URL
+		var endpointToStore = endpointValue;
+		for (var name in catoConfig.servers) {
+			if (catoConfig.servers[name] === endpointValue) {
+				// Store the server name for known servers
+				endpointToStore = name;
+				break;
+			}
+		}
 		var usrObj = {
-			"endpoint": $('#cato_api_keys_tbl tr.current .endpoint option:selected').attr('title'),
+			"endpoint": endpointToStore,
 			"description": $('#cato_api_keys_tbl tr.current .description').val(),
 			"account_id":$('#cato_api_keys_tbl tr.current .account_id').val(),
 			"api_key":$('#cato_api_keys_tbl tr.current .api_key').val()
