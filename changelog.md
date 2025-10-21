@@ -5,3 +5,4 @@
 ### Features
 - Updated look and feel to support dark and light mode
 - Added version checker witn upgrade instructions
+- Upated code examples to provide multi-line support for unix and powershell
