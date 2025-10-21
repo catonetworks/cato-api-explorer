@@ -24,6 +24,17 @@ To deploy a container based on this image, follow the steps below.  The instruct
 1. Use **docker-compose** to bring up the container:
    - `host# docker compose up -d`
 
+## Upgrade Process
+
+1. On the Docker host, create the **docker-compose.yml** file inside the `~/cato-api-explorer` folder. 
+1. Stop the container
+   - `host# docker compose down`
+1. Pull the latest image from the registry:
+   - `host# docker compose pull`
+1. Use **docker-compose** to bring up the container:
+   - `host# docker compose up -d`
+
+
 You can modify the ports mapped by the sample **docker-compose.yml** file if you'd prefer to run HTTP and HTTPS traffic on ports other than 8080 and 8443, respectively, on your system.
 
 ## Accessing the UI
@@ -43,11 +54,6 @@ Once connected, error information can be found in the **/var/log/apache2/error_l
 ## Updating and Upgrading the Container
 
 In the future, you can update the container by simply re-running **docker-compose build** followed by **docker-compose up --force-recreate** from the **/opt/docker/cato-api-explorer** folder.  These commands will automatically pull the latest version of the image(s) from the registry and replace it without affecting your data or configurations.
-
-## Additional Help or Questions
-
-If you have questions, find bugs or need additional help, please send an email to:
-[brian.anderson@catonetworks.com](mailto:brian.anderson@catonetworks.com).
 
 ## Links
 
