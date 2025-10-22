@@ -104,7 +104,6 @@ function toggleShowNestedParams(id) {
 			fieldset.show();
 			buttonsRow.show();
 			toggleLink.hide();
-			console.log('Showing fieldset and buttons');
 		} else {
 			// Hide the fieldset and buttons, show the toggle link
 			fieldset.hide();

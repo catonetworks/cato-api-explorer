@@ -53,7 +53,8 @@ var childOperationParent = {
 	"policy":true,
 	"groups":true,
 	"newGroups":true,
-	"site":true
+	"site":true,
+	"container":true
 }
 // Add ofType name here to force child operations
 var childOperationObjects = {
@@ -108,6 +109,12 @@ var catoGetObjectActionMapping = {
 			callback: function (response, paramName) { getNetworkRangeIdsResponse(response, paramName) }
 		}
 	},
+	// "ref": {
+	// 	"mutation.container.fqdn.updateFromFile": {
+	// 		function: function (paramActionObj, paramName) { getContainerFQDN(paramActionObj, paramName) },
+	// 		callback: function (response, paramName) { getContainerFQDNResponse(response, paramName) }
+	// 	}
+	// },
 	"siteLocation": {
 		"default": {
 			renderValuesFromObject: true

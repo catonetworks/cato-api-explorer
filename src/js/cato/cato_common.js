@@ -93,7 +93,7 @@ function loadApiSchema() {
 	} else if (userObj.endpoint) {
 		// It's a custom URL
 		endpointUrl = userObj.endpoint;
-		displayValue = "Custom - " + userObj.endpoint;
+		displayValue = userObj.endpoint;
 	} else {
 		// Default to Ireland
 		endpointUrl = catoConfig.servers.Ireland;

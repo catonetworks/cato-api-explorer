@@ -514,3 +514,55 @@ function getUserIDsResponse(response, paramName) {
 		});
 	}
 }
+
+
+// subdomains.default.function()
+function getContainerFQDN(paramActionObj, paramName) {
+	var userObj = getCurApiKey()
+	var query = fmtQuery(`{
+		"query":"query container ( $containerSearchInput:ContainerSearchInput! $accountId:ID! ) {
+			container ( accountId:$accountId  ) {
+				list ( input:$containerSearchInput  )  {
+					containers  {
+						id 
+						name 
+						description 
+						size 
+						audit  {
+							createdBy
+							lastModifiedBy
+							lastModifiedAt
+							createdAt
+						}
+					}
+				}
+			}  
+		}",
+		{
+			"accountId": "`+ filterStr(userObj.account_id) + `",
+			"containerSearchInput": {
+				"refs": [],
+				"types": [
+					"FQDN"
+				]
+			}
+		}
+		"operationName":"container"
+	}`);
+	makeCall(paramActionObj.callback, query, paramName);
+};
+
+function getContainerFQDNResponse(response, paramName) {
+	var userObj = getCurApiKey()
+	var dest = $("#" + paramName);
+	if (response.errors != undefined) {
+		$.gritter.add({ title: 'ERROR', text: response.errors[0].message });
+		$('#cato_api_keys_tbl tr.current input').addClass("error");
+	} else {
+		$(dest).html('');
+		$.each(response.data.containers, function (i, c) {
+			dest.append('<option value="' + c.id + '">' + c.name+' ('+c.id+')</option>');
+		});
+	}
+	updateRequestData();
+}
