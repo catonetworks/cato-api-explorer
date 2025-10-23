@@ -1428,7 +1428,7 @@ input.listInput { background:url('../images/down.png') right center no-repeat; p
 #dnsWrapper span.label { display: block; float: left; text-align: right; padding: 4px 5px 5px 0; width: 85px; font-weight:bold; }
 #dnsWrapper span { display: block; float: left; padding: 4px 5px 5px 0; width: 190px; }
 
-.disabled { color:#444; opacity: 0.5; filter: alpha(opacity=50); }
+.disabled { color:var(--text-muted); opacity: 0.5; filter: alpha(opacity=50); }
 .content input.disabled { padding: 3px; border: #ccc 1px solid; } 
 .content input.disabled:focus { color: #000; border-color: #999999; }
 

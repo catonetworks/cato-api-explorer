@@ -12,3 +12,9 @@
 ### Features
 - Added dynamimic example syntax for timeFrame param
 - Splitting out query for container
+
+## 1.0.13 (2025-10-23)
+
+### Features
+- Added default perSecond as false, and updated dark mode disabled text
+

@@ -481,6 +481,9 @@ function renderParamsHtml() {
 	$('.add_param_link').unbind().click(function () { addObjectToParent(this); updateRequestData(); });
 	initSiteLocationAutocomplete();
 	initSearch();
+	// Add settings as default to false due to bug in API
+	$('#perSecond_toggle').trigger('click');
+	$('#perSecond').val("false");
 	// Add event listeners for timeframe options dropdowns
 	$('#catoBodyParams select.timeframe-options').unbind().change(function() {
 		var selectedValue = $(this).val();
@@ -494,8 +497,6 @@ function renderParamsHtml() {
 			$targetInput.val('').focus();
 		}
 	});
-	// $(".datepicker").parent().click(function(){ $(".datepicker").trigger('blur'); });
-	// $(".datepicker").datetimepicker();
 	renderResponseArguments();
 }
 

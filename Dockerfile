@@ -1,6 +1,6 @@
 FROM alpine:3.12
 
-ENV VERSION=1.0.12
+ENV VERSION=1.0.13
 # Install packages and remove default server definition
 RUN set -xe \
 	&& apk update \
