@@ -760,14 +760,14 @@ label {
 	vertical-align: middle;
 }
 
-#catoBodyParams select.searchParam {
+#catoBodyParams select.searchParam:not([multiple]) {
 	width: 70% !important; /* 30% less to accommodate search button and toggle checkbox */
 	max-width: 70% !important;
 	min-width: 120px !important; /* Maintain minimum usable width */
 	height: 110px !important;
 	box-sizing: border-box !important;
 	display: inline-block !important;
-	vertical-align: middle !important;
+	vertical-align: top !important; /* Align to top of container */
 }
 
 #catoBodyParams input.searchParam {
@@ -781,33 +781,60 @@ label {
 
 /* Additional specific selectors to ensure searchParam width is applied */
 input[id*="search"].searchParam,
-select[id*="search"].searchParam,
+select[id*="search"].searchParam:not([multiple]),
 input.searchParam[placeholder*="Search"],
-input[id*="xxsearch"],
-select[id*="xxleft"],
-.searchParam {
+input[id*="xxsearch"] {
 	width: 70% !important;
 	max-width: 70% !important;
 	box-sizing: border-box !important;
 	display: inline-block !important;
-	vertical-align: middle !important;
+	vertical-align: top !important; /* Align to top of container */
 }
 
-/* Ultra-specific selector for dynamic search elements */
+/* Ultra-specific selector for dynamic search elements - exclude multi-select */
 #catoBodyParams input[id$="xxsearch"],
-#catoBodyParams select[id$="xxleft"],
-#catoBodyParams .searchParam,
-.tableColL .searchParam,
-table .searchParam {
+#catoBodyParams .searchParam:not([multiple]),
+.tableColL .searchParam:not([multiple]),
+table .searchParam:not([multiple]) {
 	width: 75% !important;
 	max-width: 75% !important;
 	min-width: 100px !important;
+	vertical-align: top !important; /* Align to top of container */
 }
 
-/* Force override any inline styles on searchParam elements */
-[class*="searchParam"] {
+/* Force override any inline styles on searchParam elements - exclude multi-select */
+[class*="searchParam"]:not([multiple]) {
 	width: 70% !important;
 	max-width: 70% !important;
+	vertical-align: top !important;
+}
+
+/* Multi-select boxes inside tableColL - ensure they show full content with tooltips */
+/* Override all width restrictions for multi-select boxes */
+.tableColL select[multiple],
+select.searchParam[multiple],
+#catoBodyParams .tableColL select[multiple],
+#catoBodyParams select.searchParam[multiple],
+.tableColL select.searchParam[multiple],
+select[id*="xxleft"][multiple],
+select[id$="xxleft"][multiple] {
+	min-height: 150px !important;
+	height: 150px !important;
+	width: 100% !important;
+	max-width: 100% !important;
+	min-width: 150px !important;
+	box-sizing: border-box !important;
+	display: block !important;
+}
+
+/* Ensure option text is readable and full text shows in tooltip */
+.tableColL select[multiple] option,
+select.searchParam[multiple] option {
+	padding: 3px 6px;
+	line-height: 1.4;
+	white-space: normal;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 /* Specific rules for API Authentication column form elements */
@@ -1368,6 +1395,7 @@ ul#icons span.ui-icon {float: left; margin: 0 4px;}
 .array_object_level4, 
 .array_object_level5 { border: 1px solid #ccc; } */
 /* a.toggle_param_link { float: right; display: block; } */
+a.param_link { margin: 2px 0; }
 
 .wrap1, .wrap2, .wrap3 { display:inline-table; /* \*/display:block;/**/ }
 .wrap1 { float:left; background:url('../images/shadow/shadow.gif') right bottom no-repeat; }

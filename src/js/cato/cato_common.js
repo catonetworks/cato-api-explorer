@@ -620,21 +620,21 @@ function renderDynamicParamHTML(paramActionObj, param, paramLevel, isParent, opt
 				<table class="tableColL" id="` + param.id_str + `_tbl">
 					<tr>`;
 	if (paramActionObj.singleValue != true) {
-		str += `		<td>
+		str += `		<td style="vertical-align: top; width: 45%;">
 							<select id="`+ param.id_str + `xxleft" class="dynamic searchParam array_` + param.type.name + `" multiple="multiple"></select>
 						</td>
-						<td>
+						<td style="width: 80px; text-align: center; vertical-align: middle;">
 							<a id="`+ param.id_str + `xxmoveLeft" class="moveLeft param_link">&nbsp;&lt;&nbsp;</a><br clear="all" />
 							<a id="`+ param.id_str + `xxmoveRight" class="moveRight param_link">&nbsp;&gt;&nbsp;</a><br clear="all" />
 							<a id="`+ param.id_str + `xxleftAll" class="moveLeftAll param_link">&lt;&lt;</a><br clear="all" />
 							<a id="`+ param.id_str + `xxrightAll" class="moveRightAll param_link">&gt;&gt;</a> 
 						</td>
-						<td id="` + param.id_str + `_field_td" class="array_` + param.type.name + `">
+						<td style="vertical-align: top; width: 45%;" id="` + param.id_str + `_field_td" class="array_` + param.type.name + `">
 						    <select name="`+ param.name + `" title="` + (param.varName ? param.varName : param.name) +`" id="` + param.id_str + `" class="searchParam ` + optionalClass + ` ` + paramLevel + `"  ` + required + ` multiple="multiple"></select>
 						</td>`;
 	} else {
-		str += `		<td style="width:50px;"></td>
-						<td id="` + param.id_str + `_field_td" class="array_` + param.type.name + `">
+		str += `		<td style="width:50px; vertical-align: top;"></td>
+						<td style="vertical-align: top;" id="` + param.id_str + `_field_td" class="array_` + param.type.name + `">
 						    <select name="`+ param.name + `" title="` + (param.varName ? param.varName : param.name) +`" id="` + param.id_str + `" class="searchParam singleValue ` + optionalClass + ` ` + paramLevel + `"  ` + required + ` multiple="multiple"></select>
 						</td>`;
 	}
@@ -1233,10 +1233,12 @@ function renderParamListValues(response, input_id) {
 			var subGroupObj = paramActionObjAry[paramActionIdStr];
 			var displayText = getParamDisplayText(subGroupObj, paramActionObj);
 			var displayValue = subGroupObj[paramActionObj.id];
-			$("#" + input_id).append('<option title="' + displayText + ' (' + subGroupObj[paramActionObj.id] + ')" value="' + subGroupObj[paramActionObj.id] + '">' + displayText + ' (' + displayValue + ')</option>');
+			var fullText = displayText + ' (' + displayValue + ')';
+			$("#" + input_id).append('<option title="' + fullText + '" value="' + subGroupObj[paramActionObj.id] + '">' + fullText + '</option>');
 		});
 	} else if (paramActionObj.objectName != undefined) {
-		$("#" + input_id).append('<option value="' + response[paramActionObj.objectName][paramActionObj.id] + '">' + response[paramActionObj.objectName][paramActionObj.displayText] + ' (' + response[paramActionObj.objectName][paramActionObj.id] + ')</option>');
+		var fullText = response[paramActionObj.objectName][paramActionObj.displayText] + ' (' + response[paramActionObj.objectName][paramActionObj.id] + ')';
+		$("#" + input_id).append('<option title="' + fullText + '" value="' + response[paramActionObj.objectName][paramActionObj.id] + '">' + fullText + '</option>');
 	} else if (Array.isArray(response)) {
 		$.each(response, function (i, subGroupObj) {
 			var displayText = getParamDisplayText(subGroupObj, paramActionObj);
@@ -1248,10 +1250,14 @@ function renderParamListValues(response, input_id) {
 			var subGroupObj = paramActionObjAry[paramActionIdStr];
 			var displayText = getParamDisplayText(subGroupObj, paramActionObj);
 			var displayValue = subGroupObj[paramActionObj.id];
-			$("#" + input_id).append('<option title="' + displayText + ' (' + subGroupObj[paramActionObj.id] + ')" value="' + subGroupObj[paramActionObj.id] + '">' + displayText + ' (' + displayValue + ')</option>');
+			var fullText = displayText + ' (' + displayValue + ')';
+			$("#" + input_id).append('<option title="' + fullText + '" value="' + subGroupObj[paramActionObj.id] + '">' + fullText + '</option>');
 		});
 	} else {
-		if (response[paramActionObj.id] != undefined) $("#" + input_id).append('<option value="' + response[paramActionObj.id] + '">' + response[paramActionObj.displayText] + ' (' + response[paramActionObj.id] + ')</option>');
+		if (response[paramActionObj.id] != undefined) {
+			var fullText = response[paramActionObj.displayText] + ' (' + response[paramActionObj.id] + ')';
+			$("#" + input_id).append('<option title="' + fullText + '" value="' + response[paramActionObj.id] + '">' + fullText + '</option>');
+		}
 	}
 	if (paramActionObj.children != undefined && paramActionObj.children.length != 0) {
 		loadParamChildValues(input_id);
@@ -1530,7 +1536,50 @@ function getCurrentOperation() {
 	}
 }
 
+function showOptionTooltip(text, x, y) {
+	// Remove any existing tooltip
+	$('#option-tooltip').remove();
+	
+	// Create tooltip element
+	var $tooltip = $('<div id="option-tooltip">' + text + '</div>');
+	$tooltip.css({
+		position: 'fixed',
+		left: x + 10 + 'px',
+		top: y + 10 + 'px',
+		backgroundColor: 'rgba(0, 0, 0, 0.9)',
+		color: '#fff',
+		padding: '8px 12px',
+		borderRadius: '6px',
+		fontSize: '13px',
+		zIndex: 10000,
+		maxWidth: '400px',
+		wordWrap: 'break-word',
+		boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+		pointerEvents: 'none'
+	});
+	
+	$('body').append($tooltip);
+	
+	// Auto-hide after 3 seconds or on next click
+	setTimeout(function() {
+		$('#option-tooltip').fadeOut(300, function() { $(this).remove(); });
+	}, 3000);
+}
+
 function initSearch() {
+	// Add click handler for all multi-select options to show tooltip
+	$(document).on('click', 'select[multiple] option', function(e) {
+		var fullText = $(this).attr('title') || $(this).text();
+		showOptionTooltip(fullText, e.clientX, e.clientY);
+	});
+	
+	// Remove tooltip on any other click
+	$(document).on('click', function(e) {
+		if (!$(e.target).is('select[multiple] option')) {
+			$('#option-tooltip').remove();
+		}
+	});
+	
 	$('.searchBtn').unbind("click").click(function () {
 		var id_str = this.id.split("xx")[0];
 		var param = $("#" + id_str);
