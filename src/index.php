@@ -184,12 +184,27 @@ var searchableDropdown = {
 	init: function() {
 		var $input = $('#catoOperations');
 		var $dropdown = $('#catoOperationsDropdown');
+		var self = this;
 		
 		// Input event handlers
 		$input.on('input', this.handleInput.bind(this));
 		$input.on('focus', this.handleFocus.bind(this));
 		$input.on('blur', this.handleBlur.bind(this));
 		$input.on('keydown', this.handleKeydown.bind(this));
+		
+		// Use mousedown instead of click for better handling with blur
+		// Use event delegation to handle dynamically created options
+		$dropdown.on('mousedown', '.dropdown-option', function(e) {
+			e.preventDefault(); // Prevent blur from firing
+			var value = $(this).data('value');
+			// Find the option from filteredOptions
+			var option = self.filteredOptions.find(function(opt) {
+				return opt.value === value;
+			});
+			if (option) {
+				self.selectOption(option);
+			}
+		});
 		
 		// Click outside to close
 		$(document).on('click', function(e) {
@@ -214,7 +229,13 @@ var searchableDropdown = {
 	},
 
 	handleFocus: function(e) {
-		this.filterOptions(e.target.value.toLowerCase());
+		// Clear the input and show all options when focusing after a previous selection
+		if (this.selectedValue) {
+			$('#catoOperations').val('');
+			this.filterOptions('');
+		} else {
+			this.filterOptions(e.target.value.toLowerCase());
+		}
 		this.renderOptions();
 		$('#catoOperationsDropdown').addClass('show');
 	},
@@ -291,10 +312,8 @@ var searchableDropdown = {
 				maxWidth = Math.max(maxWidth, $measurer.outerWidth());
 			}
 			
+			// Create option without attaching click handler (handled via event delegation in init)
 			var $option = $('<div class="dropdown-option" data-value="' + option.value + '">' + option.text + '</div>');
-			$option.on('click', function() {
-				searchableDropdown.selectOption(option);
-			});
 			
 			// Measure option width
 			$measurer.text(option.text);
