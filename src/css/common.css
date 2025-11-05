@@ -1630,7 +1630,108 @@ table.top td { vertical-align: top; }
 label { font-weight: bold; white-space: nowrap; }
 #sites legend { font-size: 1.25em; }
 .ui-icon { display: inline-block; }
-ul.ui-autocomplete { overflow: scroll; max-height: 280px; height: auto; }
+
+/* jQuery UI Autocomplete (siteLocation) - Match API Operation Dropdown Styling */
+ul.ui-autocomplete {
+	overflow: scroll;
+	max-height: 280px;
+	height: auto;
+	position: absolute;
+	background: var(--bg-card) !important;
+	border: 1px solid var(--border-primary) !important;
+	border-radius: 6px !important;
+	box-shadow: var(--shadow-lg) !important;
+	z-index: 1000 !important;
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+ul.ui-autocomplete li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul.ui-autocomplete li a,
+ul.ui-autocomplete .ui-menu-item-wrapper {
+	display: block;
+	padding: 10px 12px !important;
+	cursor: pointer;
+	border-bottom: 1px solid var(--border-primary) !important;
+	color: var(--text-primary) !important;
+	font-size: 13px !important;
+	transition: all 0.15s ease;
+	text-decoration: none !important;
+	background: transparent !important;
+}
+
+ul.ui-autocomplete li:last-child a,
+ul.ui-autocomplete li:last-child .ui-menu-item-wrapper {
+	border-bottom: none !important;
+}
+
+ul.ui-autocomplete li a:hover,
+ul.ui-autocomplete li a:focus,
+ul.ui-autocomplete .ui-menu-item-wrapper:hover,
+ul.ui-autocomplete .ui-state-focus,
+ul.ui-autocomplete .ui-state-active {
+	background-color: var(--bg-secondary) !important;
+	color: var(--accent-primary) !important;
+}
+
+/* siteLocation autocomplete input field styling */
+#catoBodyParams input.autocomplete {
+	width: 100% !important;
+	max-width: 100% !important;
+	padding: 10px 14px !important;
+	border: 1px solid rgba(255, 255, 255, 0.1) !important;
+	border-radius: 8px !important;
+	box-sizing: border-box;
+	background: rgba(0, 0, 0, 0.3) !important;
+	color: var(--text-primary) !important;
+	transition: all 0.2s ease;
+}
+
+#catoBodyParams input.autocomplete:focus {
+	border-color: var(--accent-primary) !important;
+	box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+	background: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Light theme overrides for autocomplete */
+[data-theme="light"] #catoBodyParams input.autocomplete {
+	background: var(--imput-bg) !important;
+	border: 1px solid var(--border-secondary) !important;
+	color: var(--text-primary) !important;
+}
+
+[data-theme="light"] #catoBodyParams input.autocomplete:focus {
+	background: #ffffff !important;
+	border-color: var(--accent-primary) !important;
+}
+
+/* Operation Documentation Link */
+.operation-doc-link {
+	display: inline-block;
+	color: var(--accent-primary) !important;
+	text-decoration: none;
+	font-size: 12px;
+	padding: 4px 8px;
+	border-radius: 4px;
+	transition: all 0.2s ease;
+	background: rgba(16, 185, 129, 0.1);
+	margin-top: 4px;
+}
+
+.operation-doc-link:hover {
+	background: rgba(16, 185, 129, 0.2);
+	text-decoration: underline;
+}
+
+.operation-doc-link::before {
+	content: "📖 ";
+	margin-right: 4px;
+}
 
 .ui-tabs-vertical { width: 100%; }
 .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 13em; }

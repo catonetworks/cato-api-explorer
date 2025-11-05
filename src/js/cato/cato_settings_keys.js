@@ -130,6 +130,7 @@ function set_renderApiKeyHTML(usrObj){
 
 function set_saveApiKey(obj) {
 	$(obj).parent().parent().addClass("current");
+	// var query = fmtQuery(`{"query":"query IntrospectionQuery { __schema { description } }","operationName":"IntrospectionQuery"}`);
 	var query = fmtQuery(`{
 		"query":"query accountSnapshot( $accountID:ID! ) {
 			accountSnapshot( accountID:$accountID ){ 

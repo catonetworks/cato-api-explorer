@@ -54,7 +54,12 @@ function transformToCLIUnix(auth = getCurApiKey($('#catoApiKeys').val())){
             var formattedJson = JSON.stringify(variables, null, 4);
             foramttedVars = " '" + formattedJson + "'"
         }
-        cliStr = "catocli " + selectedOperation.replaceAll("."," ") + accountIDStr + foramttedVars;
+        // Add trace flag if debug trace is enabled
+        var traceFlag = '';
+        if ($('#cato_debugTraceId').is(':checked')) {
+            traceFlag = ' --trace-id';
+        }
+        cliStr = "catocli " + selectedOperation.replaceAll("."," ") + accountIDStr + traceFlag + foramttedVars;
 	}
 	return cliStr;
 }
@@ -88,7 +93,12 @@ function transformToCLIPowerShell(auth = getCurApiKey($('#catoApiKeys').val())){
                 .join('\n');            // Rejoin
             foramttedVars = " @'\n" + formattedJson + "\n'@"
         }
-        cliStr = "catocli " + selectedOperation.replaceAll("."," ") + accountIDStr + foramttedVars;
+        // Add trace flag if debug trace is enabled
+        var traceFlag = '';
+        if ($('#cato_debugTraceId').is(':checked')) {
+            traceFlag = ' --trace-id';
+        }
+        cliStr = "catocli " + selectedOperation.replaceAll("."," ") + accountIDStr + traceFlag + foramttedVars;
 	}
 	return cliStr;
 }
@@ -108,6 +118,12 @@ function transformToCURL(requestUrl = null, auth = getCurApiKey($('#catoApiKeys'
 	    if (auth.api_key==undefined) auth.api_key="************************************'"
 		var headersStr = ' -H "Accept: application/json" -H "Content-Type: application/json" ';
 		var paramsAry = [];
+		
+		// Add x-force-tracing header if debug trace is enabled
+		if ($('#cato_debugTraceId').is(':checked')) {
+			headersStr += '-H "x-force-tracing: true" ';
+		}
+		
 		headersStr += ' -H "x-API-Key: '+((maskSecretKey) ? starStr.substr(0,auth.api_key.length) : auth.api_key)+'" ';
 		
 		// Check for content type and format

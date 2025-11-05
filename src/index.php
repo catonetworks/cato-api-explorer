@@ -58,6 +58,7 @@ $.extend($.gritter.options, {
 			<div class="header-right">
 				<a href="#settings" class="header-btn" id="settingsBtn">Settings</a>
 				<a href="https://api.catonetworks.com/documentation/" target="_blank" class="header-btn primary">Documentation</a>
+				<a href="https://api.catonetworks.com/api/schema" target="_blank" class="header-btn primary">Cato GraphQL API Schema</a>
 				<div title="Change Mode (Dark/Light)" class="header-btn theme-toggle" onclick="toggleTheme()">🌙</div>
 			</div>
 		</div>
@@ -92,6 +93,12 @@ $.extend($.gritter.options, {
 												</div>
 											</td>
 										</tr>
+										<tr id="catoOperationDoctr" style="display: none;">
+											<td></td>
+											<td>
+												<a id="catoOperationDocLink" href="" target="_blank" class="operation-doc-link"></a>
+											</td>
+										</tr>
 									</table>
 								</fieldset><br />
 								<div class="fieldset-header">Input Arguments</div>
@@ -105,7 +112,13 @@ $.extend($.gritter.options, {
 									<button class="collapse-button expanded" title="Collapse/Expand GraphQL Query"></button>
 								</div>
 								<fieldset id="catoAPIRequest">
-									<label for="catoQuery">Request Query</label><span id="catorequestdataspan"></span>
+									<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+										<label for="catoQuery">Request Query</label>
+										<div style="display: flex; align-items: center; gap: 8px;">
+											<label for="cato_debugTraceId" style="font-size: 12px; font-weight: normal;"><span class="info" title="Add the trace id from the response to a Cato support case for streamlined troubleshooting and assistance.">ⓘ</span> Add Debug Trace-ID</label>
+											<input id="cato_debugTraceId" type="checkbox" value="debugTrace" />
+										</div>
+									</div>
 									<textarea id="catoQuery"></textarea>
 									<label for="catoVariables">Request Variables</label><span id="catorequestdataspan"></span>
 									<textarea id="catoVariables"></textarea>

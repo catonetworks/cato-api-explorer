@@ -391,7 +391,7 @@ function initSiteLocationAutocomplete() {
 			$("#"+prefix+"___city").val(ui.item.city);
 			$.each(ui.item.timezone, function(i,timezone) {
 				$("#"+prefix+"___timezone").val(timezone);
-			});
+				});
 			return false;
 		}
 	})

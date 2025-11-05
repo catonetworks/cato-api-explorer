@@ -31,6 +31,7 @@ function init() {
 	$('#catoDeleteCredentials').click(function () { set_deleteApiKey(); });
 	$('#catoDeleteAllCredentials').click(function () { set_deleteAllApiKeys(); });
 	$('#cato_configMaskSecretKey').click(function () { generateCodeExamples() });
+	$('#cato_debugTraceId').click(function () { generateCodeExamples() });
 	$('#catoQuery').blur(function () { generateCodeExamples() });
 	// Check for version updates
 	catoLoadAll();
@@ -303,6 +304,7 @@ function changeOperation() {
 			} else {
 				$.gritter.add({ title: 'ERROR', text: "No object definition for '" + curOperationObj.curOfType.name + "' in schema for operation '" + curOperationObj.name + "'." });
 			}
+			updateOperationDocLink();
 			renderParamsHtml();
 		// }
 	} else {
@@ -312,6 +314,7 @@ function changeOperation() {
 		$('#responseObject').val('');
 		$('#catoBodyParams_tbl').html("");
 		$('.codeExample textarea').html("");
+		updateOperationDocLink();
 	}
 }
 
@@ -823,11 +826,8 @@ function addObjectToParent(input) {
 				time: 3000
 			});
 			
-			// Clear the form fields after successful add
+			// Clear error states but preserve field values
 			$('#' + parentId + "_fieldset ." + childLevel).each(function() {
-				if (!$(this).prop('required')) {
-					$(this).val('');
-				}
 				$(this).removeClass('errors');
 			});
 			
@@ -1326,24 +1326,51 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 	} else {
 		var queryJson = JSON.parse(query);
 		if (queryJson.operationName) operationName = "/"+queryJson.operationName;
-	}	
+	}
+	
+	// Check if debug trace is enabled
+	var headers = {
+		"Accept": "application/json",
+		"x-api-key": api_key,
+		"x-account-id": account_id,
+		"User-Agent": "Cato-API-Explorer/v"+catoConfig.version
+	};
+	
+	if ($('#cato_debugTraceId').is(':checked')) {
+		headers["x-force-tracing"] = "true";
+	}
+	
 	$.ajax({
 		url: url,
 		type: method,
 		contentType: 'application/json',
 		data: JSON.stringify(query),
-		headers: {
-			"Accept": "application/json",
-			"x-api-key": api_key,
-			"x-account-id": account_id,
-			"User-Agent": "Cato-API-Explorer/v"+catoConfig.version
-		},
-		success: function (data) {
+		headers: headers,
+		success: function (data, textStatus, xhr) {
 			if (data.data==undefined){
 				data = {"data":data}
 			}
 			if (data != null) {
 				responseObj = data;
+				
+				// Check for trace_id in response headers if debug trace is enabled
+				if ($('#cato_debugTraceId').is(':checked')) {
+					var traceId = xhr.getResponseHeader('X-Trace-ID');
+					if (traceId) {
+						// Show persistent gritter notification with trace ID
+						$.gritter.add({
+							title: 'Debug Trace-ID',
+							text: 'Trace ID: <strong>' + traceId + '</strong>',
+							sticky: true,
+							class_name: 'gritter-info'
+						});
+						// Uncheck the trace ID checkbox after getting the trace
+						$('#cato_debugTraceId').prop('checked', false);
+						// Regenerate code examples to remove trace flag
+						generateCodeExamples();
+					}
+				}
+				
 				if (input_id == undefined || input_id == null) $('#catoResult').val(JSON.stringify(data, null, 4));
 				if (callback != undefined) {
 					if (input_id != null && input_id != undefined && input_id != 'dest') {
@@ -1534,6 +1561,43 @@ function getCurrentOperation() {
 		var operationName = $('#catoOperations').val();
 		return catoApiSchema[operationType][operationName];
 	}
+}
+
+function updateOperationDocLink() {
+	// Get the selected operation value
+	var operationValue = '';
+	if (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) {
+		operationValue = searchableDropdown.getValue();
+	} else {
+		operationValue = $('#catoOperations').val();
+	}
+	
+	// Hide the doc link row if no operation is selected
+	if (!operationValue || operationValue === '') {
+		$('#catoOperationDoctr').hide();
+		return;
+	}
+	
+	// Parse the operation name: format is "type.operationName"
+	// e.g., "query.appStats" -> becomes "#query-appStats"
+	// e.g., "mutation.admin.addAdmin" -> becomes "#mutation-admin.addAdmin"
+	var operationParts = operationValue.split('.');
+	var operationType = operationParts[0]; // "query" or "mutation"
+	var operationPath = operationParts.slice(1).join('.'); // e.g., "appStats" or "admin.addAdmin"
+	
+	// Build the documentation URL
+	// Format: https://api.catonetworks.com/documentation/#type-path
+	var docAnchor = '#' + operationType + '-' + operationPath;
+	var docUrl = 'https://api.catonetworks.com/documentation/' + docAnchor;
+	
+	// Build the link text: "Doc - operationName()"
+	var linkText = 'Doc - ' + operationValue + '()';
+	
+	// Update the link
+	$('#catoOperationDocLink').attr('href', docUrl).text(linkText);
+	
+	// Show the doc link row
+	$('#catoOperationDoctr').show();
 }
 
 function showOptionTooltip(text, x, y) {
