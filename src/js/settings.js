@@ -52,9 +52,11 @@ var childOperationParent = {
 	"xdr":true,
 	"policy":true,
 	"groups":true,
+	"groupList":true,
 	"newGroups":true,
 	"site":true,
-	"container":true
+	"container":true,
+	"catalogs":true
 }
 // Add ofType name here to force child operations
 var childOperationObjects = {

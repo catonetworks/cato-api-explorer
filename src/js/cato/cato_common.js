@@ -791,7 +791,9 @@ function addObjectToParent(input) {
 	}
 	
 	// Process child fields
-	$.each($('#' + parentId + "_fieldset ." + childLevel), function (i, param) {
+	$.each($('#' + parentId + "_fieldset ." + childLevel).not('.timeframe-options').filter(function() {
+		return $(this).attr('name') !== 'time_options';
+	}), function (i, param) {
 		if (param.value != '') {
 			var val = parseParamValue($('#' + param.id));
 			if (typeof val === "object") {

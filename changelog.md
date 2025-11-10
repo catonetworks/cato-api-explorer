@@ -18,8 +18,13 @@
 ### Features
 - Added default perSecond as false, and updated dark mode disabled text
 
-## 1.0.15 (2025-11-04)
+## 1.0.16 (2025-11-04)
 
 ### Features
 - Updated to add trace-id for troubleshooting, fixed rendering issues in dark and light mode for siteLocation
 
+## 1.0.17 (2025-11-09)
+
+### Features
+- Updated timeFrame options to exclude problem field of time_options part of a new timeFrame selection widget getting added to queries 
+- Added child parsers for catalogs, and containers to split nested queries
