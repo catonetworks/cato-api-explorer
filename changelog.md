@@ -28,3 +28,8 @@
 ### Features
 - Updated timeFrame options to exclude problem field of time_options part of a new timeFrame selection widget getting added to queries 
 - Added child parsers for catalogs, and containers to split nested queries
+
+## 1.0.18 (2025-11-21)
+
+### Features
+- Updated code rendering section to add cato raw examples, and fixed onblur issue for operation load where things reload on first click

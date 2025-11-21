@@ -132,22 +132,12 @@ function set_saveApiKey(obj) {
 	$(obj).parent().parent().addClass("current");
 	// var query = fmtQuery(`{"query":"query IntrospectionQuery { __schema { description } }","operationName":"IntrospectionQuery"}`);
 	var query = fmtQuery(`{
-		"query":"query accountSnapshot( $accountID:ID! ) {
-			accountSnapshot( accountID:$accountID ){ 
-				id 
-			}
-		}",
+		"query":"query entityLookup($accountID: ID!, $type: EntityType!) { entityLookup(accountID: $accountID, type: $type) { items { entity { id name } } } }",
 		"variables":{
 			"accountID":` + $('#cato_api_keys_tbl tr.current .account_id').val() +`
 		},
-		"operationName":"accountSnapshot"
+		"operationName":"entityLookup"
 	}`);
-	
-	// var query = fmtQuery(`{"query":"{ 
-	// 	accountSnapshot( 
-	// 		accountID: ` + $('#cato_api_keys_tbl tr.current .account_id').val() +` 
-	// 	){ id } 
-	// }"}`);
 	$.gritter.add({ title: 'Saving User', text: 'Testing credentials on account ID "'+$('#cato_api_keys_tbl tr.current .account_id').val()+'".'});
 	makeCall(set_saveApiKeyResponse, query, 'set', $('#cato_api_keys_tbl tr.current .api_key').val(),$('#cato_api_keys_tbl tr.current .account_id').val(),$('#cato_api_keys_tbl tr.current .endpoint').val());
 }

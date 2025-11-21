@@ -29,7 +29,7 @@ function generateCodeExamples(){
     });
 }
 
-function transformToCLIUnix(auth = getCurApiKey($('#catoApiKeys').val())){
+function transformToCLIUnix(auth = getCurApiKey($('#catoApiKeys').val()), reqObj = $('#catoQuery').val(), showRawCommand = $('#cato_configRawCli').is(":checked")){
     var cliStr = '';
 	if (checkCatoForm()) {
         var variables = JSON.parse($('#catoVariables').val());
@@ -59,12 +59,20 @@ function transformToCLIUnix(auth = getCurApiKey($('#catoApiKeys').val())){
         if ($('#cato_debugTraceId').is(':checked')) {
             traceFlag = ' --trace-id';
         }
-        cliStr = "catocli " + selectedOperation.replaceAll("."," ") + accountIDStr + traceFlag + foramttedVars;
+        if (showRawCommand) {
+            cliStr = "catocli raw " + traceFlag + " '" + JSON.stringify({ 
+                "query": fmtQuery(reqObj), 
+                "variables": JSON.parse($('#catoVariables').val()),
+                "operationName": renderParentPath((typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) ? searchableDropdown.getValue() : $('#catoOperations').val()).split(" ").pop()
+            })+"'";
+        } else {
+            cliStr = "catocli " + selectedOperation.replaceAll("."," ") + accountIDStr + traceFlag + foramttedVars;
+        }
 	}
 	return cliStr;
 }
 
-function transformToCLIPowerShell(auth = getCurApiKey($('#catoApiKeys').val())){
+function transformToCLIPowerShell(auth = getCurApiKey($('#catoApiKeys').val()), reqObj = $('#catoQuery').val(), showRawCommand = $('#cato_configRawCli').is(":checked")){
     var cliStr = '';
 	if (checkCatoForm()) {
         var variables = JSON.parse($('#catoVariables').val());
@@ -91,14 +99,27 @@ function transformToCLIPowerShell(auth = getCurApiKey($('#catoApiKeys').val())){
                 .split('\n')            // Split into lines
                 //.map(line => '  ' + line)  // Add indentation
                 .join('\n');            // Rejoin
-            foramttedVars = " @'\n" + formattedJson + "\n'@"
+            foramttedVars = " \n@'\n" + formattedJson + "\n'@"
         }
         // Add trace flag if debug trace is enabled
         var traceFlag = '';
         if ($('#cato_debugTraceId').is(':checked')) {
             traceFlag = ' --trace-id';
         }
-        cliStr = "catocli " + selectedOperation.replaceAll("."," ") + accountIDStr + traceFlag + foramttedVars;
+        if (showRawCommand) {
+            var formattedJson = JSON.stringify({ 
+                "query": fmtQuery(reqObj), 
+                "variables": JSON.parse($('#catoVariables').val()),
+                "operationName": renderParentPath((typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) ? searchableDropdown.getValue() : $('#catoOperations').val()).split(" ").pop()
+            }, null, 4)
+                .replaceAll('"', '\\"')  // Escape double quotes
+                .split('\n')            // Split into lines
+                //.map(line => '  ' + line)  // Add indentation
+                .join('\n');            // Rejoin            
+            cliStr = "catocli raw " + traceFlag + " @'\n" + formattedJson + "\n'@ ";
+        } else {
+            cliStr = "catocli " + selectedOperation.replaceAll("."," ") + accountIDStr + traceFlag + foramttedVars;
+        }
 	}
 	return cliStr;
 }

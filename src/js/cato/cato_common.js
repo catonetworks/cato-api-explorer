@@ -31,6 +31,7 @@ function init() {
 	$('#catoDeleteCredentials').click(function () { set_deleteApiKey(); });
 	$('#catoDeleteAllCredentials').click(function () { set_deleteAllApiKeys(); });
 	$('#cato_configMaskSecretKey').click(function () { generateCodeExamples() });
+	$('#cato_configRawCli').click(function () { generateCodeExamples() });
 	$('#cato_debugTraceId').click(function () { generateCodeExamples() });
 	$('#catoQuery').blur(function () { generateCodeExamples() });
 	// Check for version updates
@@ -256,6 +257,11 @@ function renderApiOperations() {
 }
 
 function changeOperation() {
+	var selectedOp = (typeof searchableDropdown !== 'undefined' && searchableDropdown.getValue) ? searchableDropdown.getValue() : $('#catoOperations').val();
+	if (curOperationObj && curOperationObj._loadedOpName && selectedOp && curOperationObj._loadedOpName === selectedOp) {
+		return;
+	}
+
 	// Check if we have a valid operation selected
 	var hasValidOperation = false;
 	
@@ -283,6 +289,7 @@ function changeOperation() {
 			$('.codeExample textarea').html("");
 			var operation = getCurrentOperation();
 			curOperationObj = copy(operation);
+			curOperationObj._loadedOpName = selectedOp;
 			curOperationObj.operationArgs = {};
 			curOperationObj.fieldTypes = {};
 			var curOfType = getOfType(curOperationObj.type, { non_null: false, kind: [], name: null }, null);
@@ -538,8 +545,10 @@ function renderParamHTML(param) {
 			if (param.description != undefined) str += '<span class="info" title="' + filterStr(param.description) + '">&#9432;</span> ';
 			str += ((param.required == true) ? '<span title="Required field" class="required">*</span> ' : '') + (param.varName ? param.varName : param.name) + ': </label></td>';
 			str += '<td id="' + param.id_str + '_field_td" class="' + ((isMulti) ? "array_" + paramValType : paramValType) + '">';
-			str += '<select name="' + paramName + '" title="' + (param.varName ? param.varName : param.name) +'" class="dynamic ' + optionalClass + ' ' + ((isMulti) ? "array_" + paramValType : paramValType) + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + ' ' + ((isMulti) ? ' multiple' : '') + '><option value="">loading...</option></select>';
-			str += ((param.required != true)) ? ' <a id="' + param.id_str + '_toggle" title="Add/Remove Argument" class="toggleField inline-toggle ui-button-icon ui-icon ui-icon-cancel"></a>' : '';
+			if (isMulti) str += '<div style="display: flex; align-items: flex-start;">';
+			str += '<select ' + (isMulti ? 'style="flex: 1; width: auto !important;" ' : '') + 'name="' + paramName + '" title="' + (param.varName ? param.varName : param.name) +'" class="dynamic ' + optionalClass + ' ' + ((isMulti) ? "array_" + paramValType : paramValType) + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + ' ' + ((isMulti) ? ' multiple' : '') + '><option value="">loading...</option></select>';
+			str += ((param.required != true)) ? ' <a id="' + param.id_str + '_toggle" title="Add/Remove Argument" style="vertical-align: top;" class="toggleField inline-toggle ui-button-icon ui-icon ui-icon-cancel"></a>' : '';
+			if (isMulti) str += '</div>';
 			str += '</td>';
 			str += '</tr>';
 		}
@@ -549,6 +558,7 @@ function renderParamHTML(param) {
 		if (param.description != undefined) str += '<span class="info" title="' + filterStr(param.description) + '">&#9432;</span> ';
 		str += ((param.required == true) ? '<span title="Required field" class="required">*</span> ' : '') + (param.varName ? param.varName : param.name) + ': </label></td>';
 		str += '<td id="' + param.id_str + '_field_td" class="' + ((isMulti) ? "array_" + paramValType : paramValType) + '">';
+		if (isMulti) str += '<div style="display: flex; align-items: flex-start;">';
 		if (param.name == "timezone") {
 			str += '<select name="' + paramName + '" title="' + (param.varName ? param.varName : param.name) +'" class="' + optionalClass + ' ' + paramLevel + ' ' + isParent + '" id="' + param.id_str + '"' + required + '>';
 			$.each(timezones, function (i, timezone) { str += '<option value="' + timezone + '">' + timezone + '</option>'; });
@@ -598,6 +608,7 @@ function renderParamHTML(param) {
 			}
 		}
 		str += (!param.required) ? ' <a id="' + param.id_str + '_toggle" title="Add/Remove Argument" class="toggleField inline-toggle ui-button-icon ui-icon ui-icon-cancel"></a>' : '';
+		if (isMulti) str += '</div>';			
 		str += '</td>'
 		str += '</tr>';
 	}

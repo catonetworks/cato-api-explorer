@@ -138,6 +138,8 @@ $.extend($.gritter.options, {
 									<div style="display: flex; justify-content: space-between; align-items: center; margin: 16px 0 8px 0;">
 										<label for="catoExamplesNav">Code Examples</label>
 										<div style="display: flex; align-items: center; gap: 8px;">
+											<label for="cato_configRawCli" style="font-size: 12px; font-weight: normal;"><span class="info" title="Use the 'catocli raw' command to override the standard underlying cli command and customize the query to only return speciufic fields per operation.">ⓘ</span> Show RAW CLI</label>
+											<input id="cato_configRawCli" type="checkbox" value="rawCli" />
 											<label for="cato_configMaskSecretKey" style="font-size: 12px; font-weight: normal;">Mask secret key</label>
 											<input id="cato_configMaskSecretKey" type="checkbox" checked="checked" value="maskSecretKey" />
 										</div>
