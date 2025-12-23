@@ -9,7 +9,6 @@ The Cato API Explorer is a docker-based web application API client, developed as
 ## Prerequisites
 
 - Install [Docker Desktop](https://docs.docker.com/desktop/) on the system.
-- Choose a location on the system in which to store your settings and logs.
 - Create a folder named `cato-api-explorer` on your local system, and download the [docker-compose.yml](https://github.com/catonetworks/cato-api-explorer/blob/main/docker-compose.yml) from this repository into this folder.
 
 ## Container Setup
@@ -63,5 +62,5 @@ In the future, you can update the container by simply re-running **docker-compos
 
 ## Links
 
-- [Alpine Linux Container](https://hub.docker.com/_/alpine)
-- [Docker Compose](https://github.com/docker/compose/)
+- [Download the docker-compose.yml](https://github.com/catonetworks/cato-api-explorer/blob/main/docker-compose.yml)
+- [Generating API Keys for the Cato API](https://support.catonetworks.com/hc/en-us/articles/4413280536081-Generating-API-Keys-for-the-Cato-API)
