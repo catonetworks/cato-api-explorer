@@ -83,6 +83,7 @@ function loadCredentials() {
 }
 
 function loadApiSchema() {
+	curOperationObj = {};
 	$('#catoOperations').attr('placeholder', 'Loading...').addClass('loading');;
 	userObj = getCurApiKey();
 	// Get the endpoint URL - check if it's a known server or custom URL

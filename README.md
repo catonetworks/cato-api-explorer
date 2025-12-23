@@ -9,20 +9,33 @@ The Cato API Explorer is a docker-based web application API client, developed as
 ## Prerequisites
 
 - Install [Docker Desktop](https://docs.docker.com/desktop/) on the system.
-- Review the [Alpine Linux Container README](https://hub.docker.com/_/alpine).
 - Choose a location on the system in which to store your settings and logs.
+- Create a folder named `cato-api-explorer` on your local system, and download the [docker-compose.yml](https://github.com/catonetworks/cato-api-explorer/blob/main/docker-compose.yml) from this repository into this folder.
 
 ## Container Setup
 
 To deploy a container based on this image, follow the steps below.  The instructions assume you have chosen your home directory of `~/cato-api-explorer` as a base folder for storing settings and data.  If you choose a different path, please update the path in the commands below accordingly.
 
-1. On the Docker host, create the **docker-compose.yml** file inside the `~/cato-api-explorer` folder. A sample **docker-compose.yml** file is included in this repository.
 1. Change into the `~/cato-api-explorer` folder.
    - `host# cd ~/cato-api-explorer`
-1. Pull the latest image from the registry:
+1. Pull the latest image from the registry on to your local system:
    - `host# docker compose pull`
 1. Use **docker-compose** to bring up the container:
    - `host# docker compose up -d`
+
+## Accessing the UI
+
+Once the container has been started, you can simply access the UI by navigating to <http://localhost:8080>.  You can modify the ports mapped by the sample **docker-compose.yml** file if you'd prefer to run HTTP and HTTPS traffic on ports other than 8080 and 8443, respectively, on your system.  
+
+Example from docker-compose.yml:
+
+```bash
+   ports:
+    - 8088:8080
+    - 8443:443
+```
+
+The port number listed on the left is the listening port on the host and the port number on the right is the port inside the container.  For example, if 8080 is already in use on your system, to change the listening port to 8081, modify the config to use `8081:8080` instead and restart the contianer. 
 
 ## Upgrade Process
 
@@ -34,16 +47,9 @@ To deploy a container based on this image, follow the steps below.  The instruct
 1. Use **docker-compose** to bring up the container:
    - `host# docker compose up -d`
 
+## Initial GUI Configuration
 
-You can modify the ports mapped by the sample **docker-compose.yml** file if you'd prefer to run HTTP and HTTPS traffic on ports other than 8080 and 8443, respectively, on your system.
-
-## Accessing the UI
-
-Once the container has been started, you can simply access the UI by navigating to <http://localhost:8080>.  If you've chosen an alternate port other than 8080, be sure to connect to it instead.
-
-## Initial Configuration
-
-Under the Settings tab, add your API keys to authenticate.
+Under the Settings tab, create add an existing API key to authenticate.  [CLICK HERE](https://support.catonetworks.com/hc/en-us/articles/4413280536081-Generating-API-Keys-for-the-Cato-API) to learn how to create an API key in the Cato Management Application (CMA). 
 
 ## Troubleshooting
 
