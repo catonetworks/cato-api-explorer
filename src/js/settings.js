@@ -1,6 +1,8 @@
 var catoConfig = {
 	"servers":{
 		"Ireland":"https://api.catonetworks.com/api/v1/graphql2",
+		"Japan":"https://api.jp1.catonetworks.com/api/v1/graphql2",
+		"India":"https://api.in1.catonetworks.com/api/v1/graphql2",
 		"US1":"https://api.us1.catonetworks.com/api/v1/graphql2"
 	},
 	"version": window.DOCKER_VERSION,
@@ -47,6 +49,10 @@ var catoConfig = {
 
 var intStringParams = {"networkRangeId":true}
 
+var developmentServers = {
+	"https://api.cc.sta.catonet.works/api/v1/graphql2":true
+}
+
 // Add parent field name here to force child operations
 var childOperationParent = {
 	"xdr":true,
@@ -56,7 +62,8 @@ var childOperationParent = {
 	"newGroups":true,
 	"site":true,
 	"container":true,
-	"catalogs":true
+	"catalogs":true,
+	"ztnaAppConnector":true
 }
 // Add ofType name here to force child operations
 var childOperationObjects = {

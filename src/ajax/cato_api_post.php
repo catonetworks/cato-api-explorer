@@ -10,6 +10,10 @@ $headers = getallheaders();
 $api_key = isset($headers['X-Api-Key']) ? $headers['X-Api-Key'] : '';
 $query = json_decode(file_get_contents("php://input"), true);
 $server = $_GET["server"];
+$isDevServer = $_GET["isDevServer"];
+if ($isDevServer == "true") {
+	$server = $server."?with_undocumented=true";
+}
 $method='POST';
 $post_headers = array(
 	'Content-Type: application/json',

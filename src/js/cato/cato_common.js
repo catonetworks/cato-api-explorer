@@ -1295,7 +1295,8 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 			endpoint = catoConfig.servers.Ireland;
 		}
 	}
-	var url = "/ajax/cato_api_post.php?server=" + endpoint + "&operation=" + operationName;
+	var isDevServer = developmentServers[endpoint] ? true : false;
+	var url = "/ajax/cato_api_post.php?server=" + endpoint + "&operation=" + operationName+"&isDevServer="+isDevServer;
 	var method = "POST";
 	
 	// Get selected operation from either searchable dropdown or regular input

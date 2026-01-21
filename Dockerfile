@@ -1,4 +1,4 @@
-FROM alpine:3.12
+FROM alpine:3.13
 
 ENV VERSION=1.0.18
 # Install packages and remove default server definition
