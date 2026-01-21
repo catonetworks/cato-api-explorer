@@ -33,3 +33,9 @@
 
 ### Features
 - Updated code rendering section to add cato raw examples, and fixed onblur issue for operation load where things reload on first click
+
+
+## 1.0.19 (2026-01-21)
+
+### Features
+- updated settings to include dev server settings, as well as added new urls to settings for japan and india endpoints
