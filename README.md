@@ -11,7 +11,7 @@ The Cato API Explorer is a docker-based web application API client, developed as
 - Install [Docker Desktop](https://docs.docker.com/desktop/) on the system.
 - Create a folder named `cato-api-explorer` on your local system, and download the [docker-compose.yml](https://github.com/catonetworks/cato-api-explorer/blob/main/docker-compose.yml) from this repository into this folder.
 
-## Container Setup
+## Container Setup using Docker Compose
 
 To deploy a container based on this image, follow the steps below.  The instructions assume you have chosen your home directory of `~/cato-api-explorer` as a base folder for storing settings and data.  If you choose a different path, please update the path in the commands below accordingly.
 
@@ -21,6 +21,24 @@ To deploy a container based on this image, follow the steps below.  The instruct
    - `host# docker compose pull`
 1. Use **docker-compose** to bring up the container:
    - `host# docker compose up -d`
+
+## Container Setup using native Docker commands
+
+```bash
+# Run the container:
+docker run -d \
+  --name cato-api-explorer \
+  -p 8084:8080 \
+  -e TZ=UTC \
+  -e CONTAINER_NAME=cato-api-explorer \
+  ghcr.io/catonetworks/cato-api-explorer:latest
+
+# Stop and remove container in one step
+docker rm -f cato-api-explorer
+
+# Then remove the image if desired
+docker rmi ghcr.io/catonetworks/cato-api-explorer:latest
+```
 
 ## Accessing the UI
 
@@ -45,6 +63,8 @@ The port number listed on the left is the listening port on the host and the por
    - `host# docker compose pull`
 1. Use **docker-compose** to bring up the container:
    - `host# docker compose up -d`
+
+
 
 ## Initial GUI Configuration
 
