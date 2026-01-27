@@ -28,7 +28,7 @@ To deploy a container based on this image, follow the steps below.  The instruct
 # Run the container:
 docker run -d \
   --name cato-api-explorer \
-  -p 8084:8080 \
+  -p 8080:8080 \
   -e TZ=UTC \
   -e CONTAINER_NAME=cato-api-explorer \
   ghcr.io/catonetworks/cato-api-explorer:latest
