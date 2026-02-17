@@ -72,7 +72,8 @@ var childOperationObjects = {
 	"PolicyQueries":true,
 	"GroupsQueries":true,
 	"ContainerQueries":true,
-	"SiteQueries":true
+	"SiteQueries":true,
+	"firewall":true
 }
 
 var catoGetObjectActionMapping = {
