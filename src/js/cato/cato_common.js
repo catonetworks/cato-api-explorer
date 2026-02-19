@@ -1764,7 +1764,10 @@ function checkForChildOperation(fieldsAry) {
 	subOperation = false;
 	$.each(fieldsAry, function (i, field) {
 		if (curOperationObj.childOperations && curOperationObj.childOperations[field.name]) {
-			subOperation = field;
+			// Keep the FIRST matching field (represents next path segment)
+			if (subOperation == false) {
+				subOperation = field;
+			}
 		}
 		newFieldList[field.name] = copy(field);
 	});
