@@ -8,3 +8,5 @@
 *.war
 src/introspection.json
 CLAUDE.md
+reports/
+node_modules/
