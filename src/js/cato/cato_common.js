@@ -158,16 +158,21 @@ function parseApiSchema(schema) {
 	renderApiOperations();
 }
 
+function unwrapNamedType(typeRef) {
+	if (!typeRef) return null;
+	if (typeRef.kind !== 'LIST' && typeRef.kind !== 'NON_NULL') return typeRef;
+	return unwrapNamedType(typeRef.ofType);
+}
+
 function getChildOperations(operationType, curType, parentType, parentPath) {
 	if (parentType.childOperations==undefined) parentType.childOperations = {};
 	var curOfType = null;
-	if (curType.kind) {
-		curOfType = copy(catoApiIntrospection[curType.kind.toLowerCase() + "s"][curType.name]);
-	} else if (curType.type.ofType == null) {
-		curOfType = copy(catoApiIntrospection[curType.type.kind.toLowerCase() + "s"][curType.type.name]);
-	} else {
-		curOfType = copy(catoApiIntrospection[curType.type.ofType.kind.toLowerCase() + "s"][curType.type.ofType.name]);
+	var typeRef = curType.kind ? curType : curType.type;
+	var namedType = unwrapNamedType(typeRef);
+	if (namedType && catoApiIntrospection[namedType.kind.toLowerCase() + "s"]) {
+		curOfType = copy(catoApiIntrospection[namedType.kind.toLowerCase() + "s"][namedType.name]);
 	}
+	if (!curOfType) return;
 	var hasChildren = false;
 	for (i in curOfType.fields) {
 		var curFieldObject = copy(curOfType.fields[i]);
@@ -1296,7 +1301,7 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 		}
 	}
 	var isDevServer = developmentServers[endpoint] ? true : false;
-	var url = "/ajax/cato_api_post.php?server=" + endpoint + "&operation=" + operationName+"&isDevServer="+isDevServer;
+	var url = '/api/cato/graphql';
 	var method = "POST";
 	
 	// Get selected operation from either searchable dropdown or regular input
@@ -1347,7 +1352,6 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 	var headers = {
 		"Accept": "application/json",
 		"x-api-key": api_key,
-		"x-account-id": account_id,
 		"User-Agent": "Cato-API-Explorer/v"+catoConfig.version
 	};
 	
@@ -1359,7 +1363,7 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 		url: url,
 		type: method,
 		contentType: 'application/json',
-		data: JSON.stringify(query),
+		data: JSON.stringify({endpoint: endpoint, includeUndocumented: isDevServer, request: query}),
 		headers: headers,
 		success: function (data, textStatus, xhr) {
 			if (data.data==undefined){
