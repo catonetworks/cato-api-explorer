@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-ENV VERSION=1.0.21
+ENV VERSION=1.0.23
 
 WORKDIR /app
 

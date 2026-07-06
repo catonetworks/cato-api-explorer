@@ -1,6 +1,6 @@
 {
   "name": "cato-api-explorer",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "private": true,
   "description": "Static Cato API Explorer UI with a Node.js GraphQL proxy.",
   "engines": {
