@@ -49,9 +49,6 @@ var catoConfig = {
 
 var intStringParams = {"networkRangeId":true}
 
-var developmentServers = {
-	"https://api.cc.sta.catonet.works/api/v1/graphql2":true
-}
 
 // Add parent field name here to force child operations
 var childOperationParent = {

@@ -1300,7 +1300,6 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 			endpoint = catoConfig.servers.Ireland;
 		}
 	}
-	var isDevServer = developmentServers[endpoint] ? true : false;
 	var url = '/api/cato/graphql';
 	var method = "POST";
 	
@@ -1363,7 +1362,7 @@ function makeCall(callback, query, input_id, api_key, account_id, endpoint) {
 		url: url,
 		type: method,
 		contentType: 'application/json',
-		data: JSON.stringify({endpoint: endpoint, includeUndocumented: isDevServer, request: typeof query === 'string' ? JSON.parse(query) : query}),
+		data: JSON.stringify({endpoint: endpoint, request: typeof query === 'string' ? JSON.parse(query) : query}),
 		headers: headers,
 		success: function (data, textStatus, xhr) {
 			if (data.data==undefined){
