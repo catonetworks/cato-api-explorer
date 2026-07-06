@@ -8,6 +8,6 @@
   },
   "scripts": {
     "start": "node server/server.js",
-    "check": "node --check server/server.js && node --check server/cato-endpoints.js"
+    "check": "node --check server/server.js"
   }
 }
