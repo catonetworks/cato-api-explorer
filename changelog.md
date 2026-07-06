@@ -39,3 +39,9 @@
 
 ### Features
 - updated settings to include dev server settings, as well as added new urls to settings for japan and india endpoints
+
+## 1.0.20 (2026-07-05)
+
+### Features
+- Updated schema import process to support new nested NULL structure introduced this week.
+- Migrated to newer node proxy server for sending API calls to Cato.
