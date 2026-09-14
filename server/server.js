@@ -186,6 +186,16 @@ async function handleCatoProxy(req, res) {
     if (error.name === 'AbortError') {
       throw new HttpError(504, 'Cato API request timed out.');
     }
+    console.error(JSON.stringify({
+      event: 'cato_api_proxy_error',
+      endpoint: targetUrl.origin,
+      errorName: error.name,
+      errorCode: error.code || undefined,
+      errorMessage: error.message,
+      errorCause: error.cause ? String(error.cause) : undefined,
+      nodeVersion: process.version,
+      platform: process.platform
+    }));
     throw new HttpError(502, 'Unable to reach the Cato API.');
   } finally {
     clearTimeout(timeout);
@@ -320,6 +330,18 @@ async function handleRequest(req, res) {
     }
     await handleStatic(req, res, parsedUrl);
   } catch (error) {
+    if (!(error instanceof HttpError)) {
+      console.error(JSON.stringify({
+        event: 'unhandled_request_error',
+        method: req.method,
+        url: req.url,
+        errorName: error.name,
+        errorCode: error.code || undefined,
+        errorMessage: error.message,
+        nodeVersion: process.version,
+        platform: process.platform
+      }));
+    }
     sendJsonError(res, error);
   }
 }

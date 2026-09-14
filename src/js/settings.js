@@ -60,6 +60,7 @@ var childOperationParent = {
 	"site":true,
 	"container":true,
 	"catalogs":true,
+	"networkConfig":true,
 	"ztnaAppConnector":true
 }
 // Add ofType name here to force child operations
@@ -70,7 +71,14 @@ var childOperationObjects = {
 	"GroupsQueries":true,
 	"ContainerQueries":true,
 	"SiteQueries":true,
-	"firewall":true
+	"firewall":true,
+	// networkConfig: the dhcp/dns namespace fields take no args, so recursion
+	// stops and networkConfig collapses into one flat top-level operation.
+	// Forcing these container types splits it into per-operation children.
+	"NetworkConfigMutations":true,
+	"NetworkConfigQueries":true,
+	"NetworkConfigDhcpQueries":true,
+	"NetworkConfigDnsQueries":true
 }
 
 var catoGetObjectActionMapping = {
