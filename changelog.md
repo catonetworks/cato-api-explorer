@@ -45,3 +45,10 @@
 ### Features
 - Updated schema import process to support new nested NULL structure introduced this week.
 - Migrated to newer node proxy server for sending API calls to Cato.
+
+
+## 1.0.24 (2026-09-16)
+
+### Features
+- Updated schema import process to support new nested NULL structure introduced this week.
+- Add new parsing update to support networkConfig child operations
