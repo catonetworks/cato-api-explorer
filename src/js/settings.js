@@ -61,6 +61,7 @@ var childOperationParent = {
 	"container":true,
 	"catalogs":true,
 	"networkConfig":true,
+	"posture":true,
 	"ztnaAppConnector":true
 }
 // Add ofType name here to force child operations
@@ -78,7 +79,12 @@ var childOperationObjects = {
 	"NetworkConfigMutations":true,
 	"NetworkConfigQueries":true,
 	"NetworkConfigDhcpQueries":true,
-	"NetworkConfigDnsQueries":true
+	"NetworkConfigDnsQueries":true,
+	// posture: query.posture is gated by childOperationParent above; PostureQueries
+	// keeps the no-arg complianceFrameworkList reachable and PostureMutations exposes
+	// the no-arg reevaluateChecks mutation. Arg-bearing leaf ops split automatically.
+	"PostureQueries":true,
+	"PostureMutations":true
 }
 
 var catoGetObjectActionMapping = {
