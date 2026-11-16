@@ -177,7 +177,17 @@ function getChildOperations(operationType, curType, parentType, parentPath) {
 	for (i in curOfType.fields) {
 		var curFieldObject = copy(curOfType.fields[i]);
 		// console.log("curFieldObject.name",curFieldObject.name);
-		if ((curFieldObject.args != null && curFieldObject.args.length > 0) || childOperationObjects[curFieldObject.name]!=undefined || childOperationObjects[curOfType.name]!=undefined) {
+		if (childOperationLeafObjects[curFieldObject.name]!=undefined || childOperationLeafObjects[curOfType.name]!=undefined) {
+			// Terminal wrapper: force this field into the operation path as a child, but
+			// STOP recursion so all of its sub-fields (even arg-bearing ones like
+			// category/type/os/...) render together inside this single operation instead
+			// of each becoming its own operation.
+			hasChildren = true;
+			curParentType = copy(parentType);
+			curFieldObject.args = getNestedArgDefinitions(curFieldObject.args, curFieldObject.name);
+			curParentType.childOperations[curFieldObject.name] = curFieldObject;
+			catoApiSchema[operationType][parentPath + "." + curFieldObject.name] = curParentType;
+		} else if ((curFieldObject.args != null && curFieldObject.args.length > 0) || childOperationObjects[curFieldObject.name]!=undefined || childOperationObjects[curOfType.name]!=undefined) {
 			hasChildren = true;
 			curParentType = copy(parentType);
 			curFieldObject.args = getNestedArgDefinitions(curFieldObject.args, curFieldObject.name);
@@ -408,9 +418,15 @@ function getNestedFieldDefinitions(fieldsAry, parentParamPath) {
 	if (curOperationObj.childOperations) {
 		fieldsAry = checkForChildOperation(fieldsAry);
 	}
+	// Config-driven field exclusions for the loaded operation (full dotted path in
+	// _loadedOpName); see operationFieldExclusions in settings.js. Skipping the field
+	// here also keeps its args out of the hoisted operation variables.
+	var curOpExclusions = (typeof operationFieldExclusions !== 'undefined' && curOperationObj && curOperationObj._loadedOpName)
+		? operationFieldExclusions[curOperationObj._loadedOpName] : undefined;
 	var newFieldList = {};
 	for (i in fieldsAry) {
 		var field = copy(fieldsAry[i]);
+		if (field != null && curOpExclusions && curOpExclusions.indexOf(field.name) !== -1) continue;
 		if (field != null) {
 			if (parentParamPath == null) {
 				field.path = field.name;
@@ -467,14 +483,7 @@ function renderParamsHtml() {
 
 	// Now that all parameters are rendered, populate dynamic ENUMs
 	$.each($('#catoBodyParams .dynamic'), function (i, input) {
-		var paramActionObj = null;
-		if (catoGetObjectActionMapping[input.name]) {
-			if (catoGetObjectActionMapping[input.name][curOperationObj.name]) {
-				paramActionObj = catoGetObjectActionMapping[input.name][curOperationObj.name];
-			} else {
-				paramActionObj = catoGetObjectActionMapping[input.name].default;
-			}
-		}
+		var paramActionObj = resolveParamAction(input.name);
 		if (paramActionObj && paramActionObj != null) {
 			if (paramActionObj.function) {
 				paramActionObj.function(paramActionObj, input.name);
@@ -492,6 +501,14 @@ function renderParamsHtml() {
 	$('#catoBodyParams select.param1:not(.parent)').unbind().change(function () { updateRequestData(); });
 	$('#catoBodyParams select.dynamic').unbind().change(function () { updateRequestData(); });
 	$('#catoBodyParams select.template').unbind().change(function () { populateFieldsFromTemplateSelect(this); });
+	$('#catoBodyParams select.refPicker').unbind().change(function () { populateRefFromSelect(this); });
+	// Re-apply the picked ref whenever the sibling `by` dropdown changes, so `by` always
+	// governs what lands in `input`. Namespaced so it doesn't clobber other change handlers.
+	$('#catoBodyParams select.refPicker').each(function () {
+		var refId = $(this).attr("id");
+		var byId = refId.replace("_template", "___") + (resolveParamAction($(this).attr("name").replace(/_refPicker$/, "")) || {}).byField;
+		$('#' + byId).unbind('change.refPicker').on('change.refPicker', function () { populateRefFromSelect(document.getElementById(refId)); });
+	});
 	$('#catoBodyParams a.toggleField').unbind().click(function () { toggleResponseArgParam(this); }).click();
 	$('#responseObject').unbind().blur(function () { renderResponseArguments(); });
 	$('.add_param_link').unbind().click(function () { addObjectToParent(this); updateRequestData(); });
@@ -516,14 +533,27 @@ function renderParamsHtml() {
 	renderResponseArguments();
 }
 
+// Resolve a catoGetObjectActionMapping entry for the given parameter in the context
+// of the currently selected operation. Split operations (e.g.
+// query.aiSecurity.agents.event) all share the same root curOperationObj.name
+// ("aiSecurity"), so operation-scoped entries must be keyed by the full dotted
+// operation path, which lives in curOperationObj._loadedOpName. Resolution order:
+// full path -> root name -> default -> null. Returns null when nothing matches so
+// callers can safely fall through to normal (non-dynamic) rendering without a crash.
+function resolveParamAction(paramName) {
+	var m = catoGetObjectActionMapping[paramName];
+	if (m == undefined || m == null) return null;
+	var fullPath = (typeof curOperationObj !== 'undefined' && curOperationObj) ? curOperationObj._loadedOpName : null;
+	if (fullPath && m[fullPath] != undefined) return m[fullPath];
+	if (typeof curOperationObj !== 'undefined' && curOperationObj && m[curOperationObj.name] != undefined) return m[curOperationObj.name];
+	return (m.default != undefined) ? m.default : null;
+}
+
 function renderParamHTML(param) {
 	str = "";
 	var isParent = "";
-	var paramActionObj = null;
-	if (catoGetObjectActionMapping[param.name] != undefined) {
-		var paramActionObj = (catoGetObjectActionMapping[param.name][curOperationObj.name] != undefined) ? catoGetObjectActionMapping[param.name][curOperationObj.name] : catoGetObjectActionMapping[param.name].default;
-		if (paramActionObj.children != undefined && paramActionObj.children.length > 0) isParent = "parent";
-	}
+	var paramActionObj = resolveParamAction(param.name);
+	if (paramActionObj != null && paramActionObj.children != undefined && paramActionObj.children.length > 0) isParent = "parent";
 	var isMulti = param.type.kind.includes("LIST");
 	
 	var level = (param.id_str.split("___").length - 1);
@@ -687,7 +717,31 @@ function renderInputNestedFieldsHtml(param, parentContainerId) {
 	str += '<fieldset id="' + param.id_str + '_fieldset" class="nested_param"><legend>' + param.type.name +' Parameters</legend>';
 	str += '<table id="' + param.id_str + '_tbl" class="toggle_param param_tbl_level' + level + '">';
 
-	if (catoGetObjectActionMapping[param.name] != null && catoGetObjectActionMapping[param.name].default && catoGetObjectActionMapping[param.name].default.renderValuesFromObject) {
+	// Resolve the mapping entry in the context of the current operation (full-path ->
+	// root-name -> default), so nested-object pickers support per-operation overrides
+	// the same way sessionId does. Top-level INPUT_OBJECT args carry the arg name in
+	// param.name but display their camelCased TYPE name as varName (e.g. SiteRefInput ->
+	// siteRefInput), so a mapping keyed on the type-derived name only matches via varName.
+	// Try param.name first, then fall back to varName, and remember which key matched so
+	// the picker's name attribute (and its handlers) can recover the same key.
+	// Nested INPUT_OBJECT fields never pass through getNestedArgDefinitions, so (unlike top-level
+	// args) they carry no varName. A mapping keyed on the camelCased TYPE name (e.g. CountryRefInput
+	// -> countryRefInput) must therefore be derived here from the field's unwrapped type name.
+	// Resolution preference: an explicit field-name entry, then the type-derived key, then any
+	// precomputed varName, else the field name.
+	var nestedTypeName = (param.type && (param.type.name || (param.type.definition && param.type.definition.name))) || null;
+	if (nestedTypeName == null && typeof unwrapNamedType === 'function') {
+		var unwrapped = unwrapNamedType(param.type);
+		nestedTypeName = unwrapped ? unwrapped.name : null;
+	}
+	var nestedTypeKey = nestedTypeName ? renderCamelCase(nestedTypeName) : null;
+	var nestedActionKey =
+		(resolveParamAction(param.name) != null) ? param.name :
+		(nestedTypeKey && resolveParamAction(nestedTypeKey) != null) ? nestedTypeKey :
+		(param.varName && resolveParamAction(param.varName) != null) ? param.varName :
+		(param.varName ? param.varName : param.name);
+	var nestedAction = resolveParamAction(nestedActionKey);
+	if (nestedAction != null && nestedAction.renderValuesFromObject) {
 		if (param.name=="siteLocation") {
 			str += '<tr id="' + param.id_str + '_templatetr" class=""><td align="right"></td>';
 			str += '<td id="' + param.id_str + '_template_td" class="">';
@@ -704,6 +758,17 @@ function renderInputNestedFieldsHtml(param, parentContainerId) {
 			// str += (argType == "responseArg") ? '<td valign="top"><a id="' + param.id_str + '_toggle" title="Add/Remove Argument" class="toggleField ui-button-icon ui-icon ui-icon-cancel"></a></td>' : "<td></td>";
 			str += '</tr>';
 			}
+	} else if (nestedAction != null && nestedAction.refPicker) {
+		// ObjectRef picker: one <select class="refPicker"> listing "name (id)" options that
+		// each carry data-id + data-name. populateRefFromSelect writes id OR name into the
+		// `input` field depending on the `by` dropdown. Reuses the _template id suffix so the
+		// handler can derive the sibling nested field ids via .replace("_template","___").
+		str += '<tr id="' + param.id_str + '_templatetr" class="">';
+		str += '<td align="right"><label for="' + param.path + '_template">Available ' + (param.varName ? param.varName : param.name) + '(s): </label></td>';
+		str += '<td id="' + param.id_str + '_template_td" class="">';
+		str += '<select name="' + nestedActionKey + '_refPicker" title="' + (param.varName ? param.varName : param.name) +'" class="refPicker" id="' + param.id_str + '_template"><option value="">loading...</option></select>';
+		str += '</td>';
+		str += '</tr>';
 	}
 
 	str += '</table></fieldset>';
@@ -721,8 +786,8 @@ function renderInputNestedFieldsHtml(param, parentContainerId) {
 	str += '</tr>';
 	$("#" + parentContainerId + "_tbl").append(str);
 
-	if (catoGetObjectActionMapping[param.name] != null && catoGetObjectActionMapping[param.name].function) {
-		catoGetObjectActionMapping[param.name].function(catoGetObjectActionMapping[param.name], param.id_str);
+	if (nestedAction != null && nestedAction.function) {
+		nestedAction.function(nestedAction, param.id_str);
 	}
 
 	if (param.type.definition.inputFields) {
@@ -1105,6 +1170,23 @@ function renderArgsAndFields(responseArgStr, curOperation, definition, indent) {
 					}
 				});
 			}
+			responseArgStr += indent + "}\n";
+		}
+		// Top-level union/interface fields that expose possibleTypes but no plain
+		// `fields` (e.g. DeviceV2.networkInfo -> DeviceNetworkRef union) match neither
+		// the fields block nor the inputFields block above, so without this branch
+		// they render bare and fail validation ("must have a selection of subfields").
+		// Render them as __typename + inline fragments from the model's possibleTypes.
+		if (field.type && field.type.definition && field.type.definition.fields == null && field.type.definition.inputFields == null && field.type.definition.possibleTypes != null) {
+			responseArgStr += " {\n";
+			responseArgStr += indent + "  __typename\n";
+			$.each(field.type.definition.possibleTypes, function (possibleTypeIndex, possibleType) {
+				if ((possibleType.fields != null && Object.keys(possibleType.fields).length > 0) || (possibleType.inputFields != null && Object.keys(possibleType.inputFields).length > 0)) {
+					responseArgStr += indent + "  ... on " + possibleType.name + " {\n";
+					responseArgStr = renderArgsAndFields(responseArgStr, curOperation, possibleType, indent + "    ");
+					responseArgStr += indent + "  }\n";
+				}
+			});
 			responseArgStr += indent + "}\n";
 		}
 		if (field.type && field.type.definition && field.type.definition.inputFields != null) {
@@ -1667,13 +1749,8 @@ function initSearch() {
 		var param = $("#" + id_str);
 		var searchStr = $('#' + id_str + 'xxsearch').val().trim();
 		$('#' + id_str + 'xxsearch').addClass('loading');
-		if (catoGetObjectActionMapping[$(param).attr("name")]) {
-			var paramActionObj = null;
-			if (catoGetObjectActionMapping[$(param).attr("name")][curOperationObj.name]) {
-				paramActionObj = catoGetObjectActionMapping[$(param).attr("name")][curOperationObj.name];
-			} else {
-				paramActionObj = catoGetObjectActionMapping[$(param).attr("name")].default;
-			}
+		var paramActionObj = resolveParamAction($(param).attr("name"));
+		if (paramActionObj != null) {
 			paramActionObj.searchStr = searchStr;
 			if (paramActionObj.function) {
 				paramActionObj.function(paramActionObj, id_str);
@@ -1737,6 +1814,26 @@ function populateFieldsFromTemplateSelect(select) {
 			$('#' + $(select).attr("id").replace("_template", "___") + fieldName).val(fieldVal);
 		});
 	}
+}
+
+// ObjectRef picker handler. The selected option carries both data-id and data-name; the
+// value written into the `input` field follows the sibling `by` dropdown (ID -> id, NAME ->
+// name). Bound both to the picker's own change and to the `by` dropdown's change, so flipping
+// `by` after a selection re-writes `input`. byField/inputField come from the mapping entry
+// resolved for the current operation.
+function populateRefFromSelect(select) {
+	if (select == null) return;
+	var $select = $(select);
+	var paramName = $select.attr("name").replace(/_refPicker$/, "");
+	var action = resolveParamAction(paramName);
+	if (action == null || !action.refPicker) return;
+	var prefix = $select.attr("id").replace("_template", "___");
+	var byVal = $('#' + prefix + action.byField).val();
+	var $opt = $select.find("option:selected");
+	if ($opt.val() == '') return;
+	var val = (String(byVal).toUpperCase() === "NAME") ? $opt.attr("data-name") : $opt.attr("data-id");
+	$('#' + prefix + action.inputField).val(val);
+	updateRequestData();
 }
 
 function toggleResponseArgParam(input) {

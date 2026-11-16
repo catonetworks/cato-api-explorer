@@ -45,6 +45,81 @@ function getSiteIDsResponse(response,paramName){
 	}
 }
 
+// siteRefInput (and future ObjectRef pickers).default.function()
+// Generic entityLookup-backed fetch for ObjectRef pickers. The entity type comes from the
+// mapping entry (paramActionObj.entityType, e.g. "site"), so the same plumbing serves any
+// prescriptively-configured *RefInput. Response renders options carrying BOTH id and name;
+// populateRefFromSelect picks which one to write into `input` based on the `by` dropdown.
+function getObjectRefs(paramActionObj, paramName) {
+	var userObj = getCurApiKey();
+	var query = fmtQuery(`{
+		"query":"query entityLookup ( $accountID:ID! $type:EntityType! $limit:Int $search:String ) {
+				entityLookup ( accountID:$accountID type:$type limit:$limit search:$search  ) {
+				items  {
+					entity {
+						id
+						name
+						type
+					}
+					description
+					helperFields
+				}
+				total
+			}
+		}",
+		"variables":{
+			"accountID": `+ filterStr(userObj.account_id) + `,
+			"type": "`+ filterStr(paramActionObj.entityType) + `",
+			"limit": 1000,
+			"search": "`+ filterStr(paramActionObj.searchStr ? paramActionObj.searchStr : "") + `"
+		},
+		"operationName":"entityLookup"
+	}`);
+	makeCall(paramActionObj.callback, query, paramName);
+};
+
+function getObjectRefsResponse(response, paramName) {
+	var dest = $("#" + paramName + "_template");
+	if (response.errors != undefined) {
+		$.gritter.add({ title: 'ERROR', text: response.errors[0].message });
+		$('#cato_api_keys_tbl tr.current input').addClass("error");
+	} else {
+		$(dest).html('<option value="">-- select --</option>');
+		$.each(response.data.entityLookup.items, function (i, item) {
+			var id = item.entity.id;
+			var name = item.entity.name;
+			dest.append('<option value="' + id + '" data-id="' + id + '" data-name="' + filterStr(name) + '">' + name + ' (' + id + ')</option>');
+		});
+	}
+}
+
+// Generic list-query ObjectRef picker (Tier 2). These *RefInput types have no EntityType, so
+// unlike getObjectRefs they are sourced from a dedicated list query. The mapping entry supplies
+// refQuery(userObj) -> the GraphQL request body; its callback passes the dot-path to the items[]
+// array (e.g. "groups.groupList.items") to getRefListResponse. Options carry data-id/data-name so
+// populateRefFromSelect writes id or name per the `by` dropdown, exactly like getObjectRefsResponse.
+function getRefList(paramActionObj, paramName) {
+	var userObj = getCurApiKey();
+	var query = fmtQuery(paramActionObj.refQuery(userObj));
+	makeCall(paramActionObj.callback, query, paramName);
+};
+
+function getRefListResponse(response, paramName, itemsPath) {
+	var dest = $("#" + paramName + "_template");
+	if (response.errors != undefined) {
+		$.gritter.add({ title: 'ERROR', text: response.errors[0].message });
+		$('#cato_api_keys_tbl tr.current input').addClass("error");
+		return;
+	}
+	var node = response.data;
+	var parts = (itemsPath || "").split(".");
+	for (var i = 0; i < parts.length && node != null; i++) node = node[parts[i]];
+	$(dest).html('<option value="">-- select --</option>');
+	$.each(node || [], function (i, item) {
+		dest.append('<option value="' + item.id + '" data-id="' + item.id + '" data-name="' + filterStr(item.name) + '">' + item.name + ' (' + item.id + ')</option>');
+	});
+}
+
 // accountID.default.function()
 // function populateAccountID(input_id){
 // 	var userObj = getCurApiKey();
@@ -562,6 +637,109 @@ function getContainerFQDNResponse(response, paramName) {
 		$(dest).html('');
 		$.each(response.data.containers, function (i, c) {
 			dest.append('<option value="' + c.id + '">' + c.name+' ('+c.id+')</option>');
+		});
+	}
+	updateRequestData();
+}
+
+// sessionId.<query.aiSecurity.*>.function()
+// Populate the sessionId dropdown for the aiSecurity operations with session IDs
+// seen in the last 30 days of `events`, filtered to the AI event sub-type(s) that
+// the mapping entry specifies via paramActionObj.subTypes (e.g. ["Agent Interaction"]).
+function getSessionIDs(paramActionObj, paramName) {
+	var userObj = getCurApiKey();
+	var subTypes = (paramActionObj && paramActionObj.subTypes) ? paramActionObj.subTypes : [];
+	var query = fmtQuery(`{
+		"query":"query events ( $accountID:ID! $timeFrame:TimeFrame! $eventsDimension:[EventsDimension] $eventsFilter:[EventsFilter!] $limit:Int $from:Int ) {
+				events ( accountID:$accountID timeFrame:$timeFrame dimensions:$eventsDimension filters:$eventsFilter ) {
+					records ( limit:$limit from:$from ) {
+						fieldsMap
+					}
+				}
+			}",
+		"variables":{
+			"accountID": `+ filterStr(userObj.account_id) + `,
+			"timeFrame": "last.P30D",
+			"eventsDimension": [ { "fieldName": "session_id" }, { "fieldName": "user_name" }, { "fieldName": "time" } ],
+			"eventsFilter": [ { "fieldName": "event_sub_type", "operator": "in", "values": `+ JSON.stringify(subTypes) +` } ],
+			"limit": 1000,
+			"from": 0
+		},
+		"operationName":"events"
+	}`);
+	makeCall(paramActionObj.callback, query, paramName);
+};
+
+function getSessionIDsResponse(response, paramName) {
+	var dest = $("select[name=" + paramName + "]");
+	if (response.errors != undefined) {
+		$.gritter.add({ title: 'ERROR', text: response.errors[0].message });
+		$('#cato_api_keys_tbl tr.current input').addClass("error");
+	} else {
+		dest.html('<option value="">-- select --</option>');
+		var seen = {};
+		$.each(response.data.events.records, function (i, rec) {
+			var fm = (rec && rec.fieldsMap) ? rec.fieldsMap : {};
+			var sid = fm.session_id;
+			if (sid && !seen[sid]) {
+				seen[sid] = true;
+				// Option VALUE stays the sessionId; the LABEL adds user + timestamp for context.
+				// `time` comes back as epoch milliseconds (string) — render it human-readable.
+				var user = fm.user_name ? fm.user_name : '—';
+				var ts = '';
+				if (fm.time) {
+					var d = new Date(Number(fm.time));
+					if (!isNaN(d.getTime())) ts = ' · ' + d.toLocaleString();
+				}
+				dest.append('<option value="' + sid + '">' + user + ts + ' (' + sid + ')</option>');
+			}
+		});
+	}
+	updateRequestData();
+}
+
+// id.<query.aiSecurity.apps.invocation>.function()
+// Populate the apps.invocation `id` dropdown with Generative-AI application IDs seen
+// in the last 30 days of `appStats`, filtered to GenAI app categories.
+function getGenAiAppIDs(paramActionObj, paramName) {
+	var userObj = getCurApiKey();
+	var query = fmtQuery(`{
+		"query":"query appStats ( $accountID:ID! $timeFrame:TimeFrame! $measure:[Measure] $dimension:[Dimension] $appStatsFilter:[AppStatsFilter!] $limit:Int $from:Int ) {
+				appStats ( accountID:$accountID timeFrame:$timeFrame measures:$measure dimensions:$dimension filters:$appStatsFilter ) {
+					records ( limit:$limit from:$from ) {
+						fieldsMap
+					}
+				}
+			}",
+		"variables":{
+			"accountID": `+ filterStr(userObj.account_id) + `,
+			"timeFrame": "last.P30D",
+			"dimension": [ { "fieldName": "application_name" }, { "fieldName": "application_id" } ],
+			"measure": [ { "aggType": "sum", "fieldName": "traffic" } ],
+			"appStatsFilter": [ { "fieldName": "category", "operator": "in", "values": ["Generative AI Tools","Conversational AI"] } ],
+			"limit": 1000,
+			"from": 0
+		},
+		"operationName":"appStats"
+	}`);
+	makeCall(paramActionObj.callback, query, paramName);
+};
+
+function getGenAiAppIDsResponse(response, paramName) {
+	var dest = $("select[name=" + paramName + "]");
+	if (response.errors != undefined) {
+		$.gritter.add({ title: 'ERROR', text: response.errors[0].message });
+		$('#cato_api_keys_tbl tr.current input').addClass("error");
+	} else {
+		dest.html('<option value="">-- select --</option>');
+		var seen = {};
+		$.each(response.data.appStats.records, function (i, rec) {
+			var id = (rec && rec.fieldsMap) ? rec.fieldsMap.application_id : null;
+			var name = (rec && rec.fieldsMap) ? rec.fieldsMap.application_name : null;
+			if (id && !seen[id]) {
+				seen[id] = true;
+				dest.append('<option value="' + id + '">' + (name ? name : id) + ' (' + id + ')</option>');
+			}
 		});
 	}
 	updateRequestData();

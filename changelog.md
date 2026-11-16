@@ -56,3 +56,10 @@
 
 ### Features
 - Add new parsing update to support posture child operations
+
+## 1.0.26 (2026-11-15)
+
+### Features
+- Added ObjectRef dropdown pickers for *RefInput fields: nested, list-valued refs (firewall rule source/destination/country/host, etc.) now render a "name (id)" picker whose selection is written as id or name based on the by (ID|NAME) dropdown, instead of a free-text input
+- Resolved nested INPUT_OBJECT picker mappings by camelCased type name, so a single per-type entry covers every operation that nests the type
+- Wired 34 RefInput types: 13 via entityLookup (site, country, host, allocatedIP, user, admin, account, networkInterface, service, subscription group/mailing-list/webhook, dhcp relay group) and 21 via dedicated list queries (groups, users groups, custom applications, firewall/socketLan policies, catalog applications, global IP ranges, containers, private applications, mailing lists, RBAC roles, webhooks/templates, ZTNA connectors, DNS server/suffix sets, content-type groups, PoP locations)
